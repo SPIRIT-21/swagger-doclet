@@ -30,7 +30,7 @@ public class Doclet {
 			return false;
 		}
 	}
-	// Das ist ein neuer Kommentar
+	// This is a comment
 	// This method gets the swagger version from command line
 	private static String readOptions(String[][] options) {
 		String tagName = null;
