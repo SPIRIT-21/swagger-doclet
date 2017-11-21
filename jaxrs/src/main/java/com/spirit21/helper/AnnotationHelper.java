@@ -19,6 +19,7 @@ public class AnnotationHelper {
 	}
 	
 	// This method gets the annotation value of a annotation of a programElementDoc
+	// TODO elementValues
 	public String getAnnotationValue(String annotationType) {
 		AnnotationDesc annotation = getAnnotation(annotationType);
 		if (annotation != null) {

@@ -15,6 +15,7 @@ import io.swagger.models.properties.RefProperty;
  * This enum saves the response-tags of the javadoc comment of the HttpMethods
  * and sets the value to the response
  */
+// TODO StringBuilder refactor
 public enum ResponseTagHandler {
 
 	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {

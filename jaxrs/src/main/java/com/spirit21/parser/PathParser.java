@@ -2,9 +2,11 @@ package com.spirit21.parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.PathParam;
 
@@ -31,7 +33,7 @@ public class PathParser {
 		pathParameter = new PathParameterHandler(PathParam.class.getName());
 	}
 	
-	// This method creates a 'paths' map, put data in there and returns it
+	// This method creates a 'paths' map, puts data in there and returns it
 	protected void setPath(Swagger swagger) {
 		Map<String, Path> paths = new LinkedHashMap<>();
 		paths.putAll(getPaths(swagger));
@@ -56,14 +58,15 @@ public class PathParser {
 	 */
 	private void createPath(Swagger swagger, ClassDoc classDoc, Map<String, Path> tempPaths) {
 		Path path = new Path();
-		path.setParameters(getPathParameters(classDoc));
+		path.setParameters(new ArrayList<>(getPathParameters(classDoc)));
 		createOperation(swagger, path, classDoc);
 		tempPaths.put(ParserHelper.getPath(classDoc), path);
 	}
 	
-	 // This method gets all parameters from a resource and its parent resources.
-	private List<Parameter> getPathParameters(ClassDoc classDoc) {
-		List<Parameter> parameters = new ArrayList<>();
+	// This method gets all parameters from a resource and its parent resources.
+	// TODO Bugfix path parameter (e2e)
+	private Set<Parameter> getPathParameters(ClassDoc classDoc) {
+		Set<Parameter> parameters = new HashSet<>();
 		// Gets the current parentClassDoc of the classDoc
 		ClassDoc parent = Parser.resourceClassDocs.get(classDoc);
 		

@@ -123,8 +123,7 @@ public class ParserHelper {
 			// --> then append StringBuilder with the path of value --> recursion
 			Arrays.asList(value.methods()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
-				.filter(m -> !hasHttpMethod(m))
-				.filter(m -> m.returnType().equals(classDoc))
+				.filter(m -> !hasHttpMethod(m) && m.returnType().equals(classDoc))
 				.map(m -> getAnnotationValue(m, Path.class.getName()))
 				.forEach(v -> {
 					sb.append("/" + v);
@@ -166,6 +165,7 @@ public class ParserHelper {
 	 * method creates some properties without the PropertyBuilder because of
 	 * problems of the builder
 	 */
+	// TODO Maybe PropertyFactory?
 	public static Property createProperty(String[] typeAndFormat, Type type) {
 		if (typeAndFormat != null) {
 			// If type = ref then create RefProperty
@@ -190,7 +190,7 @@ public class ParserHelper {
 			} else {
 				return PropertyBuilder.build(typeAndFormat[0], typeAndFormat[1], null);
 			}
-			// If the property is not known, create RefProperty
+		// If the property is not known, create RefProperty
 		} else {
 			String[] temp = new String[2];
 			temp[0] = Consts.REF;
