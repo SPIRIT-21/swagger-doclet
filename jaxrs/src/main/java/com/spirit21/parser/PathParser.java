@@ -64,11 +64,13 @@ public class PathParser {
 	}
 	
 	// This method gets all parameters from a resource and its parent resources.
-	// TODO Bugfix path parameter (e2e)
 	private Set<Parameter> getPathParameters(ClassDoc classDoc) {
 		Set<Parameter> parameters = new HashSet<>();
+
 		// Gets the current parentClassDoc of the classDoc
 		ClassDoc parent = Parser.resourceClassDocs.get(classDoc);
+		// Adds all path parameters of the current ClassDoc from fields
+		parameters.addAll(getPathParameterFromField(classDoc));
 		
 		// Check if the parent is a top-level-resource 
 		if (parent != null) {
@@ -84,8 +86,6 @@ public class PathParser {
 			parameters.addAll(getPathParameters(parent));
 			return parameters;
 		} else {
-			// Adds the pathParameters from the fields to list and returns the list
-			parameters.addAll(getPathParameterFromField(classDoc));
 			return parameters;
 		}
 	}
