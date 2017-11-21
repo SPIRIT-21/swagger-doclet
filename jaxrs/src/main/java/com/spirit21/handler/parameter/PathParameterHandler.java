@@ -35,7 +35,7 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		//set description
 		pp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
-		// set Property
+		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
 		pp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
 		
@@ -43,6 +43,7 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 	}
 	
 	// This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	// TODO evp
 	public PathParameter createNewParameter(AnnotationDesc annotation, FieldDoc fieldDoc) {
 		PathParameter pp = new PathParameter();
 		

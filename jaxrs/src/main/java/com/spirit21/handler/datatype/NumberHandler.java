@@ -102,15 +102,13 @@ public class NumberHandler implements TypeHandler {
 	// This method creates with the help of the enum the correct typeAndFormat array and returns it
 	@Override
 	public String[] getTypeAndFormat(String type) {
-		String[] typeAndFormat = null;
 		// Iterate through enum values
 		for (NumberEnum nh : NumberEnum.values()) {
 			// check if the typeName equals the enum.getName(). If so then get array and return it
 			if (type.equals(nh.getObjectOfPrimitive()) || type.equals(nh.getPrimitive())) {
-				typeAndFormat = nh.getTypeAndFormat();
-				break;
+				return nh.getTypeAndFormat();
 			}
 		}
-		return typeAndFormat;
+		return null;
 	}
 }

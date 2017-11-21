@@ -85,15 +85,13 @@ public class DateHandler implements TypeHandler {
 	// This method creates with the help of the enum the correct typeAndFormat Array and returns it
 	@Override
 	public String[] getTypeAndFormat(String typeName) {
-		String[] typeAndFormat = null;
 		// Iterate through enum values
 		for (DateEnum dh : DateEnum.values()) {
 			// check if the typeName equals the enum.getName(). If so then get array and return it
 			if (dh.getName().equals(typeName)) {
-				typeAndFormat = dh.getTypeAndFormat();
-				break;
+				return dh.getTypeAndFormat();
 			}
 		}
-		return typeAndFormat;
+		return null;
 	}
 }

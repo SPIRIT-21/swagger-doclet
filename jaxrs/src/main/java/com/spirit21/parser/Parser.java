@@ -37,7 +37,8 @@ public class Parser {
 
 	private Swagger swagger;
 	
-	//Initialize
+	// Initialize
+	// TODO version
 	public Parser(RootDoc rootDoc, String version) {
 		this.rootDoc = rootDoc;
 		apiParser = new ApiParser();
@@ -47,8 +48,6 @@ public class Parser {
 		definitionClassDocs = new ArrayList<>();
 		classDocCache = new ClassDocCache(Arrays.asList(rootDoc.classes()));
 		
-		//TODO version
-		System.out.println(version);
 		swagger = new Swagger();
 	}
 
@@ -64,6 +63,7 @@ public class Parser {
 			definitionParser.setDefinitions(swagger);
 
 			writeFile(apiParser.getFileName());
+
 			return true;
 		} catch (ApiParserException e) {
 			throw new ApiParserException("Error while parsing or searching API entry point!", e);
@@ -72,7 +72,7 @@ public class Parser {
 		}
 	}
 	
-	//This method gets the entryPointClassDoc of the REST API and throws possibly an exception
+	// This method gets the entryPointClassDoc of the REST API and throws possibly an exception
 	private ClassDoc getEntryPointClassDoc() throws ApiParserException {
 		List<ClassDoc> tempList = Arrays.asList(rootDoc.classes()).stream()
 				.filter(ParserHelper::hasApplicationPathAnnotation)
