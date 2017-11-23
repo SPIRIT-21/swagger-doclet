@@ -3,8 +3,8 @@ package com.spirit21.handler.javadoc;
 import java.util.Arrays;
 
 import com.spirit21.Consts;
+import com.spirit21.helper.ParserHelper;
 import com.spirit21.parser.Parser;
-import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 
 import io.swagger.models.Response;
@@ -15,7 +15,6 @@ import io.swagger.models.properties.RefProperty;
  * This enum saves the response-tags of the javadoc comment of the HttpMethods
  * and sets the value to the response
  */
-// TODO StringBuilder refactor
 public enum ResponseTagHandler {
 
 	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {
@@ -35,8 +34,6 @@ public enum ResponseTagHandler {
 		 */
 		@Override
 		public void setResponseData(Response response, Tag tag) {
-			RefProperty ref = new RefProperty();
-			
 			// get the simpleName of the @responseSchema tag
 			StringBuilder simpleNameBuilder = new StringBuilder();
 			Arrays.asList(tag.inlineTags())
@@ -44,14 +41,12 @@ public enum ResponseTagHandler {
 			String simpleName = simpleNameBuilder.toString();
 			
 			// set value in the refProperty and set it in the response
+			RefProperty ref = new RefProperty();
 			ref.set$ref(simpleName);
 			response.setSchema(ref);
 			
-			// check if Parser.definitionClassDocs contains classDoc, if not then add it
-			ClassDoc refClassDoc = Parser.classDocCache.findBySimpleName(simpleName);
-			if (refClassDoc != null && !Parser.definitionClassDocs.contains(refClassDoc)) {
-				Parser.definitionClassDocs.add(refClassDoc);
-			}
+			// add to definitions if list does not contain
+			ParserHelper.addToEntityList(Parser.classDocCache.findBySimpleName(simpleName));
 		}
 	},
 	RESPONSE_TYPE(Consts.RESPONSE_TYPE) {

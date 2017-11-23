@@ -17,7 +17,6 @@ import com.spirit21.handler.javadoc.ResponseTagHandler;
 import com.spirit21.handler.parameter.BodyParameterHandler;
 import com.spirit21.handler.parameter.QueryParameterHandler;
 import com.spirit21.helper.ParserHelper;
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Tag;
@@ -68,7 +67,7 @@ public class OperationParser {
 		
 		// Get the top-level ClassDoc and its @Path annotation value
 		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(classDoc);
-		String annotationValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName());
+		String annotationValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
 		
 		// Compare tags and the top-level ClassDoc path and finally add tag to operation
 		swagger.getTags().stream()
@@ -79,14 +78,10 @@ public class OperationParser {
 	
 	// This method sets the MIME media type for the operation
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
-		// Iterate over the annotations of the method
-		for (AnnotationDesc annotation : methodDoc.annotations()) {
-			// Iterate over all possible MIME media types and compare the annotation with the media type
-			Arrays.asList(MIMEMediaTypeHandler.values()).stream()
-				.filter(mth -> annotation.annotationType().toString().equals(mth.getName()))
-				// set media type value to operation
-				.forEach(mth -> mth.setValue(operation, annotation.elementValues()));
-		}
+		// Iterate over possible media type annotations and filter existing values
+		Arrays.asList(MIMEMediaTypeHandler.values()).stream()
+			.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getName()))
+			.forEach(mth -> mth.setValue(operation, methodDoc));
 	}
 	
 	// This method sets the description of the operation
@@ -96,7 +91,6 @@ public class OperationParser {
 			.forEach(t -> description.append(t.text()));
 		operation.setDescription(description.toString());
 	}
-	
 	
 	// This method sets the responses for an operation
 	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
@@ -128,7 +122,6 @@ public class OperationParser {
 		operation.setResponses(responses);
 	}
 	
-	// TODO formparameter/bodyparameter --> ParameterFactory
 	// This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
 	private void setParameters(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		List<Parameter> parameters = new ArrayList<>();
@@ -136,19 +129,14 @@ public class OperationParser {
 		int counter = 0;
 		for (com.sun.javadoc.Parameter parameter : methodDoc.parameters()) {
 			if (ParserHelper.hasAnnotation(parameter, QueryParam.class.getName())) {
-				Arrays.asList(parameter.annotations()).stream()
-					.filter(a -> a.annotationType().toString().equals(queryParameter.getName()))
-					.forEach(a -> {
-						Parameter queryParam = queryParameter.createNewParameter(a, parameter, methodDoc);
-						parameters.add(queryParam);
-					});
+				Parameter queryParam = queryParameter.createNewParameter(parameter, methodDoc);
+				parameters.add(queryParam);
 			} else {
-				Parameter bodyParam = bodyParameter.createNewParameter(null, parameter, methodDoc);
+				Parameter bodyParam = bodyParameter.createNewParameter(parameter, methodDoc);
 				parameters.add(bodyParam);
 				counter++;
 			}
 		}
-		
 		if (counter > 1) {
 			throw new OperationParserException(
 					"The method " + methodDoc.name() + " in " + methodDoc.containingClass().qualifiedName()

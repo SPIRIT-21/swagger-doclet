@@ -55,7 +55,7 @@ public class Doclet {
 		return 0;
 	}
 	
-	// FIXME Something went wrong when executing doclet on other projects
+	// TODO Something went wrong when executing doclet on other projects
 //	/*
 //	 * Optional method which is also automatically invoked.
 //	 * It checks the existence of the '-version' parameter

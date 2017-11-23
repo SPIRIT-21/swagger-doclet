@@ -1,7 +1,6 @@
 package com.spirit21.handler.parameter;
 
 import com.spirit21.helper.ParserHelper;
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
@@ -13,7 +12,7 @@ public class BodyParameterHandler implements ParameterAnnotationHandler {
 	
 	// This method creates a new BodyParameter sets the data and returns it
 	@Override
-	public BodyParameter createNewParameter(AnnotationDesc annotation, Parameter parameter, MethodDoc methodDoc) {
+	public BodyParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		BodyParameter bp = new BodyParameter();
 
 		// set name
