@@ -2,7 +2,6 @@ package com.spirit21.handler.parameter;
 
 import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
@@ -18,12 +17,12 @@ public class QueryParameterHandler implements ParameterAnnotationHandler {
 	
 	// This method creates a new QueryParameter sets the data and returns it
 	@Override
-	public QueryParameter createNewParameter(AnnotationDesc annotation, Parameter parameter, MethodDoc methodDoc) {
+	public QueryParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		QueryParameter qp = new QueryParameter();
 
 		// set parameterName
-		qp.setName(annotation.elementValues()[0].value().toString().replaceAll(Consts.QUOTATION_MARK,
-				Consts.EMPTY_STRING));
+		String s = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		qp.setName(ParserHelper.replaceQuotationMarks(s));
 		
 		// set default value
 		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);

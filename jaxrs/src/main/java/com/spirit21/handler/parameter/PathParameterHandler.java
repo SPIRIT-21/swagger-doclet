@@ -2,7 +2,6 @@ package com.spirit21.handler.parameter;
 
 import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
@@ -19,13 +18,13 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 	
 	// This method creates a new PathParameter sets the data and returns it
 	@Override
-	public PathParameter createNewParameter(AnnotationDesc annotation, Parameter parameter, MethodDoc methodDoc) {
+	public PathParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		PathParameter pp = new PathParameter();
 		
 		//set parameter name
-		pp.setName(annotation.elementValues()[0].value().toString().replaceAll(Consts.QUOTATION_MARK,
-				Consts.EMPTY_STRING));
-		
+		String s = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		pp.setName(ParserHelper.replaceQuotationMarks(s));
+
 		// set defaultValue
 		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
 		if (defaultValue != null) {
@@ -43,13 +42,12 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 	}
 	
 	// This method creates a new PathParameter of a FieldDoc sets the data and returns it
-	// TODO evp
-	public PathParameter createNewParameter(AnnotationDesc annotation, FieldDoc fieldDoc) {
+	public PathParameter createPathParameterFromField(FieldDoc fieldDoc) {
 		PathParameter pp = new PathParameter();
 		
 		// set name
-		pp.setName(annotation.elementValues()[0].value().toString().replaceAll(Consts.QUOTATION_MARK,
-				Consts.EMPTY_STRING));
+		String s = ParserHelper.getAnnotationValue(fieldDoc, getName(), Consts.VALUE);
+		pp.setName(ParserHelper.replaceQuotationMarks(s));
 		
 		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(fieldDoc.type());

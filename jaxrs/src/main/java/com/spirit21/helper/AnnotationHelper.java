@@ -19,11 +19,14 @@ public class AnnotationHelper {
 	}
 	
 	// This method gets the annotation value of a annotation of a programElementDoc
-	// TODO elementValues
-	public String getAnnotationValue(String annotationType) {
+	public String getAnnotationValue(String annotationType, String specifiedAnnotation) {
 		AnnotationDesc annotation = getAnnotation(annotationType);
 		if (annotation != null) {
-			return annotation.elementValues()[0].value().toString();
+			StringBuilder sb = new StringBuilder();
+			Arrays.asList(annotation.elementValues()).stream()
+				.filter(evp -> evp.element().name().equals(specifiedAnnotation))
+				.forEach(evp -> sb.append(evp.value().toString()));
+			return sb.toString();
 		} else {
 			return null;
 		}
