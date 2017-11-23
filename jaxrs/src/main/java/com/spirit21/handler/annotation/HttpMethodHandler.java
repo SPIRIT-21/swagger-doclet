@@ -2,6 +2,8 @@ package com.spirit21.handler.annotation;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
@@ -33,6 +35,18 @@ public enum HttpMethodHandler {
 		@Override
 		public void setOperationToPath(Path path, Operation operation) {
 			path.setDelete(operation);
+		}
+	},
+	HEAD(HEAD.class.getName(), HEAD.class.getSimpleName()) {
+		@Override
+		public void setOperationToPath(Path path, Operation operation) {
+			path.setHead(operation);
+		}
+	},
+	OPTIONS(OPTIONS.class.getName(), OPTIONS.class.getSimpleName()) {
+		@Override
+		public void setOperationToPath(Path path, Operation operation) {
+			path.setOptions(operation);
 		}
 	};
 

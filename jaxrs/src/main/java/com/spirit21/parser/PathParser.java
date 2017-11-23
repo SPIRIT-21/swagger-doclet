@@ -93,10 +93,8 @@ public class PathParser {
 		
 		Arrays.asList(methodDoc.parameters()).stream()
 			.filter(p -> ParserHelper.hasAnnotation(p, pathParameter.getName()))
-			.forEach(p -> {
-				Parameter parameter = pathParameter.createNewParameter(p, methodDoc);
-				parameters.add(parameter);
-			});
+			.map(p -> pathParameter.createNewParameter(p, methodDoc))
+			.forEach(parameters::add);
 		return parameters;
 	}
 	
@@ -107,10 +105,8 @@ public class PathParser {
 		// Iterate over fields and filter fields with @PathParam annotation
 		Arrays.asList(classDoc.fields(false)).stream()
 			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))
-			.forEach(f -> {
-				Parameter parameter = pathParameter.createPathParameterFromField(f);
-				parameters.add(parameter);
-			});
+			.map(f -> pathParameter.createPathParameterFromField(f))
+			.forEach(parameters::add);
 		return parameters;
 	}
 	

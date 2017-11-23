@@ -29,4 +29,8 @@ public class BodyParameterHandler implements ParameterAnnotationHandler {
 		return bp;
 	}
 
+	@Override
+	public String getName() {
+		return null;
+	}
 }

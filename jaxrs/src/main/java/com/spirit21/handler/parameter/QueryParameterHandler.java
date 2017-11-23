@@ -39,7 +39,8 @@ public class QueryParameterHandler implements ParameterAnnotationHandler {
 		
 		return qp;
 	}
-
+	
+	@Override
 	public String getName() {
 		return name;
 	}
