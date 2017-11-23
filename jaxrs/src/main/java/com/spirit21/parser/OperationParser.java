@@ -8,14 +8,12 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 import com.spirit21.Consts;
 import com.spirit21.exception.OperationParserException;
 import com.spirit21.handler.annotation.MIMEMediaTypeHandler;
 import com.spirit21.handler.javadoc.ResponseTagHandler;
-import com.spirit21.handler.parameter.BodyParameterHandler;
-import com.spirit21.handler.parameter.QueryParameterHandler;
+import com.spirit21.handler.parameter.ParameterFactory;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
@@ -24,21 +22,20 @@ import com.sun.javadoc.Tag;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import lombok.extern.java.Log;
 
 @Log
 public class OperationParser {
-	
-	private QueryParameterHandler queryParameter;
-	private BodyParameterHandler bodyParameter;
-	
+
+	private ParameterFactory parameterFactory;
+
 	// Initialize
 	protected OperationParser() {
-		queryParameter = new QueryParameterHandler(QueryParam.class.getName());
-		bodyParameter = new BodyParameterHandler();
+		parameterFactory = new ParameterFactory();
 	}
-	
+
 	// This method creates an operation and calls other methods to set the operation properties
 	protected Operation createOperation(Swagger swagger, ClassDoc classDoc, MethodDoc methodDoc) {
 		Operation operation = new Operation();
@@ -54,52 +51,50 @@ public class OperationParser {
 		}
 		return operation;
 	}
-	
+
 	// This method sets the operationID consisting of httpMethod (get, post..) and the path
 	private void setOperationId(Operation operation, MethodDoc methodDoc) {
 		operation.setOperationId(ParserHelper.getSimpleHttpMethod(methodDoc).toLowerCase()
 				+ ParserHelper.getPath(methodDoc.containingClass()));
 	}
-	
-	// This method sets the tag(s) for the operation 
+
+	// This method sets the tag(s) for the operation
 	private void setTags(Swagger swagger, Operation operation, ClassDoc classDoc) {
 		List<String> tags = new ArrayList<>();
-		
+
 		// Get the top-level ClassDoc and its @Path annotation value
 		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(classDoc);
 		String annotationValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
-		
+
 		// Compare tags and the top-level ClassDoc path and finally add tag to operation
-		swagger.getTags().stream()
-			.filter(t -> annotationValue.contains(t.getName()))
-			.forEach(t -> tags.add(t.getName()));
+		swagger.getTags().stream().filter(t -> annotationValue.contains(t.getName()))
+				.forEach(t -> tags.add(t.getName()));
 		operation.setTags(tags);
 	}
-	
+
 	// This method sets the MIME media type for the operation
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
 		// Iterate over possible media type annotations and filter existing values
 		Arrays.asList(MIMEMediaTypeHandler.values()).stream()
-			.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getName()))
-			.forEach(mth -> mth.setValue(operation, methodDoc));
+				.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getName()))
+				.forEach(mth -> mth.setValue(operation, methodDoc));
 	}
-	
+
 	// This method sets the description of the operation
 	private void setDescription(Operation operation, MethodDoc methodDoc) {
 		StringBuilder description = new StringBuilder();
-		Arrays.asList(methodDoc.inlineTags())
-			.forEach(t -> description.append(t.text()));
+		Arrays.asList(methodDoc.inlineTags()).forEach(t -> description.append(t.text()));
 		operation.setDescription(description.toString());
 	}
-	
+
 	// This method sets the responses for an operation
 	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		Map<String, Response> responses = new HashMap<>();
 		String currentKey = "";
-		
+
 		// Iterate through the javadoc tags of the method
 		for (Tag tag : methodDoc.tags()) {
-			// Safe the response code in currentKey and put this key with a new response in map
+			// Safe the response code in currentKey and put this key with a new response inmap
 			if (tag.name().equals(Consts.RESPONSE_CODE)) {
 				currentKey = tag.text();
 				responses.put(tag.text(), new Response());
@@ -121,26 +116,26 @@ public class OperationParser {
 		}
 		operation.setResponses(responses);
 	}
-	
+
 	// This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
-	private void setParameters(Operation operation, MethodDoc methodDoc) throws OperationParserException {
+	private void setParameters(Operation operation, MethodDoc methodDoc) {
 		List<Parameter> parameters = new ArrayList<>();
-		
+
 		int counter = 0;
 		for (com.sun.javadoc.Parameter parameter : methodDoc.parameters()) {
-			if (ParserHelper.hasAnnotation(parameter, QueryParam.class.getName())) {
-				Parameter queryParam = queryParameter.createNewParameter(parameter, methodDoc);
-				parameters.add(queryParam);
-			} else {
-				Parameter bodyParam = bodyParameter.createNewParameter(parameter, methodDoc);
-				parameters.add(bodyParam);
+			Parameter param = parameterFactory.getParameter(methodDoc, parameter);
+			if (param != null && !(param instanceof BodyParameter)) {
+				parameters.add(param);
+			} else if (param != null){
+				if (counter < 1) {
+					parameters.add(param);
+				}
 				counter++;
 			}
 		}
 		if (counter > 1) {
-			throw new OperationParserException(
-					"The method " + methodDoc.name() + " in " + methodDoc.containingClass().qualifiedName()
-							+ " has more than one BodyParameter! A method cannot have more than one BodyParameter.");
+			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
+					+ "' has more than one bodyParameter. Only one is allowed.");
 		}
 		operation.setParameters(parameters);
 	}
