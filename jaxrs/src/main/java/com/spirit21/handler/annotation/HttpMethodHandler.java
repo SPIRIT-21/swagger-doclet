@@ -8,7 +8,9 @@ import javax.ws.rs.PUT;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 
-// This enum saves all HttpMethods and sets the correct operation to path
+/**
+ *  This enum saves all HttpMethods and sets the correct operation to path
+ */
 public enum HttpMethodHandler {
 	
 	GET(GET.class.getName(), GET.class.getSimpleName()) {
