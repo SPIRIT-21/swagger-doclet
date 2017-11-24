@@ -5,10 +5,14 @@ import java.math.BigInteger;
 
 import com.spirit21.Consts;
 
-//This handler handles all types of number...
+/**
+ * This handler handles all types of number...
+ */
 public class NumberHandler implements TypeHandler {
 	
-	// This enum saves the most common number types e.g. Integer, Long...
+	/**
+	 * This enum saves the most common number types e.g. Integer, Long...
+	 */
 	private enum NumberEnum {
 		BYTE(byte.class.getName(), Byte.class.getName()) {
 			@Override
@@ -99,7 +103,9 @@ public class NumberHandler implements TypeHandler {
 		public abstract String[] getTypeAndFormat();
 	}
 	
-	// This method creates with the help of the enum the correct typeAndFormat array and returns it
+	/** 
+	 * This method creates with the help of the enum the correct typeAndFormat array and returns it
+	 */
 	@Override
 	public String[] getTypeAndFormat(String type) {
 		// Iterate through enum values
