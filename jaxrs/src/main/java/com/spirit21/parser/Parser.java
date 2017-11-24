@@ -37,8 +37,10 @@ public class Parser {
 
 	private Swagger swagger;
 	
-	// Initialize
 	// TODO version
+	/**
+	 * Initialize
+	 */
 	public Parser(RootDoc rootDoc, String version) {
 		this.rootDoc = rootDoc;
 		apiParser = new ApiParser();
@@ -51,7 +53,9 @@ public class Parser {
 		swagger = new Swagger();
 	}
 
-	// This method runs all the parsers and generates finally a swagger file
+	/**
+	 * This method runs all the parsers and generates finally a swagger file
+	 */
 	public boolean run() throws ApiParserException, IOException {
 		try {
 			entryPointClassDoc = getEntryPointClassDoc();
@@ -72,7 +76,9 @@ public class Parser {
 		}
 	}
 	
-	// This method gets the entryPointClassDoc of the REST API and throws possibly an exception
+	/**
+	 * This method gets the entryPointClassDoc of the REST API and throws possibly an exception
+	 */
 	private ClassDoc getEntryPointClassDoc() throws ApiParserException {
 		List<ClassDoc> tempList = Arrays.asList(rootDoc.classes()).stream()
 				.filter(ParserHelper::hasApplicationPathAnnotation)
@@ -86,7 +92,8 @@ public class Parser {
 		}
 	}
 	
-	/* This method puts all resources in a map and afterwards all subResources
+	/**
+	 * This method puts all resources in a map and afterwards all subResources
 	 * NOTE: Can't do it like: collect(Collectors.toMap(c -> c, null)) because it throws a
 	 * 		 NullPointerException if the value is null
 	 * NOTE: Create temporary hashMap because during iteration you cannot put something in the map
@@ -101,7 +108,9 @@ public class Parser {
 		return tempMap;
 	}
 	
-	// This method gets all subResources and its subResources... (because of recursion)
+	/**
+	 * This method gets all subResources and its subResources... (because of recursion)
+	 */
 	private void getSubs(LinkedHashMap<ClassDoc, ClassDoc> tempMap, ClassDoc classDoc) {
 		Arrays.asList(classDoc.methods()).stream()
 				.filter(m -> !ParserHelper.hasHttpMethod(m))
@@ -114,7 +123,9 @@ public class Parser {
 				});
 	}
 	
-	// This method creates a new .json file and possibly throws an exception if something failed
+	/**
+	 * This method creates a new .json file and possibly throws an exception if something failed
+	 */
 	private File createFile(String fileName) throws IOException {
 		if (fileName.isEmpty()) {
 			fileName = Consts.JSON_FILE_NAME;
@@ -127,7 +138,9 @@ public class Parser {
 		}
 	}
 	
-	// This method writes in the json file and possibly throws and exception if something failed 
+	/**
+	 * This method writes in the json file and possibly throws and exception if something failed
+	 */
 	private void writeFile(String fileName) throws IOException {
 		String jsonOutput = Json.pretty(swagger);
 		File file = createFile(fileName);

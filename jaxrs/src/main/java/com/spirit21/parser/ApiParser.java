@@ -14,7 +14,7 @@ public class ApiParser {
 
 	private String fileName;
 	
-	/* 
+	/**
 	 * This method sets the basic information for the swagger file,
 	 * checks the info and throws possibly an exception
 	 */
@@ -30,7 +30,9 @@ public class ApiParser {
 		swagger.setInfo(info);
 	}
 	
-	// This method helps the method 'setBasicInformation'
+	/**
+	 * This method helps the method 'setBasicInformation'
+	 */
 	private void setInformation(Swagger swagger, Info info, Tag tag) {
 		Arrays.asList(ApiTagHandler.values()).stream()
 			.filter(ath -> ath.getName().equals(tag.name()))
@@ -40,7 +42,9 @@ public class ApiParser {
 		}
 	}
 	
-	// This method checks the info
+	/**
+	 * This method checks the info
+	 */
 	private void checkInfo(Info info) throws ApiParserException {
 		if (info.getVersion() == null || info.getVersion().isEmpty()) {
 			throw new ApiParserException("You need to provide information about your API! Version is required.");

@@ -8,7 +8,9 @@ import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 
 import io.swagger.models.Operation;
 
-// This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
+/** 
+ * This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
+ */
 // TODO evp
 public enum MIMEMediaTypeHandler {
 
