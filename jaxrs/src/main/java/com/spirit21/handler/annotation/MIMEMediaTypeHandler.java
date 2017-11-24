@@ -8,8 +8,11 @@ import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 
 import io.swagger.models.Operation;
 
-// This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
-public enum MediaTypeHandler {
+/** 
+ * This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
+ */
+// TODO evp
+public enum MIMEMediaTypeHandler {
 
 	PRODUCES(Produces.class.getName()) {
 		@Override
@@ -26,7 +29,7 @@ public enum MediaTypeHandler {
 
 	private final String operation;
 
-	private MediaTypeHandler(String operation) {
+	private MIMEMediaTypeHandler(String operation) {
 		this.operation = operation;
 	}
 

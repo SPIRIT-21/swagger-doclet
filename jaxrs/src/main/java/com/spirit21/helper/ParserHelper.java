@@ -23,31 +23,41 @@ import io.swagger.models.properties.RefProperty;
 
 public class ParserHelper {
 
-	// This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation
+	/**
+	 * This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation
+	 */
 	public static boolean hasAnnotation(ProgramElementDoc programElementDoc, String annotation) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		return p.isAnnotatedBy(annotation);
 	}
 
-	// This method checks if a parameter has a specific annotation
+	/**
+	 * This method checks if a parameter has a specific annotation
+	 */
 	public static boolean hasAnnotation(Parameter parameter, String annotation) {
 		AnnotationHelper p = new AnnotationHelper(parameter.annotations());
 		return p.isAnnotatedBy(annotation);
 	}
 
-	// This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
+	/**
+	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
+	 */
 	public static boolean hasApplicationPathAnnotation(ProgramElementDoc programElementDoc) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		return p.isAnnotatedBy(ApplicationPath.class.getName());
 	}
 	
-	// This method checks if a programElementDoc has the javax.ws.rs.Path annotation
+	/**
+	 * This method checks if a programElementDoc has the javax.ws.rs.Path annotation
+	 */
 	public static boolean hasPathAnnotation(ProgramElementDoc programElementDoc) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		return p.isAnnotatedBy(Path.class.getName());
 	}
 
-	// This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
+	/**
+	 * This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
+	 */
 	public static boolean hasHttpMethod(ProgramElementDoc programElementDoc) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		for (HttpMethodHandler hmh : HttpMethodHandler.values()) {
@@ -58,7 +68,9 @@ public class ParserHelper {
 		return false;
 	}
 
-	// This method gets the annotationValue of a specific annotation of a programElementDoc
+	/**
+	 * This method gets the annotationValue of a specific annotation of a programElementDoc
+	 */
 	public static String getAnnotationValue(ProgramElementDoc programElementDoc, String annotationType) {
 		if (hasAnnotation(programElementDoc, annotationType)) {
 			AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
@@ -68,7 +80,9 @@ public class ParserHelper {
 		}
 	}
 
-	// This method gets the full HTTP-method of a programElementDoc (javax.ws.rs.GET/POST..)
+	/**
+	 * This method gets the full HTTP-method of a programElementDoc (javax.ws.rs.GET/POST..)
+	 */
 	public static String getFullHttpMethod(ProgramElementDoc programElementDoc) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
@@ -79,7 +93,9 @@ public class ParserHelper {
 		return null;
 	}
 
-	// This method gets the simple HTTP-method of a programElementDoc (GET/POST/PUT/DELETE)
+	/**
+	 * This method gets the simple HTTP-method of a programElementDoc (GET/POST/PUT/DELETE)
+	 */
 	public static String getSimpleHttpMethod(ProgramElementDoc programElementDoc) {
 		AnnotationHelper p = new AnnotationHelper(programElementDoc.annotations());
 		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
@@ -90,7 +106,9 @@ public class ParserHelper {
 		return null;
 	}
 
-	// This method checks if a resource has any methods with HTTP-annotations
+	/**
+	 * This method checks if a resource has any methods with HTTP-annotations
+	 */
 	public static boolean isResource(ClassDoc classDoc) {
 		for (MethodDoc methodDoc : classDoc.methods()) {
 			if (hasHttpMethod(methodDoc)) {
@@ -100,7 +118,9 @@ public class ParserHelper {
 		return false;
 	}
 
-	// This method returns the parentResourceClassDoc of any (sub..)ResourceClassDoc
+	/**
+	 * This method returns the parentResourceClassDoc of any (sub..)ResourceClassDoc
+	 */
 	public static ClassDoc getParentClassDoc(ClassDoc classDoc) {
 		if (Parser.resourceClassDocs.containsKey(classDoc)) {
 			if (Parser.resourceClassDocs.get(classDoc) == null) {
@@ -112,7 +132,9 @@ public class ParserHelper {
 		return null;
 	}
 
-	// This method returns the complete path of any classDoc
+	/**
+	 * This method returns the complete path of any classDoc
+	 */
 	public static String getPath(ClassDoc classDoc) {
 		StringBuilder sb = new StringBuilder();
 		ClassDoc value = Parser.resourceClassDocs.get(classDoc);
@@ -123,8 +145,7 @@ public class ParserHelper {
 			// --> then append StringBuilder with the path of value --> recursion
 			Arrays.asList(value.methods()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
-				.filter(m -> !hasHttpMethod(m))
-				.filter(m -> m.returnType().equals(classDoc))
+				.filter(m -> !hasHttpMethod(m) && m.returnType().equals(classDoc))
 				.map(m -> getAnnotationValue(m, Path.class.getName()))
 				.forEach(v -> {
 					sb.append("/" + v);
@@ -139,13 +160,17 @@ public class ParserHelper {
 		return null;
 	}
 	
-	// This method helps to replace quotation marks and slashes
+	/**
+	 * This method helps to replace quotation marks and slashes
+	 */
 	private static String replacer(String replace) {
 		return replace.replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING).replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
 	}
 
-	// This method returns the type and format of a property in this format
-	// String[0] = type, String[1] = format
+	/**
+	 * This method returns the type and format of a property in this format
+	 * String[0] = type, String[1] = format
+	 */
 	public static String[] checkTypeAndFormat(Type type) {
 		String[] typeAndFormat = null;
 		// If the type is a classDoc --> type = ref
@@ -161,11 +186,12 @@ public class ParserHelper {
 		}
 	}
 
-	/*
+	/**
 	 * This method creates properties with the help of typeAndFormat NOTE: This
 	 * method creates some properties without the PropertyBuilder because of
 	 * problems of the builder
 	 */
+	// TODO Maybe PropertyFactory?
 	public static Property createProperty(String[] typeAndFormat, Type type) {
 		if (typeAndFormat != null) {
 			// If type = ref then create RefProperty
@@ -190,7 +216,7 @@ public class ParserHelper {
 			} else {
 				return PropertyBuilder.build(typeAndFormat[0], typeAndFormat[1], null);
 			}
-			// If the property is not known, create RefProperty
+		// If the property is not known, create RefProperty
 		} else {
 			String[] temp = new String[2];
 			temp[0] = Consts.REF;
@@ -199,7 +225,9 @@ public class ParserHelper {
 		}
 	}
 
-	// This method adds a classDoc to the definitionClassDoc list in the Parser
+	/**
+	 * This method adds a classDoc to the definitionClassDoc list in the Parser
+	 */
 	private static void addToEntityList(ClassDoc classDoc) {
 		if (!Parser.definitionClassDocs.contains(classDoc) && classDoc != null) {
 			Parser.definitionClassDocs.add(classDoc);

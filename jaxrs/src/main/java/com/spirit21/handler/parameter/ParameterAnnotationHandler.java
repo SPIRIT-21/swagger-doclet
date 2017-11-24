@@ -12,11 +12,15 @@ import io.swagger.models.parameters.Parameter;
 
 public interface ParameterAnnotationHandler {
 	
-	// This method creates a new (Query/Body/Path)Parameter
+	/**
+	 * This method creates a new (Query/Body/Path)Parameter
+	 */
 	public abstract Parameter createNewParameter(AnnotationDesc annotation, com.sun.javadoc.Parameter parameter,
 			MethodDoc methodDoc);
 	
-	// This method gets the javadoc description of the Parameter
+	/**
+	 * This method gets the javadoc description of the Parameter
+	 */
 	public static String getDescriptionForParameters(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -29,7 +33,9 @@ public interface ParameterAnnotationHandler {
 		return sb.toString();
 	}
 
-	// This method gets the DefaultValue of the Parameter
+	/**
+	 * This method gets the DefaultValue of the Parameter
+	 */
 	public static String getDefaultValue(com.sun.javadoc.Parameter parameter) {
 		String defaultValue = null;
 		

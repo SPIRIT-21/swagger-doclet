@@ -17,7 +17,9 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		this.name = name;
 	}
 	
-	// This method creates a new PathParameter sets the data and returns it
+	/**
+	 * This method creates a new PathParameter sets the data and returns it
+	 */
 	@Override
 	public PathParameter createNewParameter(AnnotationDesc annotation, Parameter parameter, MethodDoc methodDoc) {
 		PathParameter pp = new PathParameter();
@@ -35,14 +37,17 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		//set description
 		pp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
-		// set Property
+		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
 		pp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
 		
 		return pp;
 	}
 	
-	// This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	// TODO evp
+	/**
+	 * This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	 */
 	public PathParameter createNewParameter(AnnotationDesc annotation, FieldDoc fieldDoc) {
 		PathParameter pp = new PathParameter();
 		
