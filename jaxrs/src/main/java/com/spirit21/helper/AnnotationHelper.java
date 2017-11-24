@@ -13,12 +13,16 @@ public class AnnotationHelper {
 		this.annotations = Arrays.asList(annotations);
 	}
 	
-	// This method checks if a programElementDoc (methodDoc, classDoc) is annotated by an annotationType
+	/**
+	 *  This method checks if a programElementDoc (methodDoc, classDoc) is annotated by an annotationType
+	 */
 	public boolean isAnnotatedBy(String annotationType) {
 		return getAnnotation(annotationType) != null;
 	}
 	
-	// This method gets the annotation value of a annotation of a programElementDoc
+	/**
+	 * This method gets the annotation value of a annotation of a programElementDoc
+	 */
 	public String getAnnotationValue(String annotationType, String specifiedAnnotation) {
 		AnnotationDesc annotation = getAnnotation(annotationType);
 		if (annotation != null) {
@@ -32,7 +36,9 @@ public class AnnotationHelper {
 		}
 	}
 	
-	// This method gets the AnnotationDesc of a programElementDoc 
+	/**
+	 *  This method gets the AnnotationDesc of a programElementDoc 
+	 */
 	private AnnotationDesc getAnnotation(String qualifiedTypeName) {
 		return annotations.stream()
 			.filter(a -> a.annotationType().qualifiedTypeName().equals(qualifiedTypeName))
