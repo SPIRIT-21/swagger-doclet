@@ -9,7 +9,9 @@ import com.sun.javadoc.MethodDoc;
 
 import io.swagger.models.Operation;
 
-// This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
+/** 
+ * This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
+ */
 public enum MIMEMediaTypeHandler {
 
 	PRODUCES(Produces.class.getName()) {

@@ -15,7 +15,9 @@ public class QueryParameterHandler implements ParameterAnnotationHandler {
 		this.name = name;
 	}
 	
-	// This method creates a new QueryParameter sets the data and returns it
+	/** 
+	 * This method creates a new QueryParameter sets the data and returns it
+	 */
 	@Override
 	public QueryParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		QueryParameter qp = new QueryParameter();

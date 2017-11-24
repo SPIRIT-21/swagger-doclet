@@ -7,10 +7,14 @@ import java.util.Set;
 
 import com.spirit21.Consts;
 
-// This handler handles all types of Lists...
+/**
+ *  This handler handles all types of Lists...
+ */
 public class ArrayHandler implements TypeHandler {
 	
-	// This enum saves the most common Lists, Maps..
+	/**
+	 *  This enum saves the most common Lists, Maps..
+	 */
 	private enum ArrayEnum {
 		COLLECTION(Collection.class.getName()) {
 			@Override
@@ -58,7 +62,9 @@ public class ArrayHandler implements TypeHandler {
 		public abstract String[] getTypeAndFormat();
 	}
 	
-	// This method creates with the help of the enum the correct typeAndFormat array and returns it
+	/** 
+	 * This method creates with the help of the enum the correct typeAndFormat array and returns it
+	 */
 	@Override
 	public String[] getTypeAndFormat(String typeName) {
 		// Iterate through enum values

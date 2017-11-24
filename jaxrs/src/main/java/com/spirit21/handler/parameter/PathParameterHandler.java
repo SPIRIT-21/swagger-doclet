@@ -41,7 +41,9 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		return pp;
 	}
 	
-	// This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	/**
+	 * This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	 */
 	public PathParameter createPathParameterFromField(FieldDoc fieldDoc) {
 		PathParameter pp = new PathParameter();
 		

@@ -33,13 +33,17 @@ public class OperationParser {
 	private QueryParameterHandler queryParameter;
 	private BodyParameterHandler bodyParameter;
 	
-	// Initialize
+	/**
+	 * Initialize
+	 */
 	protected OperationParser() {
 		queryParameter = new QueryParameterHandler(QueryParam.class.getName());
 		bodyParameter = new BodyParameterHandler();
 	}
 	
-	// This method creates an operation and calls other methods to set the operation properties
+	/**
+	 * This method creates an operation and calls other methods to set the operation properties
+	 */
 	protected Operation createOperation(Swagger swagger, ClassDoc classDoc, MethodDoc methodDoc) {
 		Operation operation = new Operation();
 		setOperationId(operation, methodDoc);
@@ -55,13 +59,17 @@ public class OperationParser {
 		return operation;
 	}
 	
-	// This method sets the operationID consisting of httpMethod (get, post..) and the path
+	/**
+	 * This method sets the operationID consisting of httpMethod (get, post..) and the path
+	 */
 	private void setOperationId(Operation operation, MethodDoc methodDoc) {
 		operation.setOperationId(ParserHelper.getSimpleHttpMethod(methodDoc).toLowerCase()
 				+ ParserHelper.getPath(methodDoc.containingClass()));
 	}
 	
-	// This method sets the tag(s) for the operation 
+	/**
+	 * This method sets the tag(s) for the operation
+	 */
 	private void setTags(Swagger swagger, Operation operation, ClassDoc classDoc) {
 		List<String> tags = new ArrayList<>();
 		
@@ -76,7 +84,9 @@ public class OperationParser {
 		operation.setTags(tags);
 	}
 	
-	// This method sets the MIME media type for the operation
+	/**
+	 * This method sets the MIME media type for the operation
+	 */
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
 		// Iterate over possible media type annotations and filter existing values
 		Arrays.asList(MIMEMediaTypeHandler.values()).stream()
@@ -84,7 +94,9 @@ public class OperationParser {
 			.forEach(mth -> mth.setValue(operation, methodDoc));
 	}
 	
-	// This method sets the description of the operation
+	/**
+	 * This method sets the description of the operation
+	 */
 	private void setDescription(Operation operation, MethodDoc methodDoc) {
 		StringBuilder description = new StringBuilder();
 		Arrays.asList(methodDoc.inlineTags())
@@ -92,7 +104,9 @@ public class OperationParser {
 		operation.setDescription(description.toString());
 	}
 	
-	// This method sets the responses for an operation
+	/**
+	 * This method sets the responses for an operation
+	 */
 	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		Map<String, Response> responses = new HashMap<>();
 		String currentKey = "";
@@ -122,7 +136,9 @@ public class OperationParser {
 		operation.setResponses(responses);
 	}
 	
-	// This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
+	/**
+	 * This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
+	 */
 	private void setParameters(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		List<Parameter> parameters = new ArrayList<>();
 		

@@ -12,8 +12,10 @@ import io.swagger.models.Swagger;
 import io.swagger.models.properties.Property;
 
 public class DefinitionParser {
-	
-	// This method creates the definitions Map and sets it to the swagger object
+
+	/**
+	 * This method creates the definitions Map and sets it to the swagger object
+	 */
 	protected void setDefinitions(Swagger swagger) {
 		Map<String, Model> definitions = new HashMap<>();
 		
@@ -27,7 +29,9 @@ public class DefinitionParser {
 		swagger.setDefinitions(definitions);
 	}
 	
-	// This method creates the properties map for a model
+	/**
+	 * This method creates the properties map for a model
+	 */
 	private Map<String, Property> getProperties(int index) {
 		Map<String, Property> properties = new HashMap<>();
 		

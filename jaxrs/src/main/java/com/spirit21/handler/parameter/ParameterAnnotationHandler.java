@@ -12,10 +12,14 @@ import io.swagger.models.parameters.Parameter;
 
 public interface ParameterAnnotationHandler {
 
-	// This method creates a new (Query/Body/Path)Parameter
+	/**
+	 * This method creates a new (Query/Body/Path)Parameter
+	 */
 	public abstract Parameter createNewParameter(com.sun.javadoc.Parameter parameter, MethodDoc methodDoc);
 
-	// This method gets the javadoc description of a Parameter
+	/**
+	 * This method gets the javadoc description of the Parameter
+	 */
 	public static String getDescriptionForParameters(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
 		StringBuilder sb = new StringBuilder();
 
