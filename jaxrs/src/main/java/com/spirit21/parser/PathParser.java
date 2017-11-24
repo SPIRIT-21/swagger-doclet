@@ -63,7 +63,9 @@ public class PathParser {
 		tempPaths.put(ParserHelper.getPath(classDoc), path);
 	}
 	
-	// This method gets all parameters from a resource and its parent resources.
+	/**
+	 *  This method gets all parameters from a resource and its parent resources.
+	 */
 	private Set<Parameter> getPathParameters(ClassDoc classDoc) {
 		Set<Parameter> parameters = new HashSet<>();
 
