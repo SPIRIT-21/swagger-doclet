@@ -17,15 +17,15 @@ public enum MIMEMediaTypeHandler {
 	PRODUCES(Produces.class.getName()) {
 		@Override
 		public void setValue(Operation operation, MethodDoc methodDoc) {
-			String s = ParserHelper.getAnnotationValue(methodDoc, getName(), Consts.VALUE);
-			operation.addProduces(ParserHelper.replaceQuotationMarks(s));
+			String annotationValue = ParserHelper.getAnnotationValue(methodDoc, getOperation(), Consts.VALUE);
+			operation.addProduces(ParserHelper.replaceQuotationMarks(annotationValue));
 		}
 	},
 	CONSUMES(Consumes.class.getName()) {
 		@Override
 		public void setValue(Operation operation, MethodDoc methodDoc) {
-			String s = ParserHelper.getAnnotationValue(methodDoc, getName(), Consts.VALUE);
-			operation.addConsumes(ParserHelper.replaceQuotationMarks(s));
+			String annotationValue = ParserHelper.getAnnotationValue(methodDoc, getOperation(), Consts.VALUE);
+			operation.addConsumes(ParserHelper.replaceQuotationMarks(annotationValue));
 		}
 	};
 
@@ -35,7 +35,7 @@ public enum MIMEMediaTypeHandler {
 		this.operation = operation;
 	}
 
-	public String getName() {
+	public String getOperation() {
 		return operation;
 	}
 

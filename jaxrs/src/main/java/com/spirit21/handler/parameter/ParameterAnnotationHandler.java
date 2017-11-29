@@ -25,10 +25,10 @@ public interface ParameterAnnotationHandler {
 
 		Arrays.asList(methodDoc.paramTags()).stream()
 			.filter(tag -> tag.parameterName().equals(parameter.name()))
-			.forEach(tag -> {
-					Arrays.asList(tag.inlineTags()).forEach(t -> sb.append(t.text()));
-				});
-
+			.flatMap(tag -> Arrays.asList(tag.inlineTags()).stream())
+			.map(inlineTag -> inlineTag.text())
+			.forEach(sb::append);
+		
 		return sb.toString();
 	}
 
