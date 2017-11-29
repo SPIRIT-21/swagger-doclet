@@ -90,7 +90,7 @@ public class OperationParser {
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
 		// Iterate over possible media type annotations and filter existing values
 		Arrays.asList(MIMEMediaTypeHandler.values()).stream()
-			.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getName()))
+			.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getOperation()))
 			.forEach(mth -> mth.setValue(operation, methodDoc));
 	}
 	

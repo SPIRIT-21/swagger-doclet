@@ -29,7 +29,8 @@ public class AnnotationHelper {
 			StringBuilder sb = new StringBuilder();
 			Arrays.asList(annotation.elementValues()).stream()
 				.filter(evp -> evp.element().name().equals(specifiedAnnotation))
-				.forEach(evp -> sb.append(evp.value().toString()));
+				.map(evp -> evp.value().toString())
+				.forEach(sb::append);
 			return sb.toString();
 		} else {
 			return null;

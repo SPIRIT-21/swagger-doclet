@@ -19,43 +19,43 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 	// This method creates a new PathParameter sets the data and returns it
 	@Override
 	public PathParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
-		PathParameter pp = new PathParameter();
+		PathParameter pathParameter = new PathParameter();
 		
 		//set parameter name
-		String s = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
-		pp.setName(ParserHelper.replaceQuotationMarks(s));
+		String parameterName = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		pathParameter.setName(ParserHelper.replaceQuotationMarks(parameterName));
 
 		// set defaultValue
 		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
 		if (defaultValue != null) {
-			pp.setDefaultValue(defaultValue);
+			pathParameter.setDefaultValue(defaultValue);
 		}
 		
 		//set description
-		pp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
+		pathParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
 		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		pp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
+		pathParameter.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
 		
-		return pp;
+		return pathParameter;
 	}
 	
 	/**
 	 * This method creates a new PathParameter of a FieldDoc sets the data and returns it
 	 */
 	public PathParameter createPathParameterFromField(FieldDoc fieldDoc) {
-		PathParameter pp = new PathParameter();
+		PathParameter pathParameter = new PathParameter();
 		
 		// set name
-		String s = ParserHelper.getAnnotationValue(fieldDoc, getName(), Consts.VALUE);
-		pp.setName(ParserHelper.replaceQuotationMarks(s));
+		String annotationValue = ParserHelper.getAnnotationValue(fieldDoc, getName(), Consts.VALUE);
+		pathParameter.setName(ParserHelper.replaceQuotationMarks(annotationValue));
 		
 		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(fieldDoc.type());
-		pp.setProperty(ParserHelper.createProperty(typeAndFormat, fieldDoc.type()));
+		pathParameter.setProperty(ParserHelper.createProperty(typeAndFormat, fieldDoc.type()));
 		
-		return pp;
+		return pathParameter;
 	}
 
 	public String getName() {

@@ -15,20 +15,20 @@ public class BodyParameterHandler implements ParameterAnnotationHandler {
 	 */
 	@Override
 	public BodyParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
-		BodyParameter bp = new BodyParameter();
+		BodyParameter bodyParameter = new BodyParameter();
 
 		// set name
-		bp.setName(parameter.name());
+		bodyParameter.setName(parameter.name());
 		
 		// set Description
-		bp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
+		bodyParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
 		// set schema
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
 		Property property = ParserHelper.createProperty(typeAndFormat, parameter.type());
-		bp.setSchema(PropertyBuilder.toModel(property));
+		bodyParameter.setSchema(PropertyBuilder.toModel(property));
 		
-		return bp;
+		return bodyParameter;
 	}
 
 }

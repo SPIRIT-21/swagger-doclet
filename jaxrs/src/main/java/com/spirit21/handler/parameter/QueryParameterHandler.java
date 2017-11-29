@@ -20,26 +20,26 @@ public class QueryParameterHandler implements ParameterAnnotationHandler {
 	 */
 	@Override
 	public QueryParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
-		QueryParameter qp = new QueryParameter();
+		QueryParameter queryParameter = new QueryParameter();
 
 		// set parameterName
-		String s = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
-		qp.setName(ParserHelper.replaceQuotationMarks(s));
+		String parameterName = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		queryParameter.setName(ParserHelper.replaceQuotationMarks(parameterName));
 		
 		// set default value
 		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
 		if (defaultValue != null) {
-			qp.setDefaultValue(defaultValue);
+			queryParameter.setDefaultValue(defaultValue);
 		}
 		
 		// set description
-		qp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
+		queryParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
 		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		qp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
+		queryParameter.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
 		
-		return qp;
+		return queryParameter;
 	}
 
 	public String getName() {
