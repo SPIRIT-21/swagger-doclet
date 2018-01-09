@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.PathParam;
 
@@ -97,27 +98,21 @@ public class PathParser {
 	 * This method gets the pathParameter from the parameter of a method
 	 */
 	private List<Parameter> getPathParameterFromMethodParameter(MethodDoc methodDoc) {
-		List<Parameter> parameters = new ArrayList<>();
-		
-		Arrays.asList(methodDoc.parameters()).stream()
+		return Arrays.asList(methodDoc.parameters()).stream()
 			.filter(p -> ParserHelper.hasAnnotation(p, pathParameter.getName()))
 			.map(p -> pathParameter.createNewParameter(p, methodDoc))
-			.forEach(parameters::add);
-		return parameters;
+			.collect(Collectors.toList());
 	}
 	
 	/**
 	 * This method gets the pathParameter from the fields of a ClassDoc
 	 */
 	private List <Parameter> getPathParameterFromField(ClassDoc classDoc) {
-		List <Parameter> parameters = new ArrayList<>();
-		
 		// Iterate over fields and filter fields with @PathParam annotation
-		Arrays.asList(classDoc.fields(false)).stream()
+		return Arrays.asList(classDoc.fields(false)).stream()
 			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))
 			.map(f -> pathParameter.createPathParameterFromField(f))
-			.forEach(parameters::add);
-		return parameters;
+			.collect(Collectors.toList());
 	}
 	
 	/**
