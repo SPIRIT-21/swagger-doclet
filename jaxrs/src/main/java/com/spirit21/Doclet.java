@@ -13,7 +13,9 @@ import lombok.extern.java.Log;
 @Log
 public class Doclet {
 	
-	// Starting point of the Doclet
+	/**
+	 * Starting point of the Doclet
+	 */
 	public static boolean start(RootDoc rootDoc) {
 		// Gets the swagger version
 		String version = readOptions(rootDoc.options());
@@ -30,7 +32,9 @@ public class Doclet {
 	}
 	
 	// TODO rewrite method
-	// This method gets the swagger version from command line
+	/**
+	 * This method gets the swagger version from command line
+	 */
 	private static String readOptions(String[][] options) {
 		String tagName = null;
 		for (int i = 0; i < options.length; i++) {
@@ -42,7 +46,7 @@ public class Doclet {
 		return tagName;
 	}
 	
-	/* 
+	/**
 	 * Required method to allow custom commandline parameter like '-version x'
 	 * This method determines the number of parts of the option
 	 * For Example '-test that this' --> 3 '-version x' --> 2
@@ -78,7 +82,9 @@ public class Doclet {
 //		return foundTagOption;
 //	}
 	
-	// Required method which allows the doclet to get the generics of a List/Map..
+	/**
+	 * Required method which allows the doclet to get the generics of a List/Map..
+	 */
 	public static LanguageVersion languageVersion() {
 		return LanguageVersion.JAVA_1_5;
 	}
