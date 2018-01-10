@@ -19,11 +19,11 @@ public class ParameterFactory {
 	private List<ParameterAnnotationHandler> handlers;
 
 	public ParameterFactory() {
-		bph = new BodyParameterHandler();
 		handlers = new ArrayList<>();
 		handlers.add(new FormParameterHandler(FormParam.class.getName()));
 		handlers.add(new HeaderParameterHandler(HeaderParam.class.getName()));
 		handlers.add(new QueryParameterHandler(QueryParam.class.getName()));
+		bph = new BodyParameterHandler();
 	}
 
 	public Parameter getParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
@@ -32,16 +32,14 @@ public class ParameterFactory {
 		for (ParameterAnnotationHandler pah : handlers) {
 			if (ParserHelper.hasAnnotation(parameter, pah.getName())
 					&& !ParserHelper.hasAnnotation(parameter, Context.class.getName())) {
-				param = pah.createNewParameter(parameter, methodDoc);
-				return param;
+				return pah.createNewParameter(parameter, methodDoc);
 			}
 		}
 
 		if (ParserHelper.hasAnnotation(parameter, Context.class.getName())) {
 			return param;
 		} else {
-			param = bph.createNewParameter(parameter, methodDoc);
-			return param;
+			return bph.createNewParameter(parameter, methodDoc);
 		}
 	}
 }

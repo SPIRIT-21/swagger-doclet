@@ -1,13 +1,11 @@
 package com.spirit21.handler.parameter;
 
-import com.spirit21.Consts;
-import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
 import io.swagger.models.parameters.FormParameter;
 
-public class FormParameterHandler implements ParameterAnnotationHandler {
+public class FormParameterHandler extends AbstractParameterHandler<FormParameter> implements ParameterAnnotationHandler {
 	
 	private final String name;
 	
@@ -15,27 +13,13 @@ public class FormParameterHandler implements ParameterAnnotationHandler {
 		this.name = name;
 	}
 	
+	/** 
+	 * This method creates a new FormParameter sets the data and returns it
+	 */
 	@Override
 	public FormParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		FormParameter fp = new FormParameter();
-		
-		//set parameter name
-		String s = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
-		fp.setName(ParserHelper.replaceQuotationMarks(s));
-		
-		// set default value
-		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
-		if (defaultValue != null) {
-			fp.setDefaultValue(defaultValue);
-		}
-		
-		// set description
-		fp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
-		
-		// set property
-		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		fp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
-		
+		handleParameter(fp, parameter, methodDoc);
 		return fp;
 	}
 	
