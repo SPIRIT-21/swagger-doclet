@@ -4,26 +4,28 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
 import com.spirit21.Consts;
-import com.sun.javadoc.AnnotationDesc.ElementValuePair;
+import com.spirit21.helper.ParserHelper;
+import com.sun.javadoc.MethodDoc;
 
 import io.swagger.models.Operation;
 
 /** 
  * This enum svaes the produces and consumes annotation and adds the value of these annotations to the operation
  */
-// TODO evp
 public enum MIMEMediaTypeHandler {
 
 	PRODUCES(Produces.class.getName()) {
 		@Override
-		public void setValue(Operation operation, ElementValuePair[] evp) {
-			operation.addProduces(evp[0].value().toString().replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING));
+		public void setValue(Operation operation, MethodDoc methodDoc) {
+			String annotationValue = ParserHelper.getAnnotationValue(methodDoc, getOperation(), Consts.VALUE);
+			operation.addProduces(ParserHelper.replaceQuotationMarks(annotationValue));
 		}
 	},
 	CONSUMES(Consumes.class.getName()) {
 		@Override
-		public void setValue(Operation operation, ElementValuePair[] evp) {
-			operation.addConsumes(evp[0].value().toString().replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING));
+		public void setValue(Operation operation, MethodDoc methodDoc) {
+			String annotationValue = ParserHelper.getAnnotationValue(methodDoc, getOperation(), Consts.VALUE);
+			operation.addConsumes(ParserHelper.replaceQuotationMarks(annotationValue));
 		}
 	};
 
@@ -33,9 +35,9 @@ public enum MIMEMediaTypeHandler {
 		this.operation = operation;
 	}
 
-	public String getName() {
+	public String getOperation() {
 		return operation;
 	}
 
-	public abstract void setValue(Operation operation, ElementValuePair[] evp);
+	public abstract void setValue(Operation operation, MethodDoc methodDoc);
 }

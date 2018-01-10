@@ -2,7 +2,6 @@ package com.spirit21.handler.parameter;
 
 import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
@@ -20,27 +19,27 @@ public class QueryParameterHandler implements ParameterAnnotationHandler {
 	 * This method creates a new QueryParameter sets the data and returns it
 	 */
 	@Override
-	public QueryParameter createNewParameter(AnnotationDesc annotation, Parameter parameter, MethodDoc methodDoc) {
-		QueryParameter qp = new QueryParameter();
+	public QueryParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
+		QueryParameter queryParameter = new QueryParameter();
 
 		// set parameterName
-		qp.setName(annotation.elementValues()[0].value().toString().replaceAll(Consts.QUOTATION_MARK,
-				Consts.EMPTY_STRING));
+		String parameterName = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		queryParameter.setName(ParserHelper.replaceQuotationMarks(parameterName));
 		
 		// set default value
 		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
 		if (defaultValue != null) {
-			qp.setDefaultValue(defaultValue);
+			queryParameter.setDefaultValue(defaultValue);
 		}
 		
 		// set description
-		qp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
+		queryParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
 		// set property
 		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		qp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
+		queryParameter.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
 		
-		return qp;
+		return queryParameter;
 	}
 
 	public String getName() {

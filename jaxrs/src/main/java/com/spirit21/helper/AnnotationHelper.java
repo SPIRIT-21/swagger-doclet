@@ -2,6 +2,7 @@ package com.spirit21.helper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.sun.javadoc.AnnotationDesc;
 
@@ -23,11 +24,13 @@ public class AnnotationHelper {
 	/**
 	 * This method gets the annotation value of a annotation of a programElementDoc
 	 */
-	// TODO elementValues
-	public String getAnnotationValue(String annotationType) {
+	public String getAnnotationValue(String annotationType, String specifiedAnnotation) {
 		AnnotationDesc annotation = getAnnotation(annotationType);
 		if (annotation != null) {
-			return annotation.elementValues()[0].value().toString();
+			return Arrays.asList(annotation.elementValues()).stream()
+				.filter(evp -> evp.element().name().equals(specifiedAnnotation))
+				.map(evp -> evp.value().toString())
+				.collect(Collectors.joining());
 		} else {
 			return null;
 		}
