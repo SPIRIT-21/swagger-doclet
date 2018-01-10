@@ -34,12 +34,12 @@ public class ApiParser {
 	 * This method helps the method 'setBasicInformation'
 	 */
 	private void setInformation(Swagger swagger, Info info, Tag tag) {
-		Arrays.asList(ApiTagHandler.values()).stream()
-			.filter(ath -> ath.getName().equals(tag.name()))
-			.forEach(ath -> ath.setValue(swagger, info, tag.text()));
 		if (tag.name().equals(Consts.FILE_NAME)) {
 			fileName = tag.text();
 		}
+		Arrays.asList(ApiTagHandler.values()).stream()
+			.filter(ath -> ath.getName().equals(tag.name()))
+			.forEach(ath -> ath.setValue(swagger, info, tag.text()));
 	}
 	
 	/**

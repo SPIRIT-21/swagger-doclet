@@ -21,14 +21,11 @@ public class DefinitionParser {
 		
 		// Iterate through the definitionClassDoc list
 		for (int i = 0; i < Parser.definitionClassDocs.size(); i++) {
-			// Create a new model
+			// Create a new model, set the properties and put it in the map
 			ModelImpl model = new ModelImpl();
-			// set the properties 
 			model.setProperties(getProperties(i));
-			// put it in the map
 			definitions.put(Parser.definitionClassDocs.get(i).name(), model);
 		}
-
 		swagger.setDefinitions(definitions);
 	}
 	
@@ -46,7 +43,6 @@ public class DefinitionParser {
 				Property property = ParserHelper.createProperty(typeAndFormat, f.type());
 				properties.put(f.name(), property);
 			});
-		
 		return properties;
 	}
 }
