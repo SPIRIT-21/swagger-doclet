@@ -75,8 +75,10 @@ public class OperationParser {
 		String annotationValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
 
 		// Compare tags and the top-level ClassDoc path and finally add tag to operation
-		swagger.getTags().stream().filter(t -> annotationValue.contains(t.getName()))
-				.forEach(t -> tags.add(t.getName()));
+		swagger.getTags().stream()
+			.map(t -> t.getName())
+			.filter(v -> annotationValue.contains(v))
+			.forEach(tags::add);
 		operation.setTags(tags);
 	}
 
@@ -95,7 +97,9 @@ public class OperationParser {
 	 */
 	private void setDescription(Operation operation, MethodDoc methodDoc) {
 		StringBuilder description = new StringBuilder();
-		Arrays.asList(methodDoc.inlineTags()).forEach(t -> description.append(t.text()));
+		Arrays.asList(methodDoc.inlineTags()).stream()
+			.map(t -> t.text())
+			.forEach(description::append);
 		operation.setDescription(description.toString());
 	}
 
@@ -133,6 +137,7 @@ public class OperationParser {
 
 	/**
 	 * This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
+	 * The counter counts the amount of bodyParameters and warns, if there are are more than one
 	 */
 	private void setParameters(Operation operation, MethodDoc methodDoc) {
 		List<Parameter> parameters = new ArrayList<>();
