@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.PathParam;
 
@@ -26,20 +27,24 @@ public class PathParser {
 	private OperationParser operationParser;
 	private PathParameterHandler pathParameter;
 	
-	// Initialize
+	/**
+	 * Initialize
+	 */
 	protected PathParser() {
 		operationParser = new OperationParser();
 		pathParameter = new PathParameterHandler(PathParam.class.getName());
 	}
 	
-	// This method creates a 'paths' map, puts data in there and returns it
+	/**
+	 * This method creates a 'paths' map, puts data in there and returns it
+	 */
 	protected void setPath(Swagger swagger) {
 		Map<String, Path> paths = new LinkedHashMap<>();
 		paths.putAll(getPaths(swagger));
 		swagger.setPaths(paths);
 	}
 	
-	/*
+	/**
 	 * This method iterates over all resources and checks if the resource has HttpMethods
 	 * If yes, then it calls the method createPath
 	 */
@@ -51,7 +56,7 @@ public class PathParser {
 		return tempPaths;
 	}
 	
-	/*
+	/**
 	 * This method creates a Path for a single resource, sets its PathParameters, creates the operations
 	 * and put it in the map
 	 */
@@ -62,7 +67,9 @@ public class PathParser {
 		tempPaths.put(ParserHelper.getPath(classDoc), path);
 	}
 	
-	// This method gets all parameters from a resource and its parent resources.
+	/**
+	 * This method gets all parameters from a resource and its parent resources.
+	 */
 	private Set<Parameter> getPathParameters(ClassDoc classDoc) {
 		Set<Parameter> parameters = new HashSet<>();
 
@@ -87,30 +94,30 @@ public class PathParser {
 		}
 	}
 	
-	// This method gets the pathParameter from the parameter of a method
+	/**
+	 * This method gets the pathParameter from the parameter of a method
+	 */
 	private List<Parameter> getPathParameterFromMethodParameter(MethodDoc methodDoc) {
-		List<Parameter> parameters = new ArrayList<>();
-		
-		Arrays.asList(methodDoc.parameters()).stream()
+		return Arrays.asList(methodDoc.parameters()).stream()
 			.filter(p -> ParserHelper.hasAnnotation(p, pathParameter.getName()))
 			.map(p -> pathParameter.createNewParameter(p, methodDoc))
-			.forEach(parameters::add);
-		return parameters;
+			.collect(Collectors.toList());
 	}
 	
-	// This method gets the pathParameter from the fields of a ClassDoc
+	/**
+	 * This method gets the pathParameter from the fields of a ClassDoc
+	 */
 	private List <Parameter> getPathParameterFromField(ClassDoc classDoc) {
-		List <Parameter> parameters = new ArrayList<>();
-		
 		// Iterate over fields and filter fields with @PathParam annotation
-		Arrays.asList(classDoc.fields(false)).stream()
+		return Arrays.asList(classDoc.fields(false)).stream()
 			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))
 			.map(f -> pathParameter.createPathParameterFromField(f))
-			.forEach(parameters::add);
-		return parameters;
+			.collect(Collectors.toList());
 	}
 	
-	// This method creates the operations to our path
+	/**
+	 * This method creates the operations to our path
+	 */
 	private void createOperation(Swagger swagger, Path path, ClassDoc classDoc) {
 		// Iterate over the methods
 		Arrays.asList(classDoc.methods()).stream()
@@ -124,7 +131,9 @@ public class PathParser {
 				});
 	}
 	
-	// This method sets an operation to the path
+	/**
+	 * This method sets an operation to the path
+	 */
 	private void setOperationToPath(Path path, Operation operation, MethodDoc methodDoc) {
 		// Iterate over HttpMethodHandler
 		Arrays.asList(HttpMethodHandler.values()).stream()
