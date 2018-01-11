@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
@@ -96,10 +97,9 @@ public class OperationParser {
 	 * This method sets the description of the operation
 	 */
 	private void setDescription(Operation operation, MethodDoc methodDoc) {
-		StringBuilder description = new StringBuilder();
-		Arrays.asList(methodDoc.inlineTags()).stream()
-			.map(t -> t.text())
-			.forEach(description::append);
+		String description = Arrays.asList(methodDoc.inlineTags()).stream()
+			.map(Tag::text)
+			.collect(Collectors.joining());
 		operation.setDescription(description.toString());
 	}
 
