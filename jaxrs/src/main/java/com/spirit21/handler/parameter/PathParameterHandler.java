@@ -8,7 +8,7 @@ import com.sun.javadoc.Parameter;
 
 import io.swagger.models.parameters.PathParameter;
 
-public class PathParameterHandler implements ParameterAnnotationHandler {
+public class PathParameterHandler extends AbstractParameterHandler<PathParameter> implements ParameterAnnotationHandler {
 
 	private final String name;
 
@@ -16,28 +16,13 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		this.name = name;
 	}
 	
-	// This method creates a new PathParameter sets the data and returns it
+	/** 
+	 * This method creates a new PathParameter sets the data and returns it
+	 */
 	@Override
 	public PathParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
 		PathParameter pathParameter = new PathParameter();
-		
-		//set parameter name
-		String parameterName = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
-		pathParameter.setName(ParserHelper.replaceQuotationMarks(parameterName));
-
-		// set defaultValue
-		String defaultValue = ParameterAnnotationHandler.getDefaultValue(parameter);
-		if (defaultValue != null) {
-			pathParameter.setDefaultValue(defaultValue);
-		}
-		
-		//set description
-		pathParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
-		
-		// set property
-		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		pathParameter.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
-		
+		handleParameter(pathParameter, parameter, methodDoc);
 		return pathParameter;
 	}
 	
@@ -57,7 +42,8 @@ public class PathParameterHandler implements ParameterAnnotationHandler {
 		
 		return pathParameter;
 	}
-
+	
+	@Override
 	public String getName() {
 		return name;
 	}
