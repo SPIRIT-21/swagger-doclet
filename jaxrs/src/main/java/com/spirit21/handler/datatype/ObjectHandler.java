@@ -1,13 +1,17 @@
 package com.spirit21.handler.datatype;
 
-// This handler handles all types of Objects...
+/** 
+ * This handler handles all types of Objects...
+ */
 public class ObjectHandler implements TypeHandler {
 	
-	// This method creates the correct typeAndFormat array and returns it
+	/** 
+	 * This method creates the correct typeAndFormat array and returns it
+	 */
 	@Override
 	public String[] getTypeAndFormat(String type) {
-		String[] typeAndFormat = new String[2];
 		if (type.equals(Object.class.getName())) {
+			String[] typeAndFormat = new String[2];
 			typeAndFormat[0] = "object";
 			return typeAndFormat;
 		}

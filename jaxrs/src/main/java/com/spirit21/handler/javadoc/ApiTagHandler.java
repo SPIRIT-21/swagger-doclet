@@ -5,7 +5,7 @@ import com.spirit21.Consts;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 
-/*
+/**
  * This enum saves the tags of the javadoc comment of the entry point of the REST API
  * and saves the value to the swagger model/info model
  */

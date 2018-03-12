@@ -9,10 +9,14 @@ import java.util.Date;
 
 import com.spirit21.Consts;
 
-// This handler handles all types of Date...
+/** 
+ * This handler handles all types of Date...
+ */
 public class DateHandler implements TypeHandler {
 	
-	// This enum saves the most common Date, LocalDateTime..
+	/**
+	 * This enum saves the most common Date, LocalDateTime..
+	 */
 	private enum DateEnum {
 		DATE(Date.class.getName()) {
 			@Override
@@ -82,18 +86,18 @@ public class DateHandler implements TypeHandler {
 		public abstract String[] getTypeAndFormat();
 	}
 	
-	// This method creates with the help of the enum the correct typeAndFormat Array and returns it
+	/**
+	 * This method creates with the help of the enum the correct typeAndFormat Array and returns it
+	 */
 	@Override
 	public String[] getTypeAndFormat(String typeName) {
-		String[] typeAndFormat = null;
 		// Iterate through enum values
 		for (DateEnum dh : DateEnum.values()) {
 			// check if the typeName equals the enum.getName(). If so then get array and return it
 			if (dh.getName().equals(typeName)) {
-				typeAndFormat = dh.getTypeAndFormat();
-				break;
+				return dh.getTypeAndFormat();
 			}
 		}
-		return typeAndFormat;
+		return null;
 	}
 }

@@ -28,7 +28,7 @@ Include the plugin to your POM:
 </plugin>
 ```
 
-## Required Parameters
+## Required Parameters in your configuration-tags
 
 <table border="1" style="border-collapse: collapse">
 	<tr>
@@ -48,7 +48,7 @@ Include the plugin to your POM:
 	</tr>
 </table>
 
-## Optional Parameters in your configuration-tags
+## Most important optional Parameters in your configuration-tags
 
 <table border="1" style="border-collapse: collapse">
 	<tr>
@@ -71,8 +71,20 @@ Include the plugin to your POM:
 
 More parameters you can find here: <a href="https://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html">More Parameters</a>
 
+## Custom Parameters
+
+If you want to specify the output format of the generated swagger file, then include these tags in your configuration tags:
+
+```
+<additionalparam></additionalparam>
+```
+
+With ``-type`` you configure the output format: 
+
+Allowed parameters are ``-type json`` for the json format and ``-type yaml`` for the yaml format.
+
 ## Usage with other dependencies
-If you want to include the source files of dependencies, then please include these tags in the configuration:
+If you want to include the source files of dependencies, then please include these tags in the configuration-tags:
 
 ```xml
 <includeDependencySources>true</includeDependencySources>
@@ -123,7 +135,7 @@ For a valid Swagger documentation, you need to at least provide a title and a ve
  * @apiDescription API description
  * @apiHost localhost:8080
  * @apiBasePath /example/api/v1
- * @fileName swagger-file-name.json
+ * @fileName swagger-file-name
  */
 ```
 
@@ -154,8 +166,6 @@ public class SubResource {
 ```
 	
 ### Operations
-An operation must be defined in the same file as its resource! Otherwise the operation will be ignored because it cannot be assigned to a resource.
-
 The doclet detects the JAX-RS HTTP-method annotations and the `@Produces` / `@Consumes` annotations by itself.
 
 ```java
@@ -170,7 +180,7 @@ public void name() {
 ```
 
 ### Parameters
-Parameters are obtained by the parameter list of the java function. Use the `@QueryParam` annotation for query parameters.
+Parameters are obtained by the parameter list of the java function. Use the `@QueryParam/@HeaderParam/@FormParam` annotation for parameters.
 If you want to provide a description for a parameter, use the built-in `@param` Javadoc tag, followed by the name and finally the description. Example:
 
 ```java
