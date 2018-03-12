@@ -4,6 +4,7 @@ public class Consts {
 	
 	// Commandline options
 	public static final String VERSION = "-version";
+	public static final String OUTPUT_TYPE = "-type";
 	// Regex constants
 	public static final String SLASHES = "[/]{2,}";
 	public static final String SLASHES_REPLACE = "/";
@@ -22,11 +23,12 @@ public class Consts {
 	public static final String RESPONSE_SCHEMA = "@responseSchema";
 	public static final String RESPONSE_TYPE = "@responseType";
 	// Default file-name 
-	public static final String JSON_FILE_NAME = "generated-swagger-file.json";
+	public static final String STANDARD_FILE_NAME = "generated-swagger-file";
 	// Property constants
 	public static final String REF = "ref";
 	public static final String ARRAY = "array";
 	public static final String MAP = "map";
+	public static final String ENUM = "enum";
 	// TypeHandler constants
 	public static final String STRING = "string";
 	public static final String DATE = "date";

@@ -26,6 +26,7 @@ public class AnnotationHelper {
 	 */
 	public String getAnnotationValue(String annotationType, String specifiedAnnotation) {
 		AnnotationDesc annotation = getAnnotation(annotationType);
+		
 		if (annotation != null) {
 			return Arrays.asList(annotation.elementValues()).stream()
 				.filter(evp -> evp.element().name().equals(specifiedAnnotation))

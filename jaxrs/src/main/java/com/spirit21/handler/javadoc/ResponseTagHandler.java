@@ -18,17 +18,21 @@ import io.swagger.models.properties.RefProperty;
 public enum ResponseTagHandler {
 
 	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {
-		// This method creates the responseMessage and sets it in the response Object
+		/**
+		 * This method creates the responseMessage and sets it in the response Object
+		 */
 		@Override
 		public void setResponseData(Response response, Tag tag) {
 			StringBuilder responseMessage = new StringBuilder();
+			
 			Arrays.asList(tag.inlineTags())
 				.forEach(t -> responseMessage.append(t.text()));
+			
 			response.setDescription(responseMessage.toString());
 		}
 	},
 	RESPONSE_SCHEMA(Consts.RESPONSE_SCHEMA) {
-		/* 
+		/** 
 		 * This method creates a RefProperty and adds the classDoc to the Parser.definitionClassDoc list, 
 		 * if the list does not contain the classDoc
 		 */

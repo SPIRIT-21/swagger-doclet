@@ -107,7 +107,7 @@ public class PathParser {
 	/**
 	 * This method gets the pathParameter from the fields of a ClassDoc
 	 */
-	private List <Parameter> getPathParameterFromField(ClassDoc classDoc) {
+	private List<Parameter> getPathParameterFromField(ClassDoc classDoc) {
 		// Iterate over fields and filter fields with @PathParam annotation
 		return Arrays.asList(classDoc.fields(false)).stream()
 			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))

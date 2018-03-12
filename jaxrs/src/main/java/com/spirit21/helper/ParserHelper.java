@@ -20,6 +20,7 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 
 public class ParserHelper {
 
@@ -86,6 +87,7 @@ public class ParserHelper {
 	 */
 	public static String getPath(ClassDoc classDoc) {
 		ClassDoc parent = Parser.resourceClassDocs.get(classDoc);
+		
 		// check if classDoc has a parent
 		if (parent != null) {
 			StringBuilder sb = new StringBuilder();
@@ -99,6 +101,7 @@ public class ParserHelper {
 					sb.append("/" + v);
 					sb.insert(0, getPath(parent));
 				});
+			
 			return replaceQuotationMarkAndSlashes(sb.toString());
 		} else {
 			String annotationValue = "/" + getAnnotationValue(classDoc, Path.class.getName(), Consts.VALUE);
@@ -119,7 +122,9 @@ public class ParserHelper {
 	public static String replaceQuotationMarks(String replace) {
 		return replace.replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING);
 	}
-
+	
+	
+	// TODO refactor/simplify with a PropertyProduction (?)
 	/**
 	 * This method returns the type and format of a property in this format
 	 * String[0] = type, String[1] = format
@@ -128,8 +133,13 @@ public class ParserHelper {
 		String[] typeAndFormat = null;
 		// If the type is a classDoc --> type = ref
 		if (Parser.classDocCache.findByType(type) != null) {
-			typeAndFormat = new String[2];
-			typeAndFormat[0] = Consts.REF;
+			if (type.asClassDoc().isEnum()) {
+				typeAndFormat = new String[2];
+				typeAndFormat[0] = Consts.ENUM;
+			} else {
+				typeAndFormat = new String[2];
+				typeAndFormat[0] = Consts.REF;
+			}
 			return typeAndFormat;
 		} else {
 			DataTypeFactory dataTypeFactory = new DataTypeFactory();
@@ -143,7 +153,6 @@ public class ParserHelper {
 	 * method creates some properties without the PropertyBuilder because of
 	 * problems of the builder
 	 */
-	// TODO Maybe PropertyFactory?
 	public static Property createProperty(String[] typeAndFormat, Type type) {
 		if (typeAndFormat != null) {
 			// If type = ref then create RefProperty
@@ -164,6 +173,12 @@ public class ParserHelper {
 				String[] temp = checkTypeAndFormat(type.asParameterizedType().typeArguments()[1]);
 				property.additionalProperties(createProperty(temp, type.asParameterizedType().typeArguments()[1]));
 				return property;
+			} else if (typeAndFormat[0].equals(Consts.ENUM)) {
+				StringProperty property = new StringProperty();
+				Arrays.asList(type.asClassDoc().enumConstants()).stream()
+					.map(fieldDoc -> fieldDoc.name())
+					.forEach(property::_enum);
+				return property;
 				// else create property with PropertyBuilder
 			} else {
 				return PropertyBuilder.build(typeAndFormat[0], typeAndFormat[1], null);
@@ -181,12 +196,12 @@ public class ParserHelper {
 	 * This method adds a classDoc to the definitionClassDoc list in the Parser
 	 */
 	public static void addToEntityList(ClassDoc classDoc) {
-		if (!Parser.definitionClassDocs.contains(classDoc) && classDoc != null) {
+		if (classDoc != null && !Parser.definitionClassDocs.contains(classDoc)) {
 			Parser.definitionClassDocs.add(classDoc);
 		}
 	}
 	
-	// FROM HERE NO COMMON METHODS. NEEDED METHODS ARE MARKED WITH A *
+	// FROM HERE NO COMMON METHODS
 	/**
 	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
 	 */
