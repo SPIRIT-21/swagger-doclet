@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
+import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
 
 import io.swagger.models.Swagger;
@@ -22,11 +23,13 @@ public class TagParser {
 		pattern = Pattern.compile("\"/?([a-zA-Z0-9_-]+)/?.*\"");
 	}
 	
-	// This method puts all tags, which 
+	/**
+	 * This method sets all tags into the swagger object
+	 */
 	protected void setTags(Swagger swagger) {
 		Set<Tag> hashSet = Parser.resourceClassDocs.entrySet().stream()
 			.filter(e -> e.getValue() == null)
-			.map(e -> ParserHelper.getAnnotationValue(e.getKey(), Path.class.getName()))
+			.map(e -> ParserHelper.getAnnotationValue(e.getKey(), Path.class.getName(), Consts.VALUE))
 			.filter(Objects::nonNull)
 			.map(this::createTag)
 			.filter(Objects::nonNull)
@@ -34,7 +37,9 @@ public class TagParser {
 		swagger.setTags(new ArrayList<>(hashSet));	
 	}
 	
-	// This method creates the tag with the name
+	/**
+	 * This method creates the tag with the annotationValue 
+	 */
 	private Tag createTag(String annotationValue) {
 		Matcher matcher = pattern.matcher(annotationValue);
 		if (matcher.matches()) {

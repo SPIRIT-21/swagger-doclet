@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import com.spirit21.exception.ApiParserException;
-import com.spirit21.exception.SwaggerException;
 import com.spirit21.parser.Parser;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
@@ -14,14 +13,16 @@ import lombok.extern.java.Log;
 
 @Log
 public class Doclet {
-	
-	//Starting point of the Doclet
+
+	/**
+	 * Starting point of the Doclet
+	 */
 	public static boolean start(RootDoc rootDoc) {
-		//Gets the swagger version
-		String version = readOptions(rootDoc.options());
+		// Gets the swagger version and the output format
+		String outputType = getOption(rootDoc.options(), Consts.OUTPUT_TYPE);
 		try {
-			return new Parser(rootDoc, version).run();
-		//several exceptions that could occur
+			return new Parser(rootDoc, outputType).run();
+			// several exceptions that could occur
 		} catch (ApiParserException e) {
 			log.log(Level.SEVERE, "Failed to parse your API entry point.", e);
 			return false;
@@ -30,55 +31,54 @@ public class Doclet {
 			return false;
 		}
 	}
-	//
-	// This method gets the swagger version from command line
-	private static String readOptions(String[][] options) {
+
+	/**
+	 * This method gets parameter of a command line argument
+	 */
+	private static String getOption(String[][] options, String option) {
 		String tagName = null;
-		for (int i = 0; i < options.length; i++) {
-			String[] opt = options[i];
-			if (opt[0].equals(Consts.VERSION)) {
-				tagName = opt[1];
+		for (String[] args : options) {
+			if (args[0].equals(option)) {
+				tagName = args[1];
 			}
 		}
 		return tagName;
 	}
-	
-	/* 
-	 * Required method to allow custom commandline parameter like '-version x'
-	 * This method determines the number of parts of the option
-	 * For Example '-test that this' --> 3 '-version x' --> 2
-	 * This method is automatically invoked.
+
+	/**
+	 * Required method to allow custom commandline parameter like '-type x' This
+	 * method determines the number of parts of the option For Example '-test that
+	 * this' --> 3 '-type x' --> 2 This method is automatically invoked.
 	 */
 	public static int optionLength(String option) {
-		if (option.equals(Consts.VERSION)) {
+		if (option.equals(Consts.OUTPUT_TYPE)) {
 			return 2;
 		}
 		return 0;
 	}
-	
-	/*
-	 * Optional method which is also automatically invoked.
-	 * It checks the existence of the '-version' parameter
+
+	/**
+	 * Optional method which is also automatically invoked. It checks the existence
+	 * of the outputType parameter.
 	 */
-	public static boolean validOptions(String[][] options, DocErrorReporter reporter) throws SwaggerException {
-		boolean foundTagOption = false;
-		for (int i = 0; i < options.length; i++) {
-			String[] opt = options[i];
-			if (opt[0].equals(Consts.VERSION)) {
-				if (foundTagOption) {
-					throw new SwaggerException("Only one '-version' option in commandline is allowed");
-				} else {
-					foundTagOption = true;
-				}
+	// TODO: commandline swagger version
+	public static boolean validOptions(String options[][], DocErrorReporter reporter) {
+		boolean outputType = false;
+
+		for (String[] args : options) {
+			if (args[0].equals(Consts.OUTPUT_TYPE)) {
+				outputType = true;
 			}
 		}
-		if (!foundTagOption) {
-			throw new SwaggerException("There is no required '-version' in your commandline. ");
+		if (!outputType) {
+			log.info("There is no '-type x' parameter in commandline used. Please specify an outputType. For now is the json-format used.");
 		}
-		return foundTagOption;
+		return true;
 	}
-	
-	//Required method which allows the doclet to get the generics of a List/Map..
+
+	/**
+	 * Required method which allows the doclet to get the generics of a List/Map..
+	 */
 	public static LanguageVersion languageVersion() {
 		return LanguageVersion.JAVA_1_5;
 	}

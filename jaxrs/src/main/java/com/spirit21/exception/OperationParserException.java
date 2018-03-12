@@ -1,6 +1,6 @@
 package com.spirit21.exception;
 
-public class OperationParserException extends Exception {
+public class OperationParserException extends SwaggerException {
 
 	private static final long serialVersionUID = 3373933311052398404L;
 
