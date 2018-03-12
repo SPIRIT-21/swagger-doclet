@@ -3,6 +3,7 @@ package com.spirit21.helper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.sun.javadoc.ClassDoc;
@@ -31,10 +32,11 @@ public class ClassDocCache {
 	 * This method finds a classDoc by the simpleTypeName
 	 */
 	public ClassDoc findBySimpleName(String simpleName) {
-		return typeNameToClass.entrySet().stream()
-				.filter(e -> e.getValue().simpleTypeName().equals(simpleName))
-				.findFirst()
-				.orElse(null)
-				.getValue();
+		for (Entry<String, ClassDoc> entry : typeNameToClass.entrySet()) {
+			if (entry.getValue().simpleTypeName().equals(simpleName)) {
+				return entry.getValue();
+			}
+		}
+		return null;
 	}
 }

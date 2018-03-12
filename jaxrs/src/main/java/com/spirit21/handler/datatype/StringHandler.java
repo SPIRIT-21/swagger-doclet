@@ -8,7 +8,6 @@ public class StringHandler implements TypeHandler {
 	/**
 	 * This method creates the correct typeAndFormat Array and returns it
 	 */
-	// TODO Character?
 	@Override
 	public String[] getTypeAndFormat(String type) {
 		if (type.equals(String.class.getName())) {

@@ -7,7 +7,7 @@ import com.sun.javadoc.MethodDoc;
 import io.swagger.models.parameters.Parameter;
 
 public interface ParameterAnnotationHandler {
-
+	
 	/**
 	 * This method gets the javadoc description of the Parameter
 	 */

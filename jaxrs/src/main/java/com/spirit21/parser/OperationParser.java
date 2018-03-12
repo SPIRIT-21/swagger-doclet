@@ -78,7 +78,7 @@ public class OperationParser {
 		// Compare tags and the top-level ClassDoc path and finally add tag to operation
 		swagger.getTags().stream()
 			.map(t -> t.getName())
-			.filter(v -> annotationValue.contains(v))
+			.filter(annotationValue::contains)
 			.forEach(tags::add);
 		operation.setTags(tags);
 	}
@@ -100,12 +100,13 @@ public class OperationParser {
 		String description = Arrays.asList(methodDoc.inlineTags()).stream()
 			.map(Tag::text)
 			.collect(Collectors.joining());
-		operation.setDescription(description.toString());
+		operation.setDescription(description);
 	}
 
 	/**
 	 * This method sets the responses for an operation
 	 */
+	// TODO: refactor/simplify responses
 	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		Map<String, Response> responses = new HashMap<>();
 		String currentKey = "";
@@ -137,12 +138,13 @@ public class OperationParser {
 
 	/**
 	 * This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
-	 * The counter counts the amount of bodyParameters and warns, if there are are more than one
+	 * The counter counts the amount of bodyParameters and warns if there are are more than one
 	 */
+	// TODO: refactor/simplify parameters
 	private void setParameters(Operation operation, MethodDoc methodDoc) {
 		List<Parameter> parameters = new ArrayList<>();
-
 		int counter = 0;
+		
 		for (com.sun.javadoc.Parameter parameter : methodDoc.parameters()) {
 			Parameter param = parameterFactory.getParameter(methodDoc, parameter);
 			if (param != null && !(param instanceof BodyParameter)) {
