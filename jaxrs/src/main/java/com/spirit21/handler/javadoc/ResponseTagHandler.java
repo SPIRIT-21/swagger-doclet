@@ -50,7 +50,7 @@ public enum ResponseTagHandler {
 			response.setSchema(ref);
 			
 			// add to definitions if list does not contain
-			ParserHelper.addToEntityList(Parser.classDocCache.findBySimpleName(simpleName));
+			ParserHelper.addToDefinitionList(Parser.classDocCache.findBySimpleName(simpleName));
 		}
 	},
 	RESPONSE_TYPE(Consts.RESPONSE_TYPE) {
