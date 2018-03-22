@@ -104,62 +104,67 @@ public class OperationParser {
 	}
 
 	/**
-	 * This method sets the responses for an operation
+	 * This method sets the responses for an operation and throws an exception if the user forgot to document
+	 * at least one response.
 	 */
-	// TODO: refactor/simplify responses
 	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
 		Map<String, Response> responses = new HashMap<>();
-		String currentKey = "";
-
-		// Iterate through the javadoc tags of the method
-		for (Tag tag : methodDoc.tags()) {
-			// Safe the response code in currentKey and put this key with a new response in map
+		Response currentResponse = null;
+		
+		for (Tag tag : methodDoc.tags()) { // Iterate through the javadoc tags of the method
 			if (tag.name().equals(Consts.RESPONSE_CODE)) {
-				currentKey = tag.text();
-				responses.put(tag.text(), new Response());
+				currentResponse = new Response();
+				responses.put(tag.text(), currentResponse);
 				continue;
-			}
-			// Iterate trough the ResposeTagHandler
-			for (ResponseTagHandler rth : ResponseTagHandler.values()) {
-				// Check if one of these ResponseTagHandler values equals the tag, if so then then set value in response
-				if (tag.name().equals(rth.getName())) {
-					rth.setResponseData(responses.get(currentKey), tag);
-					break;
-				}
+			} else {
+				setResponseProperties(tag, currentResponse);
 			}
 		}
-		// If someone forgot to document at least one response, the doclet throws an exception
+		
 		if (responses.size() == 0) {
 			throw new OperationParserException("In your documentation of the method '" + methodDoc.name() + "' in '"
 					+ methodDoc.containingClass().qualifiedName() + "' you have to document at least one response!");
 		}
 		operation.setResponses(responses);
 	}
+	
+	/**
+	 * This method sets the response properties of a Response object. E.g. the response message.
+	 */
+	private void setResponseProperties(Tag tag, Response response) {
+		Arrays.asList(ResponseTagHandler.values()).stream()
+			.filter(rth -> rth.getName().equals(tag.name()))
+			.forEach(rth -> rth.setResponseData(response, tag));
+	}
 
 	/**
 	 * This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
 	 * The counter counts the amount of bodyParameters and warns if there are are more than one
 	 */
-	// TODO: refactor/simplify parameters
 	private void setParameters(Operation operation, MethodDoc methodDoc) {
 		List<Parameter> parameters = new ArrayList<>();
-		int counter = 0;
 		
-		for (com.sun.javadoc.Parameter parameter : methodDoc.parameters()) {
-			Parameter param = parameterFactory.getParameter(methodDoc, parameter);
-			if (param != null && !(param instanceof BodyParameter)) {
-				parameters.add(param);
-			} else if (param != null){
-				if (counter < 1) {
-					parameters.add(param);
-				}
-				counter++;
-			}
-		}
-		if (counter > 1) {
-			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
-					+ "' has more than one bodyParameter. Only one is allowed.");
-		}
+		Arrays.asList(methodDoc.parameters()).stream()
+			.map(p -> parameterFactory.getParameter(methodDoc, p))
+			.forEach(parameters::add);
+		checkBodyParameters(parameters, methodDoc);
+		
 		operation.setParameters(parameters);
+	}
+	
+	/**
+	 * This method checks the amount of the body parameters and removes if there are too much.
+	 */
+	private void checkBodyParameters(List<Parameter> parameters, MethodDoc methodDoc) {
+		List<Parameter> bodyParameters = parameters.stream()
+			.filter(param -> param instanceof BodyParameter)
+			.collect(Collectors.toList());
+		
+		if (bodyParameters.size() > 1) {
+			bodyParameters.remove(0);
+			parameters.removeAll(bodyParameters);
+			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
+			+ "' has more than one bodyParameter. Only one is allowed.");
+		}
 	}
 }

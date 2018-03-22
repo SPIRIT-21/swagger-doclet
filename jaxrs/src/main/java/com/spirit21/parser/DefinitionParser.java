@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.spirit21.helper.ParserHelper;
+import com.spirit21.handler.property.PropertyFactory;
 
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -35,13 +35,10 @@ public class DefinitionParser {
 	private Map<String, Property> getProperties(int index) {
 		Map<String, Property> properties = new HashMap<>();
 		
-		// Iterate over fields
 		Arrays.asList(Parser.definitionClassDocs.get(index).fields(false))
 			.forEach(f -> {
-				// Create property and put it in properties map
-				String[] typeAndFormat = ParserHelper.checkTypeAndFormat(f.type());
-				Property property = ParserHelper.createProperty(typeAndFormat, f.type());
-				properties.put(f.name(), property);
+				Property p = PropertyFactory.createProperty(f.type());
+				properties.put(f.name(), p);
 			});
 		return properties;
 	}
