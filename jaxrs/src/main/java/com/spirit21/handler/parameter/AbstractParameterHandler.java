@@ -3,6 +3,7 @@ package com.spirit21.handler.parameter;
 import javax.ws.rs.DefaultValue;
 
 import com.spirit21.Consts;
+import com.spirit21.handler.property.PropertyFactory;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
@@ -29,8 +30,7 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 		asp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 
 		// set property
-		String[] typeAndFormat = ParserHelper.checkTypeAndFormat(parameter.type());
-		asp.setProperty(ParserHelper.createProperty(typeAndFormat, parameter.type()));
+		asp.setProperty(PropertyFactory.createProperty(parameter.type()));
 	}
 	
 	/** 
