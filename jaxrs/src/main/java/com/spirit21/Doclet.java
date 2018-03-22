@@ -46,9 +46,9 @@ public class Doclet {
 	}
 
 	/**
-	 * Required method to allow custom commandline parameter like '-type x' This
+	 * Required method to allow custom commandline parameter like '-type x'. This
 	 * method determines the number of parts of the option For Example '-test that
-	 * this' --> 3 '-type x' --> 2 This method is automatically invoked.
+	 * this' has 3 parts, while '-type x' has 2 parts. This method is automatically invoked.
 	 */
 	public static int optionLength(String option) {
 		if (option.equals(Consts.OUTPUT_TYPE)) {

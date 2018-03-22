@@ -27,7 +27,7 @@ public class Parser {
 
 	private RootDoc rootDoc;
 	
-	public static List<ClassDoc> definitionClassDocs = null;
+	public static List<ClassDoc> definitionClassDocs;
 	public static Map<ClassDoc, ClassDoc> resourceClassDocs;
 	public static ClassDocCache classDocCache;
 	protected static ClassDoc entryPointClassDoc;
