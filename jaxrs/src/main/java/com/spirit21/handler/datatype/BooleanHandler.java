@@ -6,7 +6,7 @@ package com.spirit21.handler.datatype;
 public class BooleanHandler implements TypeHandler {
 	
 	/**
-	 *  This method creates the correct typeAndFormat array and returns it
+	 * This method creates the correct typeAndFormat array and returns it
 	 */
 	@Override
 	public String[] getTypeAndFormat(String type) {

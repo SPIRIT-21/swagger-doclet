@@ -1,6 +1,7 @@
 package com.spirit21.helper;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
@@ -8,19 +9,29 @@ import javax.ws.rs.Path;
 import com.spirit21.Consts;
 import com.spirit21.handler.annotation.HttpMethodHandler;
 import com.spirit21.parser.Parser;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ProgramElementDoc;
 
 public class ParserHelper {
-
+	
+	// COMMON
 	/**
 	 * This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation
 	 */
 	public static boolean hasAnnotation(ProgramElementDoc programElementDoc, String annotation) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
 		return annotationHelper.isAnnotatedBy(annotation);
+	}
+	
+	/**
+	 * This method gets the annotationValue of a specific annotation of a programElementDoc
+	 */
+	public static AnnotationValue getAnnotationValue(ProgramElementDoc programElementDoc, String annotation, String specificAnnotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		return annotationHelper.getAnnotationValue(annotation, specificAnnotation);
 	}
 
 	/**
@@ -32,21 +43,24 @@ public class ParserHelper {
 	}
 	
 	/**
-	 * This method gets the annotationValue of a specific annotation of a programElementDoc
+	 * This method gets the annotationValue of a specific annotation of a parameter
 	 */
-	public static String getAnnotationValue(ProgramElementDoc programElementDoc, String annotationType, String specificAnnotation) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.getAnnotationValue(annotationType, specificAnnotation);
+	public static AnnotationValue getAnnotationValue(Parameter parameter, String annotation, String specificAnnotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
+		return annotationHelper.getAnnotationValue(annotation, specificAnnotation);
 	}
 	
 	/**
-	 * This method gets the annotationValue of a specific annotation of a parameter
+	 * This method gets the value of the AnnotationValue object
 	 */
-	public static String getAnnotationValue(Parameter parameter, String annotationType, String specificAnnotation) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
-		return annotationHelper.getAnnotationValue(annotationType, specificAnnotation);
+	public static Object getAnnotationValueObject(AnnotationValue aValue) {
+		if (aValue != null) {
+			return aValue.value();
+		}
+		return null;
 	}
 	
+	// EVENTUELL COMMON
 	/**
 	 * This method checks if a resource has any methods with HTTP-annotations
 	 */
@@ -59,6 +73,43 @@ public class ParserHelper {
 		return false;
 	}
 	
+	/**
+	 * This method helps to replace multiple slashes with one
+	 */
+	private static String replaceSlashes(String replace) {
+		return replace.replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
+	}
+	
+	/**
+	 * This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
+	 */
+	public static boolean hasHttpMethod(ProgramElementDoc programElementDoc) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		for (HttpMethodHandler hmh : HttpMethodHandler.values()) {
+			if (annotationHelper.isAnnotatedBy(hmh.getName(true))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This method gets the HTTP-method of a programElementDoc
+	 * NOTE: true is the full http method (javax.ws.rs.GET/POST..)
+	 * NOTE: false is the simple http method (GET/POST..)
+	 */
+	public static String getHttpMethod(ProgramElementDoc programElementDoc, Boolean fullOrSimple) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		
+		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
+			if (annotationHelper.isAnnotatedBy(httpMethod.getName(true))) {
+				return httpMethod.getName(fullOrSimple);
+			}
+		}
+		return null;
+	}
+	
+	// NOT COMMON
 	/**
 	 * This method returns the parentResourceClassDoc of any (sub..)ResourceClassDoc
 	 */
@@ -88,30 +139,20 @@ public class ParserHelper {
 				.filter(ParserHelper::hasPathAnnotation)
 				.filter(m -> !hasHttpMethod(m) && m.returnType().equals(classDoc))
 				.map(m -> getAnnotationValue(m, Path.class.getName(), Consts.VALUE))
-				.forEach(v -> {
-					sb.append("/" + v);
+				.filter(Objects::nonNull)
+				.map(ParserHelper::getAnnotationValueObject)
+				.filter(Objects::nonNull)
+				.forEach(aValue -> {
+					sb.append("/" + aValue);
 					sb.insert(0, getPath(parent));
 				});
 			
-			return replaceQuotationMarkAndSlashes(sb.toString());
+			return replaceSlashes(sb.toString());
 		} else {
-			String annotationValue = "/" + getAnnotationValue(classDoc, Path.class.getName(), Consts.VALUE);
-			return replaceQuotationMarkAndSlashes(annotationValue);			
+			AnnotationValue aValue = getAnnotationValue(classDoc, Path.class.getName(), Consts.VALUE);
+			String value = "/" + (String) getAnnotationValueObject(aValue);
+			return replaceSlashes(value);
 		}
-	}
-	
-	/**
-	 * This method helps to replace quotation marks and slashes
-	 */
-	private static String replaceQuotationMarkAndSlashes(String replace) {
-		return replace.replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING).replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
-	}
-	
-	/**
-	 * This method helps to replace quotation marks
-	 */ 
-	public static String replaceQuotationMarks(String replace) {
-		return replace.replaceAll(Consts.QUOTATION_MARK, Consts.EMPTY_STRING);
 	}
 	
 	/**
@@ -123,7 +164,6 @@ public class ParserHelper {
 		}
 	}
 	
-	// FROM HERE NO COMMON METHODS
 	/**
 	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
 	 */
@@ -138,44 +178,5 @@ public class ParserHelper {
 	public static boolean hasPathAnnotation(ProgramElementDoc programElementDoc) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
 		return annotationHelper.isAnnotatedBy(Path.class.getName());
-	}
-
-	/**
-	 * This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
-	 */
-	public static boolean hasHttpMethod(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		for (HttpMethodHandler hmh : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(hmh.getFullName())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * This method gets the full HTTP-method of a programElementDoc (javax.ws.rs.GET/POST..)
-	 */
-	public static String getFullHttpMethod(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(httpMethod.getFullName())) {
-				return httpMethod.getFullName();
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * This method gets the simple HTTP-method of a programElementDoc (GET/POST/PUT/DELETE)
-	 */
-	public static String getSimpleHttpMethod(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(httpMethod.getFullName())) {
-				return httpMethod.getSimpleName();
-			}
-		}
-		return null;
 	}
 }

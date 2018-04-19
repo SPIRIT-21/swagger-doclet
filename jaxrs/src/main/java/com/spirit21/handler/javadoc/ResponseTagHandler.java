@@ -1,6 +1,7 @@
 package com.spirit21.handler.javadoc;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
@@ -16,45 +17,43 @@ import io.swagger.models.properties.RefProperty;
  * and sets the value to the response
  */
 public enum ResponseTagHandler {
-
+	
+	/**
+	 * This value creates the response message and sets it in the response object
+	 */
 	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {
-		/**
-		 * This method creates the responseMessage and sets it in the response Object
-		 */
 		@Override
 		public void setResponseData(Response response, Tag tag) {
-			StringBuilder responseMessage = new StringBuilder();
+			String responseMessage = Arrays.asList(tag.inlineTags()).stream()
+						.map(Tag::text)
+						.collect(Collectors.joining());
 			
-			Arrays.asList(tag.inlineTags())
-				.forEach(t -> responseMessage.append(t.text()));
-			
-			response.setDescription(responseMessage.toString());
+			response.setDescription(responseMessage);
 		}
 	},
+	/** 
+	 * This value creates a RefProperty and adds the classDoc to the Parser.definitionClassDoc list, 
+	 * if the list does not contain the classDoc
+	 */
 	RESPONSE_SCHEMA(Consts.RESPONSE_SCHEMA) {
-		/** 
-		 * This method creates a RefProperty and adds the classDoc to the Parser.definitionClassDoc list, 
-		 * if the list does not contain the classDoc
-		 */
 		@Override
 		public void setResponseData(Response response, Tag tag) {
-			// get the simpleName of the @responseSchema tag
-			StringBuilder simpleNameBuilder = new StringBuilder();
-			Arrays.asList(tag.inlineTags())
-				.forEach(t -> simpleNameBuilder.append(t.text()));
-			String simpleName = simpleNameBuilder.toString();
+			String simpleName = Arrays.asList(tag.inlineTags()).stream()
+						.map(Tag::text)
+						.collect(Collectors.joining());
 			
-			// set value in the refProperty and set it in the response
 			RefProperty ref = new RefProperty();
 			ref.set$ref(simpleName);
 			response.setSchema(ref);
 			
-			// add to definitions if list does not contain
 			ParserHelper.addToDefinitionList(Parser.classDocCache.findBySimpleName(simpleName));
 		}
 	},
+	/**
+	 * If the response type tag exists, this value creates an array property
+	 * set its properties and give it to the response object 
+	 */
 	RESPONSE_TYPE(Consts.RESPONSE_TYPE) {
-		// This method sets the schema of the response to an arrayProperty
 		@Override
 		public void setResponseData(Response response, Tag tag) {
 			if (response.getSchema() != null) {
