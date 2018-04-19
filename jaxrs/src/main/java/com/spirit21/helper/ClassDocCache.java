@@ -17,7 +17,8 @@ public class ClassDocCache {
 	 * Constructor which puts the qualifiedTypeName and the belonging ClassDoc into a map
 	 */
 	public ClassDocCache(List<ClassDoc> classDocs) {
-		typeNameToClass = classDocs.stream().collect(Collectors.toMap(c -> c.qualifiedTypeName(), c -> c));
+		typeNameToClass = classDocs.stream()
+							.collect(Collectors.toMap(Type::qualifiedTypeName, c -> c));
 	}
 	
 	/** 

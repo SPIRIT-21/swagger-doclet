@@ -1,6 +1,6 @@
 package com.spirit21.exception;
 
-public class SwaggerException extends Exception{
+public class SwaggerException extends Exception {
 
 	private static final long serialVersionUID = -5058119381383284890L;
 

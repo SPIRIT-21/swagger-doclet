@@ -1,8 +1,10 @@
 package com.spirit21.handler.parameter;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import com.sun.javadoc.MethodDoc;
+import com.sun.javadoc.Tag;
 
 import io.swagger.models.parameters.Parameter;
 
@@ -12,15 +14,12 @@ public interface ParameterAnnotationHandler {
 	 * This method gets the javadoc description of the Parameter
 	 */
 	public static String getDescriptionForParameters(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
-		StringBuilder sb = new StringBuilder();
-
-		Arrays.asList(methodDoc.paramTags()).stream()
+		return Arrays.asList(methodDoc.paramTags()).stream()
 			.filter(tag -> tag.parameterName().equals(parameter.name()))
-			.flatMap(tag -> Arrays.asList(tag.inlineTags()).stream())
-			.map(inlineTag -> inlineTag.text())
-			.forEach(sb::append);
-		
-		return sb.toString();
+			.map(Tag::inlineTags)
+			.flatMap(Arrays::stream)
+			.map(Tag::text)
+			.collect(Collectors.joining());
 	}
 	
 	/**

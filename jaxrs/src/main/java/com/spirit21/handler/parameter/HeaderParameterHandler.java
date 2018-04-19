@@ -18,9 +18,9 @@ public class HeaderParameterHandler extends AbstractParameterHandler<HeaderParam
 	 */
 	@Override
 	public HeaderParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
-		HeaderParameter hp = new HeaderParameter();
-		handleParameter(hp, parameter, methodDoc);
-		return hp;
+		HeaderParameter headerParameter = new HeaderParameter();
+		handleParameter(headerParameter, parameter, methodDoc);
+		return headerParameter;
 	}
 	
 	@Override

@@ -108,9 +108,7 @@ public class NumberHandler implements TypeHandler {
 	 */
 	@Override
 	public String[] getTypeAndFormat(String type) {
-		// Iterate through enum values
 		for (NumberEnum nh : NumberEnum.values()) {
-			// check if the typeName equals the enum.getName(). If so then get array and return it
 			if (type.equals(nh.getObjectOfPrimitive()) || type.equals(nh.getPrimitive())) {
 				return nh.getTypeAndFormat();
 			}

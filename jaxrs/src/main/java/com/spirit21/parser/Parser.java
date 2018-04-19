@@ -26,7 +26,7 @@ import io.swagger.util.Yaml;
 public class Parser {
 
 	private RootDoc rootDoc;
-	
+
 	public static List<ClassDoc> definitionClassDocs;
 	public static Map<ClassDoc, ClassDoc> resourceClassDocs;
 	public static ClassDocCache classDocCache;
@@ -45,25 +45,21 @@ public class Parser {
 	 */
 	public Parser(RootDoc rootDoc, String outputType) {
 		this.rootDoc = rootDoc;
-		
+
 		definitionClassDocs = new ArrayList<>();
 		classDocCache = new ClassDocCache(Arrays.asList(rootDoc.classes()));
-		
+
 		apiParser = new ApiParser();
 		tagParser = new TagParser();
 		pathParser = new PathParser();
 		definitionParser = new DefinitionParser();
-		
+
 		swagger = new Swagger();
-		if (outputType == null) {
-			this.outputType = "";
-		} else {
-			this.outputType = outputType;
-		}
+		this.outputType = outputType;
 	}
 
 	/**
-	 * This method runs all the parsers and generates finally a swagger file
+	 * This method runs all the parser and generates finally a swagger file
 	 */
 	public boolean run() throws ApiParserException, IOException {
 		try {
@@ -86,13 +82,14 @@ public class Parser {
 	}
 
 	/**
-	 * This method gets the entryPointClassDoc of the REST API and throws possibly
-	 * an exception
+	 * This method gets the ClassDoc of the entry point of the JAX-RS REST API and
+	 * throws possibly an exception
 	 */
 	private ClassDoc getEntryPointClassDoc() throws ApiParserException {
 		List<ClassDoc> tempList = Arrays.asList(rootDoc.classes()).stream()
 				.filter(ParserHelper::hasApplicationPathAnnotation)
 				.collect(Collectors.toList());
+		
 		if (tempList.size() == 1) {
 			return tempList.get(0);
 		} else if (tempList.size() > 1) {
@@ -103,18 +100,19 @@ public class Parser {
 	}
 
 	/**
-	 * This method puts all resources in a map and afterwards all subResources NOTE:
-	 * Can't do it like: collect(Collectors.toMap(c -> c, null)) because it throws a
-	 * NullPointerException if the value is null NOTE: Create temporary hashMap
-	 * because during iteration you cannot put something in the map
+	 * This method puts all resources in a map and afterwards all subResources 
+	 * NOTE: Can't do it like: collect(Collectors.toMap(c -> c, null)) because it throws a
+	 * NullPointerException if the value is null 
+	 * NOTE: Create temporary hashMap because during iteration you cannot put something in the map
 	 */
 	private Map<ClassDoc, ClassDoc> getResources() {
 		LinkedHashMap<ClassDoc, ClassDoc> tempMap = Arrays.asList(rootDoc.classes()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
-				.collect(LinkedHashMap::new, (m, c) -> m.put(c, null), HashMap::putAll);
+				.collect(LinkedHashMap::new, (map, classDoc) -> map.put(classDoc, null), HashMap::putAll);
 
 		LinkedHashMap<ClassDoc, ClassDoc> hashMap = new LinkedHashMap<>(tempMap);
 		hashMap.entrySet().forEach(c -> getSubs(tempMap, c.getKey()));
+		
 		return tempMap;
 	}
 
@@ -124,13 +122,13 @@ public class Parser {
 	 */
 	private void getSubs(LinkedHashMap<ClassDoc, ClassDoc> tempMap, ClassDoc classDoc) {
 		Arrays.asList(classDoc.methods()).stream()
-			.filter(m -> !ParserHelper.hasHttpMethod(m))
+			.filter(methodDoc -> !ParserHelper.hasHttpMethod(methodDoc))
 			.filter(ParserHelper::hasPathAnnotation)
-			.map(m -> classDocCache.findByType(m.returnType()))
+			.map(methodDoc -> classDocCache.findByType(methodDoc.returnType()))
 			.filter(Objects::nonNull)
-			.forEach(c -> {
-					tempMap.put(c, classDoc);
-					getSubs(tempMap, c);
+			.forEach(subClassDoc -> {
+					tempMap.put(subClassDoc, classDoc);
+					getSubs(tempMap, subClassDoc);
 				});
 	}
 
@@ -142,7 +140,9 @@ public class Parser {
 		if (fileName.isEmpty()) {
 			fileName = Consts.STANDARD_FILE_NAME;
 		}
+		
 		File file = new File(fileName + "." + outputType);
+		
 		if (file.createNewFile()) {
 			return file;
 		} else {
@@ -151,12 +151,12 @@ public class Parser {
 	}
 
 	/**
-	 * This method writes in a file (json or yaml) and possibly throws and exception if
-	 * something failed
+	 * This method writes in a file (json or yaml) and possibly throws and exception
+	 * if something failed
 	 */
 	private void writeFile(String fileName) throws IOException {
 		String output;
-		
+
 		switch (outputType) {
 		case "json":
 			output = Json.pretty(swagger);
@@ -168,9 +168,9 @@ public class Parser {
 			outputType = "json";
 			output = Json.pretty(swagger);
 		}
-		
+
 		File file = createFile(fileName);
-		
+
 		try (FileWriter fw = new FileWriter(file)) {
 			fw.write(output);
 		} catch (IOException e) {
