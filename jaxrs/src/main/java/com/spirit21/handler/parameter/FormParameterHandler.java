@@ -18,9 +18,9 @@ public class FormParameterHandler extends AbstractParameterHandler<FormParameter
 	 */
 	@Override
 	public FormParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
-		FormParameter fp = new FormParameter();
-		handleParameter(fp, parameter, methodDoc);
-		return fp;
+		FormParameter formParameter = new FormParameter();
+		handleParameter(formParameter, parameter, methodDoc);
+		return formParameter;
 	}
 	
 	@Override

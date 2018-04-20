@@ -7,6 +7,7 @@ import com.spirit21.parser.Parser;
 import com.sun.javadoc.Type;
 
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
 
 public class PropertyFactory {
 	
@@ -17,16 +18,29 @@ public class PropertyFactory {
 		String[] typeAndFormat = getTypeAndFormat(type); 
 		
 		if (typeAndFormat != null) {
-			for (PropertyHandler handler : PropertyHandler.values()) {
-				if (typeAndFormat[0].equals(handler.getTypeName())) {
-					return handler.createProperty(typeAndFormat, type);
-				}
+			PropertyHandler handler = getHandler(typeAndFormat);
+			
+			if (handler != null) {
+				return handler.createProperty(typeAndFormat, type);
 			}
+			return PropertyBuilder.build(typeAndFormat[0], typeAndFormat[1], null);
+
 		} else {
 			String[] temp = new String[2];
 			temp[0] = Consts.REF;
 			ParserHelper.addToDefinitionList(type.asClassDoc());
 			return createProperty(type);
+		}
+	}
+	
+	/**
+	 * This method gets the correct property handler for the type
+	 */
+	private static PropertyHandler getHandler(String[] typeAndFormat) {
+		for (PropertyHandler handler : PropertyHandler.values()) {
+			if (typeAndFormat[0].equals(handler.getTypeName())) {
+				return handler;
+			}
 		}
 		return null;
 	}
@@ -39,11 +53,11 @@ public class PropertyFactory {
 		String[] typeAndFormat = null;
 		
 		if (Parser.classDocCache.findByType(type) != null) {
+			typeAndFormat = new String[2];
+			
 			if (type.asClassDoc().isEnum()) {
-				typeAndFormat = new String[2];
 				typeAndFormat[0] = Consts.ENUM;
 			} else {
-				typeAndFormat = new String[2];
 				typeAndFormat[0] = Consts.REF;
 			}
 			return typeAndFormat;

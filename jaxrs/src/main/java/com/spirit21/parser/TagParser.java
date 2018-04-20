@@ -20,25 +20,28 @@ public class TagParser {
 	private Pattern pattern;
 	
 	protected TagParser() {
-		pattern = Pattern.compile("\"/?([a-zA-Z0-9_-]+)/?.*\"");
+		pattern = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
 	}
 	
 	/**
 	 * This method sets all tags into the swagger object
 	 */
 	protected void setTags(Swagger swagger) {
-		Set<Tag> hashSet = Parser.resourceClassDocs.entrySet().stream()
-			.filter(e -> e.getValue() == null)
-			.map(e -> ParserHelper.getAnnotationValue(e.getKey(), Path.class.getName(), Consts.VALUE))
+		Set<Tag> tags = Parser.resourceClassDocs.entrySet().stream()
+			.filter(entry -> entry.getValue() == null)
+			.map(entry -> ParserHelper.getAnnotationValue(entry.getKey(), Path.class.getName(), Consts.VALUE))
+			.filter(Objects::nonNull)
+			.map(aValue -> (String) ParserHelper.getAnnotationValueObject(aValue))
 			.filter(Objects::nonNull)
 			.map(this::createTag)
 			.filter(Objects::nonNull)
 			.collect(Collectors.toSet());
-		swagger.setTags(new ArrayList<>(hashSet));	
+		
+		swagger.setTags(new ArrayList<>(tags));
 	}
 	
 	/**
-	 * This method creates the tag with the annotationValue 
+	 * This method creates the tag with the annotation value 
 	 */
 	private Tag createTag(String annotationValue) {
 		Matcher matcher = pattern.matcher(annotationValue);

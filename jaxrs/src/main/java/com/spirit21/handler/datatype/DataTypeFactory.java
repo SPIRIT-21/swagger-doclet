@@ -23,12 +23,12 @@ public class DataTypeFactory {
 	/**
 	 * Tries all handlers on a given typeName and returns a typeAndFormat array
 	 */
-	public String[] getDataType(String name) {
+	public String[] getDataType(String typeName) {
 		String[] typeAndFormat = null;
-		// Iterate through all handlers
+		
 		for (TypeHandler typeHandler : handlers) {
-			// Get the typeAndFormat array and check if it is filled
-			typeAndFormat = typeHandler.getTypeAndFormat(name);
+			typeAndFormat = typeHandler.getTypeAndFormat(typeName);
+			
 			if (typeAndFormat != null) {
 				break;
 			}
