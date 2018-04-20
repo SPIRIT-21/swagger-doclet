@@ -16,6 +16,7 @@ import com.spirit21.handler.annotation.MIMEMediaTypeHandler;
 import com.spirit21.handler.javadoc.ResponseTagHandler;
 import com.spirit21.handler.parameter.ParameterFactory;
 import com.spirit21.helper.ParserHelper;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Tag;
@@ -44,16 +45,19 @@ public class OperationParser {
 	 */
 	protected Operation createOperation(Swagger swagger, ClassDoc classDoc, MethodDoc methodDoc) {
 		Operation operation = new Operation();
+		
 		setOperationId(operation, methodDoc);
 		setTags(swagger, operation, classDoc);
 		setMediaType(operation, methodDoc);
 		setDescription(operation, methodDoc);
+		
 		try {
 			setResponses(operation, methodDoc);
 			setParameters(operation, methodDoc);
 		} catch (OperationParserException e) {
 			log.log(Level.SEVERE, "Error while creating operation for a path!", e);
 		}
+		
 		return operation;
 	}
 
@@ -61,7 +65,7 @@ public class OperationParser {
 	 * This method sets the operationID consisting of httpMethod (get, post..) and the path
 	 */
 	private void setOperationId(Operation operation, MethodDoc methodDoc) {
-		operation.setOperationId(ParserHelper.getSimpleHttpMethod(methodDoc).toLowerCase()
+		operation.setOperationId(ParserHelper.getHttpMethod(methodDoc, false).toLowerCase()
 				+ ParserHelper.getPath(methodDoc.containingClass()));
 	}
 
@@ -71,14 +75,14 @@ public class OperationParser {
 	private void setTags(Swagger swagger, Operation operation, ClassDoc classDoc) {
 		List<String> tags = new ArrayList<>();
 
-		// Get the top-level ClassDoc and its @Path annotation value
 		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(classDoc);
-		String annotationValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
-
-		// Compare tags and the top-level ClassDoc path and finally add tag to operation
+		AnnotationValue aValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
+		String value = (String) ParserHelper.getAnnotationValueObject(aValue);
+		
+		// Comparison with the tags of the swagger model
 		swagger.getTags().stream()
-			.map(t -> t.getName())
-			.filter(annotationValue::contains)
+			.map(io.swagger.models.Tag::getName)
+			.filter(value::contains)
 			.forEach(tags::add);
 		operation.setTags(tags);
 	}
@@ -87,10 +91,9 @@ public class OperationParser {
 	 * This method sets the MIME media type for the operation
 	 */
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
-		// Iterate over possible media type annotations and filter existing values
 		Arrays.asList(MIMEMediaTypeHandler.values()).stream()
-				.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getOperation()))
-				.forEach(mth -> mth.setValue(operation, methodDoc));
+			.filter(mth -> ParserHelper.hasAnnotation(methodDoc, mth.getMimeMediaType()))
+			.forEach(mth -> mth.setValue(operation, methodDoc));
 	}
 
 	/**
@@ -100,6 +103,7 @@ public class OperationParser {
 		String description = Arrays.asList(methodDoc.inlineTags()).stream()
 			.map(Tag::text)
 			.collect(Collectors.joining());
+		
 		operation.setDescription(description);
 	}
 
@@ -111,7 +115,7 @@ public class OperationParser {
 		Map<String, Response> responses = new HashMap<>();
 		Response currentResponse = null;
 		
-		for (Tag tag : methodDoc.tags()) { // Iterate through the javadoc tags of the method
+		for (Tag tag : methodDoc.tags()) {
 			if (tag.name().equals(Consts.RESPONSE_CODE)) {
 				currentResponse = new Response();
 				responses.put(tag.text(), currentResponse);
@@ -139,21 +143,20 @@ public class OperationParser {
 
 	/**
 	 * This method analyzes the parameters of a methodDoc, puts them in a list and adds it to the operation
-	 * The counter counts the amount of bodyParameters and warns if there are are more than one
 	 */
 	private void setParameters(Operation operation, MethodDoc methodDoc) {
-		List<Parameter> parameters = new ArrayList<>();
+		List<Parameter> parameters = Arrays.asList(methodDoc.parameters()).stream()
+						.map(param -> parameterFactory.getParameter(methodDoc, param))
+						.collect(Collectors.toList());
 		
-		Arrays.asList(methodDoc.parameters()).stream()
-			.map(p -> parameterFactory.getParameter(methodDoc, p))
-			.forEach(parameters::add);
 		checkBodyParameters(parameters, methodDoc);
 		
 		operation.setParameters(parameters);
 	}
 	
 	/**
-	 * This method checks the amount of the body parameters and removes if there are too much.
+	 * This method checks the amount of the body parameters and if there is more than one
+	 * body parameter, it picks one and removes the other body parameters
 	 */
 	private void checkBodyParameters(List<Parameter> parameters, MethodDoc methodDoc) {
 		List<Parameter> bodyParameters = parameters.stream()
@@ -164,7 +167,7 @@ public class OperationParser {
 			bodyParameters.remove(0);
 			parameters.removeAll(bodyParameters);
 			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
-			+ "' has more than one bodyParameter. Only one is allowed.");
+						+ "' has more than one bodyParameter. Only one is allowed.");
 		}
 	}
 }

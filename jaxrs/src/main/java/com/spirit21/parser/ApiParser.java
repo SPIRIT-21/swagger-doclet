@@ -20,8 +20,10 @@ public class ApiParser {
 	 */
 	protected void setBasicInformation(Swagger swagger) throws ApiParserException {
 		Info info = new Info();
+		
 		Arrays.asList(Parser.entryPointClassDoc.tags())
 			.forEach(t -> setInformation(swagger, info, t));
+		
 		try {
 			checkInfo(info);
 		} catch (ApiParserException e) {
@@ -36,7 +38,9 @@ public class ApiParser {
 	private void setInformation(Swagger swagger, Info info, Tag tag) {
 		if (tag.name().equals(Consts.FILE_NAME)) {
 			fileName = tag.text();
+			return;
 		}
+		
 		Arrays.asList(ApiTagHandler.values()).stream()
 			.filter(ath -> ath.getName().equals(tag.name()))
 			.forEach(ath -> ath.setValue(swagger, info, tag.text()));

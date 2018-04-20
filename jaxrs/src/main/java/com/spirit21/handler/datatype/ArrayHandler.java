@@ -67,9 +67,7 @@ public class ArrayHandler implements TypeHandler {
 	 */
 	@Override
 	public String[] getTypeAndFormat(String typeName) {
-		// Iterate through enum values
 		for (ArrayEnum ae : ArrayEnum.values()) {
-			// check if the typename equals the enum.getName(). If so then get array and return
 			if (typeName.equals(ae.getName())) {
 				return ae.getTypeAndFormat();
 			}

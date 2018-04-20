@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.spirit21.Consts;
 import com.spirit21.helper.ParserHelper;
 import com.spirit21.parser.Parser;
+import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.Type;
 
 import io.swagger.models.properties.ArrayProperty;
@@ -13,6 +14,9 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 
+/**
+ * This enum handles all possible properties
+ */
 public enum PropertyHandler {
 	
 	REF(Consts.REF) {
@@ -27,6 +31,7 @@ public enum PropertyHandler {
 		@Override
 		public Property createProperty(String[] typeAndFormat, Type type) {
 			ArrayProperty property = new ArrayProperty();
+			
 			for (Type newType : type.asParameterizedType().typeArguments()) {
 				property.setItems(PropertyFactory.createProperty(newType));
 			}
@@ -37,7 +42,11 @@ public enum PropertyHandler {
 		@Override
 		public Property createProperty(String[] typeAndFormat, Type type) {
 			MapProperty property = new MapProperty();
-			property.additionalProperties(PropertyFactory.createProperty(type.asParameterizedType().typeArguments()[1]));
+			
+			Type genericOfMap = type.asParameterizedType().typeArguments()[1];
+			Property prop = PropertyFactory.createProperty(genericOfMap);
+			
+			property.additionalProperties(prop);
 			return property;
 		}
 	},
@@ -45,9 +54,11 @@ public enum PropertyHandler {
 		@Override
 		public Property createProperty(String[] typeAndFormat, Type type) {
 			StringProperty property = new StringProperty();
+			
 			Arrays.asList(type.asClassDoc().enumConstants()).stream()
-				.map(fieldDoc -> fieldDoc.name())
+				.map(FieldDoc::name)
 				.forEach(property::_enum);
+			
 			return property;
 		}
 	};

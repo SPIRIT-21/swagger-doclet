@@ -3,6 +3,7 @@ package com.spirit21.handler.parameter;
 import com.spirit21.Consts;
 import com.spirit21.handler.property.PropertyFactory;
 import com.spirit21.helper.ParserHelper;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
@@ -34,8 +35,9 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 		PathParameter pathParameter = new PathParameter();
 		
 		// set name
-		String annotationValue = ParserHelper.getAnnotationValue(fieldDoc, getName(), Consts.VALUE);
-		pathParameter.setName(ParserHelper.replaceQuotationMarks(annotationValue));
+		AnnotationValue aValue  = ParserHelper.getAnnotationValue(fieldDoc, getName(), Consts.VALUE);
+		String value = (String) ParserHelper.getAnnotationValueObject(aValue);
+		pathParameter.setName(value);
 		
 		// set property
 		pathParameter.setProperty(PropertyFactory.createProperty(fieldDoc.type()));

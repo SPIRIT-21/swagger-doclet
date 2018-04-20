@@ -36,7 +36,7 @@ public class PathParser {
 	}
 	
 	/**
-	 * This method creates a 'paths' map, puts data in there and returns it
+	 * This method creates a 'paths' map, puts data in there and adds it to the swagger model
 	 */
 	protected void setPath(Swagger swagger) {
 		Map<String, Path> paths = new LinkedHashMap<>();
@@ -46,13 +46,15 @@ public class PathParser {
 	
 	/**
 	 * This method iterates over all resources and checks if the resource has HttpMethods
-	 * If yes, then it calls the method createPath
+	 * If so, then it calls the method createPath
 	 */
 	private Map<String, Path> getPaths(Swagger swagger) {
 		Map<String, Path> tempPaths = new LinkedHashMap<>();
+		
 		Parser.resourceClassDocs.entrySet().stream()
-			.filter(e -> ParserHelper.isResource(e.getKey()))
-			.forEach(e -> createPath(swagger, e.getKey(), tempPaths));
+			.filter(entry -> ParserHelper.isResource(entry.getKey()))
+			.forEach(entry -> createPath(swagger, entry.getKey(), tempPaths));
+		
 		return tempPaths;
 	}
 	
@@ -62,8 +64,10 @@ public class PathParser {
 	 */
 	private void createPath(Swagger swagger, ClassDoc classDoc, Map<String, Path> tempPaths) {
 		Path path = new Path();
+		
 		path.setParameters(new ArrayList<>(getPathParameters(classDoc)));
 		createOperation(swagger, path, classDoc);
+		
 		tempPaths.put(ParserHelper.getPath(classDoc), path);
 	}
 	
@@ -73,25 +77,34 @@ public class PathParser {
 	private Set<Parameter> getPathParameters(ClassDoc classDoc) {
 		Set<Parameter> parameters = new HashSet<>();
 
-		// Adds all path parameters of the current ClassDoc from fields
 		parameters.addAll(getPathParameterFromField(classDoc));
 		
-		// Gets the current parentClassDoc of the classDoc
 		ClassDoc parent = Parser.resourceClassDocs.get(classDoc);
-		// Check if the parent is a top-level-resource 
+		
 		if (parent != null) {
-			// Iterate through methods of the parent ClassDoc and filter the method which returns the classDoc
 			Arrays.asList(parent.methods()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
-				.filter(m -> !ParserHelper.hasHttpMethod(m) && m.returnType().equals(classDoc))
-				// Add to parameters list all pathParameter from the parameter of the method
-				.forEach(m -> parameters.addAll(getPathParameterFromMethodParameter(m)));
-			// Get the pathParameter of the parentClassDoc --> recursion
+				.filter(methodDoc -> !ParserHelper.hasHttpMethod(methodDoc))
+				.filter(methodDoc -> methodDoc.returnType().equals(classDoc))
+				.map(this::getPathParameterFromMethodParameter)
+				.flatMap(List::stream)
+				.forEach(parameters::add);
+			
 			parameters.addAll(getPathParameters(parent));
 			return parameters;
 		} else {
 			return parameters;
 		}
+	}
+	
+	/**
+	 * This method gets the pathParameter from the fields of a ClassDoc
+	 */
+	private List<Parameter> getPathParameterFromField(ClassDoc classDoc) {
+		return Arrays.asList(classDoc.fields(false)).stream()
+			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))
+			.map(f -> pathParameter.createPathParameterFromField(f))
+			.collect(Collectors.toList());
 	}
 	
 	/**
@@ -105,41 +118,25 @@ public class PathParser {
 	}
 	
 	/**
-	 * This method gets the pathParameter from the fields of a ClassDoc
-	 */
-	private List<Parameter> getPathParameterFromField(ClassDoc classDoc) {
-		// Iterate over fields and filter fields with @PathParam annotation
-		return Arrays.asList(classDoc.fields(false)).stream()
-			.filter(f -> ParserHelper.hasAnnotation(f, pathParameter.getName()))
-			.map(f -> pathParameter.createPathParameterFromField(f))
-			.collect(Collectors.toList());
-	}
-	
-	/**
 	 * This method creates the operations to our path
 	 */
+	// TODO: Methods with HTTP AND Path annotation
 	private void createOperation(Swagger swagger, Path path, ClassDoc classDoc) {
-		// Iterate over the methods
 		Arrays.asList(classDoc.methods()).stream()
-			// Filter the methods which has httpMethodAnnotations but no Path annotation
 			.filter(ParserHelper::hasHttpMethod)
-			.filter(m -> !ParserHelper.hasPathAnnotation(m))
-			// For every method it creates an operation and sets the operation into the path 
-			.forEach(m -> {
-				Operation operation = operationParser.createOperation(swagger, classDoc, m);
-				setOperationToPath(path, operation, m);
-				});
+			.filter(methodDoc -> !ParserHelper.hasPathAnnotation(methodDoc))
+			.forEach(methodDoc -> {
+				Operation operation = operationParser.createOperation(swagger, classDoc, methodDoc);
+				setOperationToPath(path, operation, methodDoc);
+			});
 	}
 	
 	/**
 	 * This method sets an operation to the path
 	 */
 	private void setOperationToPath(Path path, Operation operation, MethodDoc methodDoc) {
-		// Iterate over HttpMethodHandler
 		Arrays.asList(HttpMethodHandler.values()).stream()
-			// Check the httpMethod of the method
-			.filter(hmh -> ParserHelper.getFullHttpMethod(methodDoc).equals(hmh.getFullName()))
-			// sets the operation to path
+			.filter(hmh -> hmh.getName(true).equals(ParserHelper.getHttpMethod(methodDoc, true)))
 			.forEach(hmh -> hmh.setOperationToPath(path, operation));
 	}
 }

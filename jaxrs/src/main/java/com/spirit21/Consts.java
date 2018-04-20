@@ -3,7 +3,6 @@ package com.spirit21;
 public class Consts {
 	
 	// Commandline options
-	public static final String VERSION = "-version";
 	public static final String OUTPUT_TYPE = "-type";
 	// Regex constants
 	public static final String SLASHES = "[/]{2,}";

@@ -5,6 +5,7 @@ import javax.ws.rs.DefaultValue;
 import com.spirit21.Consts;
 import com.spirit21.handler.property.PropertyFactory;
 import com.spirit21.helper.ParserHelper;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
@@ -17,8 +18,9 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	 */
 	protected void handleParameter(AbstractSerializableParameter<T> asp, Parameter parameter, MethodDoc methodDoc) {
 		// set parameter name
-		String parameterName = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
-		asp.setName(ParserHelper.replaceQuotationMarks(parameterName));
+		AnnotationValue aValue = ParserHelper.getAnnotationValue(parameter, getName(), Consts.VALUE);
+		String value = (String) ParserHelper.getAnnotationValueObject(aValue);
+		asp.setName(value);
 
 		// set default value
 		String defaultValue = getDefaultValue(parameter);
@@ -37,7 +39,8 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	 * This method gets the DefaultValue of the Parameter
 	 */
 	protected String getDefaultValue(Parameter parameter) {
-		return ParserHelper.getAnnotationValue(parameter, DefaultValue.class.getName(), Consts.VALUE);
+		AnnotationValue aValue = ParserHelper.getAnnotationValue(parameter, DefaultValue.class.getName(), Consts.VALUE);
+		return (String) ParserHelper.getAnnotationValueObject(aValue);
 	}
 	
 	protected abstract String getName();
