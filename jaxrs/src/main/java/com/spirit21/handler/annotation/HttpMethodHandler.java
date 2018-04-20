@@ -68,6 +68,11 @@ public enum HttpMethodHandler {
 		return simpleName;
 	}
 	
+	/**
+	 * getName gets the full or the simple http-method
+	 * NOTE: true gets the full method
+	 * NOTE: false gets the false method
+	 */
 	public String getName(Boolean fullOrSimple) {
 		if (fullOrSimple) {
 			return getFullName();
