@@ -19,7 +19,7 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 	}
 	
 	/** 
-	 * This method creates a new PathParameter sets the data and returns it
+	 * This method creates a new path parameter sets the data and returns it
 	 */
 	@Override
 	public PathParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
@@ -29,7 +29,7 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 	}
 	
 	/**
-	 * This method creates a new PathParameter of a FieldDoc sets the data and returns it
+	 * This method creates a new path parameter of a fieldDoc sets the data and returns it
 	 */
 	public PathParameter createPathParameterFromField(FieldDoc fieldDoc) {
 		PathParameter pathParameter = new PathParameter();

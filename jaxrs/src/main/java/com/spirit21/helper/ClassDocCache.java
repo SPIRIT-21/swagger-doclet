@@ -14,7 +14,7 @@ public class ClassDocCache {
 	private Map<String, ClassDoc> typeNameToClass = new HashMap<>();
 	
 	/** 
-	 * Constructor which puts the qualifiedTypeName and the belonging ClassDoc into a map
+	 * Constructor which puts the qualifiedTypeName and the belonging classDoc into a map
 	 */
 	public ClassDocCache(List<ClassDoc> classDocs) {
 		typeNameToClass = classDocs.stream()
@@ -22,7 +22,7 @@ public class ClassDocCache {
 	}
 	
 	/** 
-	 * This method finds a classDoc by Type
+	 * This method finds a classDoc by type
 	 */
 	public ClassDoc findByType(Type type) {
 		String typeName = type.qualifiedTypeName();
@@ -30,7 +30,7 @@ public class ClassDocCache {
 	}
 	
 	/**
-	 * This method finds a classDoc by the simpleTypeName
+	 * This method finds a classDoc by the simple class name
 	 */
 	public ClassDoc findBySimpleName(String simpleName) {
 		for (Entry<String, ClassDoc> entry : typeNameToClass.entrySet()) {

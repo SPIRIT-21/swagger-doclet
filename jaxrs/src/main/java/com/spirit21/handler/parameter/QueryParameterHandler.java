@@ -14,7 +14,7 @@ public class QueryParameterHandler extends AbstractParameterHandler<QueryParamet
 	}
 	
 	/** 
-	 * This method creates a new QueryParameter sets the data and returns it
+	 * This method creates a new query parameter sets the data and returns it
 	 */
 	@Override
 	public QueryParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
@@ -65,7 +66,7 @@ public class OperationParser {
 	 * This method sets the operationID consisting of httpMethod (get, post..) and the path
 	 */
 	private void setOperationId(Operation operation, MethodDoc methodDoc) {
-		operation.setOperationId(ParserHelper.getHttpMethod(methodDoc, false).toLowerCase()
+		operation.setOperationId(ParserHelper.getSimpleHttpMethod(methodDoc).toLowerCase()
 				+ ParserHelper.getPath(methodDoc.containingClass()));
 	}
 
@@ -79,11 +80,11 @@ public class OperationParser {
 		AnnotationValue aValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
 		String value = (String) ParserHelper.getAnnotationValueObject(aValue);
 		
-		// Comparison with the tags of the swagger model
-		swagger.getTags().stream()
-			.map(io.swagger.models.Tag::getName)
-			.filter(value::contains)
-			.forEach(tags::add);
+		Matcher matcher = Parser.pattern.matcher(value);
+		
+		if (matcher.matches()) {
+			tags.add(matcher.group(1));
+		}
 		operation.setTags(tags);
 	}
 
@@ -133,7 +134,7 @@ public class OperationParser {
 	}
 	
 	/**
-	 * This method sets the response properties of a Response object. E.g. the response message.
+	 * This method sets the response properties of a response object. E.g. the response message.
 	 */
 	private void setResponseProperties(Tag tag, Response response) {
 		Arrays.asList(ResponseTagHandler.values()).stream()

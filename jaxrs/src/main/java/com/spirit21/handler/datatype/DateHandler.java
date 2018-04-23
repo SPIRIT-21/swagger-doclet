@@ -10,7 +10,7 @@ import java.util.Date;
 import com.spirit21.Consts;
 
 /** 
- * This handler handles all types of Date...
+ * This handler handles the most common types of Date
  */
 public class DateHandler implements TypeHandler {
 	

@@ -8,12 +8,12 @@ import java.util.Set;
 import com.spirit21.Consts;
 
 /**
- *  This handler handles all types of Lists...
+ * This handler handles the most common types of collections
  */
 public class ArrayHandler implements TypeHandler {
 	
 	/**
-	 *  This enum saves the most common Lists, Maps..
+	 *  This enum saves the most common types of collections
 	 */
 	private enum ArrayEnum {
 		COLLECTION(Collection.class.getName()) {

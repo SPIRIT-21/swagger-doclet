@@ -13,7 +13,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.RefProperty;
 
 /**
- * This enum saves the response-tags of the javadoc comment of the HttpMethods
+ * This enum saves the response tags of the javadoc comment of the http methods
  * and sets the value to the response
  */
 public enum ResponseTagHandler {
@@ -46,7 +46,7 @@ public enum ResponseTagHandler {
 			ref.set$ref(simpleName);
 			response.setSchema(ref);
 			
-			ParserHelper.addToDefinitionList(Parser.classDocCache.findBySimpleName(simpleName));
+			ParserHelper.addToDefinitionList(Parser.definitionClassDocs, Parser.classDocCache.findBySimpleName(simpleName));
 		}
 	},
 	/**

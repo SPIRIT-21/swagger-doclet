@@ -28,7 +28,7 @@ public class PropertyFactory {
 		} else {
 			String[] temp = new String[2];
 			temp[0] = Consts.REF;
-			ParserHelper.addToDefinitionList(type.asClassDoc());
+			ParserHelper.addToDefinitionList(Parser.definitionClassDocs, type.asClassDoc());
 			return createProperty(type);
 		}
 	}
@@ -46,7 +46,7 @@ public class PropertyFactory {
 	}
 	
 	/**
-	 * This method returns the type and format of a property in this format
+	 * This method returns the type and format of a property in this format:
 	 * String[0] = type, String[1] = format
 	 */
 	private static String[] getTypeAndFormat(Type type) {

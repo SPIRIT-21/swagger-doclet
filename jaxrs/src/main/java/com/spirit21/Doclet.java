@@ -28,7 +28,7 @@ public class Doclet {
 			log.log(Level.SEVERE, "Failed to parse your API entry point.", e);
 			return false;
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Failed to write or create the .json swagger file.", e);
+			log.log(Level.SEVERE, "Failed to write or create the swagger file.", e);
 			return false;
 		}
 	}
@@ -82,7 +82,7 @@ public class Doclet {
 	}
 
 	/**
-	 * Required method which allows the doclet to get the generics of a List/Map..
+	 * Required method which allows the doclet to get the generics of a list/map..
 	 */
 	public static LanguageVersion languageVersion() {
 		return LanguageVersion.JAVA_1_5;

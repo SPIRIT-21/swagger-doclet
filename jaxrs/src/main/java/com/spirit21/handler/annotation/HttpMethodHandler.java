@@ -11,7 +11,7 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 
 /**
- *  This enum saves all HttpMethods and sets the operation to path
+ *  This enum saves all http methods and sets the operation to path
  */
 public enum HttpMethodHandler {
 	
@@ -60,25 +60,12 @@ public enum HttpMethodHandler {
 		this.simpleName = simpleName;
 	}
 
-	private String getFullName() {
+	public String getFullName() {
 		return fullName;
 	}
 
-	private String getSimpleName() {
+	public String getSimpleName() {
 		return simpleName;
-	}
-	
-	/**
-	 * getName gets the full or the simple http-method
-	 * NOTE: true gets the full method
-	 * NOTE: false gets the false method
-	 */
-	public String getName(Boolean fullOrSimple) {
-		if (fullOrSimple) {
-			return getFullName();
-		} else {
-			return getSimpleName();
-		}
 	}
 
 	public abstract void setOperationToPath(Path path, Operation operation);
