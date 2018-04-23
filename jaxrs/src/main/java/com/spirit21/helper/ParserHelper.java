@@ -1,6 +1,7 @@
 package com.spirit21.helper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import javax.ws.rs.ApplicationPath;
@@ -60,19 +61,16 @@ public class ParserHelper {
 		return null;
 	}
 	
-	// EVENTUELL COMMON
 	/**
-	 * This method checks if a resource has any methods with HTTP-annotations
+	 * This method adds a classDoc to the definitionClassDoc list in the Parser
 	 */
-	public static boolean isResource(ClassDoc classDoc) {
-		for (MethodDoc methodDoc : classDoc.methods()) {
-			if (hasHttpMethod(methodDoc)) {
-				return true;
-			}
+	public static void addToDefinitionList(List<ClassDoc> definitionClassDocs, ClassDoc classDoc) {
+		if (classDoc != null && !definitionClassDocs.contains(classDoc)) {
+			definitionClassDocs.add(classDoc);
 		}
-		return false;
 	}
 	
+	// EVENTUELL COMMON
 	/**
 	 * This method helps to replace multiple slashes with one
 	 */
@@ -81,12 +79,11 @@ public class ParserHelper {
 	}
 	
 	/**
-	 * This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
+	 * This method checks if a resource has any methods with HTTP-annotations
 	 */
-	public static boolean hasHttpMethod(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		for (HttpMethodHandler hmh : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(hmh.getName(true))) {
+	public static boolean isResource(ClassDoc classDoc) {
+		for (MethodDoc methodDoc : classDoc.methods()) {
+			if (isHttpMethod(methodDoc)) {
 				return true;
 			}
 		}
@@ -94,22 +91,67 @@ public class ParserHelper {
 	}
 	
 	/**
-	 * This method gets the HTTP-method of a programElementDoc
-	 * NOTE: true is the full http method (javax.ws.rs.GET/POST..)
-	 * NOTE: false is the simple http method (GET/POST..)
+	 * This method gets the simple http method of a programElementDoc
 	 */
-	public static String getHttpMethod(ProgramElementDoc programElementDoc, Boolean fullOrSimple) {
+	public static String getSimpleHttpMethod(ProgramElementDoc programElementDoc) {
+		HttpMethodHandler httpMethodHandler = getHttpMethodHandler(programElementDoc);
+		
+		if (httpMethodHandler != null) {
+			return httpMethodHandler.getSimpleName();
+		}
+		return null;
+	}
+	
+	/**
+	 * This method gets the full http method of a programElementDoc
+	 */
+	public static String getFullHttpMethod(ProgramElementDoc programElementDoc) {
+		HttpMethodHandler httpMethodHandler = getHttpMethodHandler(programElementDoc);
+		
+		if (httpMethodHandler != null) {
+			return httpMethodHandler.getFullName();
+		}
+		return null;
+	}
+	
+	/**
+	 * This method gets the right handler for the programElementDoc
+	 */
+	private static HttpMethodHandler getHttpMethodHandler(ProgramElementDoc programElementDoc) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
 		
-		for (HttpMethodHandler httpMethod : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(httpMethod.getName(true))) {
-				return httpMethod.getName(fullOrSimple);
+		for (HttpMethodHandler httpMethodHandler : HttpMethodHandler.values()) {
+			if (annotationHelper.isAnnotatedBy(httpMethodHandler.getFullName())) {
+				return httpMethodHandler;
 			}
 		}
 		return null;
 	}
 	
+	/**
+	 * This method checks if a programElementDoc has a HTTP-method-annotation (javax.ws.rs.GET/POST/PUT/DELETE)
+	 */
+	public static boolean isHttpMethod(ProgramElementDoc programElementDoc) {
+		return getFullHttpMethod(programElementDoc) != null;
+	}
+	
 	// NOT COMMON
+	/**
+	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
+	 */
+	public static boolean hasApplicationPathAnnotation(ProgramElementDoc programElementDoc) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		return annotationHelper.isAnnotatedBy(ApplicationPath.class.getName());
+	}
+	
+	/**
+	 * This method checks if a programElementDoc has the javax.ws.rs.Path annotation
+	 */
+	public static boolean hasPathAnnotation(ProgramElementDoc programElementDoc) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		return annotationHelper.isAnnotatedBy(Path.class.getName());
+	}
+	
 	/**
 	 * This method returns the parentResourceClassDoc of any (sub..)ResourceClassDoc
 	 */
@@ -137,7 +179,7 @@ public class ParserHelper {
 			// iterate through parent methods and get the method which returns the subResource
 			Arrays.asList(parent.methods()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
-				.filter(m -> !hasHttpMethod(m) && m.returnType().equals(classDoc))
+				.filter(m -> !isHttpMethod(m) && m.returnType().equals(classDoc))
 				.map(m -> getAnnotationValue(m, Path.class.getName(), Consts.VALUE))
 				.filter(Objects::nonNull)
 				.map(ParserHelper::getAnnotationValueObject)
@@ -153,30 +195,5 @@ public class ParserHelper {
 			String value = "/" + (String) getAnnotationValueObject(aValue);
 			return replaceSlashes(value);
 		}
-	}
-	
-	/**
-	 * This method adds a classDoc to the definitionClassDoc list in the Parser
-	 */
-	public static void addToDefinitionList(ClassDoc classDoc) {
-		if (classDoc != null && !Parser.definitionClassDocs.contains(classDoc)) {
-			Parser.definitionClassDocs.add(classDoc);
-		}
-	}
-	
-	/**
-	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
-	 */
-	public static boolean hasApplicationPathAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.isAnnotatedBy(ApplicationPath.class.getName());
-	}
-	
-	/**
-	 * This method checks if a programElementDoc has the javax.ws.rs.Path annotation
-	 */
-	public static boolean hasPathAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.isAnnotatedBy(Path.class.getName());
 	}
 }

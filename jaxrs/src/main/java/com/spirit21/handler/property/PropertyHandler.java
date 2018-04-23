@@ -23,7 +23,7 @@ public enum PropertyHandler {
 		@Override
 		public Property createProperty(String[] typeAndFormat, Type type) {
 			RefProperty property = new RefProperty(type.simpleTypeName());
-			ParserHelper.addToDefinitionList(Parser.classDocCache.findByType(type));
+			ParserHelper.addToDefinitionList(Parser.definitionClassDocs, Parser.classDocCache.findByType(type));
 			return property;
 		}
 	},

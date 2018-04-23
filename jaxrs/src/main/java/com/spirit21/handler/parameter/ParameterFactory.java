@@ -25,7 +25,10 @@ public class ParameterFactory {
 		handlers.add(new QueryParameterHandler(QueryParam.class.getName()));
 		bph = new BodyParameterHandler();
 	}
-
+	
+	/**
+	 * This method gets creates the swagger parameter model out of the doclet parameter
+	 */
 	public Parameter getParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
 		Parameter param = null;
 

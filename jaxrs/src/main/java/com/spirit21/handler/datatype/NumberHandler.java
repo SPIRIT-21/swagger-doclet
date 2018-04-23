@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import com.spirit21.Consts;
 
 /**
- * This handler handles all types of number...
+ * This handler handles the most common types of numbers
  */
 public class NumberHandler implements TypeHandler {
 	

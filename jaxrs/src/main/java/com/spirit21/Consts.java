@@ -7,8 +7,6 @@ public class Consts {
 	// Regex constants
 	public static final String SLASHES = "[/]{2,}";
 	public static final String SLASHES_REPLACE = "/";
-	public static final String QUOTATION_MARK = "\"";
-	public static final String EMPTY_STRING = "";
 	// ApiParser constants
 	public static final String API_TITLE = "@apiTitle";
 	public static final String API_DESCRIPTION = "@apiDescription";

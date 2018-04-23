@@ -1,7 +1,7 @@
 package com.spirit21.handler.datatype;
 
 /**
- *  This handler handles booleans...
+ *  This handler handles booleans
  */
 public class BooleanHandler implements TypeHandler {
 	

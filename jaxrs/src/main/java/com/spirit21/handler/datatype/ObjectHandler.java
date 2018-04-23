@@ -1,7 +1,7 @@
 package com.spirit21.handler.datatype;
 
 /** 
- * This handler handles all types of Objects...
+ * This handler handles the type object
  */
 public class ObjectHandler implements TypeHandler {
 	

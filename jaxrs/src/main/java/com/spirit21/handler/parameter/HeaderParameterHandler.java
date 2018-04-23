@@ -14,7 +14,7 @@ public class HeaderParameterHandler extends AbstractParameterHandler<HeaderParam
 	}
 	
 	/** 
-	 * This method creates a new Header sets the data and returns it
+	 * This method creates a new header parameter sets the data and returns it
 	 */
 	@Override
 	public HeaderParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {

@@ -1,12 +1,12 @@
 package com.spirit21.handler.datatype;
 
 /** 
- * This handler handles all types of Strings/Character...
+ * This handler handles strings
  */
 public class StringHandler implements TypeHandler {
 	
 	/**
-	 * This method creates the correct typeAndFormat Array and returns it
+	 * This method creates the correct typeAndFormat array and returns it
 	 */
 	@Override
 	public String[] getTypeAndFormat(String type) {

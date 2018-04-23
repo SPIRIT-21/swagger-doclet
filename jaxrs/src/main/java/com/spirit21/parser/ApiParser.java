@@ -33,7 +33,7 @@ public class ApiParser {
 	}
 	
 	/**
-	 * This method helps the method 'setBasicInformation'
+	 * This method helps the method setBasicInformation to get the relevant information
 	 */
 	private void setInformation(Swagger swagger, Info info, Tag tag) {
 		if (tag.name().equals(Consts.FILE_NAME)) {

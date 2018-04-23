@@ -21,7 +21,7 @@ public class DataTypeFactory {
 	}
 	
 	/**
-	 * Tries all handlers on a given typeName and returns a typeAndFormat array
+	 * Tries all handlers on a given type name and returns a typeAndFormat array
 	 */
 	public String[] getDataType(String typeName) {
 		String[] typeAndFormat = null;

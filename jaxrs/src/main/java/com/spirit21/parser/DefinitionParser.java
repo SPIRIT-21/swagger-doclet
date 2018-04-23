@@ -14,7 +14,7 @@ import io.swagger.models.properties.Property;
 public class DefinitionParser {
 
 	/**
-	 * This method creates the definitions Map and the models 
+	 * This method creates the definitions map and the models 
 	 * After that it sets it to the swagger object
 	 */
 	protected void setDefinitions(Swagger swagger) {

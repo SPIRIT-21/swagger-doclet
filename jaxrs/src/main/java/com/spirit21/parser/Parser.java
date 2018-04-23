@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.spirit21.Consts;
@@ -31,6 +32,7 @@ public class Parser {
 	public static Map<ClassDoc, ClassDoc> resourceClassDocs;
 	public static ClassDocCache classDocCache;
 	protected static ClassDoc entryPointClassDoc;
+	protected static Pattern pattern;
 
 	private ApiParser apiParser;
 	private TagParser tagParser;
@@ -39,12 +41,13 @@ public class Parser {
 
 	private Swagger swagger;
 	private String outputType;
-
+	
 	/**
 	 * Initialize
 	 */
 	public Parser(RootDoc rootDoc, String outputType) {
 		this.rootDoc = rootDoc;
+		this.outputType = outputType;
 
 		definitionClassDocs = new ArrayList<>();
 		classDocCache = new ClassDocCache(Arrays.asList(rootDoc.classes()));
@@ -55,7 +58,8 @@ public class Parser {
 		definitionParser = new DefinitionParser();
 
 		swagger = new Swagger();
-		this.outputType = outputType;
+		
+		pattern = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
 	}
 
 	/**
@@ -77,12 +81,12 @@ public class Parser {
 		} catch (ApiParserException e) {
 			throw new ApiParserException("Error while parsing or searching API entry point!", e);
 		} catch (IOException e) {
-			throw new IOException("Error while creating or writing .json swagger file!", e);
+			throw new IOException("Error while creating or writing swagger file!", e);
 		}
 	}
 
 	/**
-	 * This method gets the ClassDoc of the entry point of the JAX-RS REST API and
+	 * This method gets the classDoc of the entry point of the JAX-RS REST API and
 	 * throws possibly an exception
 	 */
 	private ClassDoc getEntryPointClassDoc() throws ApiParserException {
@@ -117,12 +121,11 @@ public class Parser {
 	}
 
 	/**
-	 * This method gets all subResources and its subSubResources... (because of
-	 * recursion)
+	 * This method gets all subResources and its subSubResources...
 	 */
 	private void getSubs(LinkedHashMap<ClassDoc, ClassDoc> tempMap, ClassDoc classDoc) {
 		Arrays.asList(classDoc.methods()).stream()
-			.filter(methodDoc -> !ParserHelper.hasHttpMethod(methodDoc))
+			.filter(methodDoc -> !ParserHelper.isHttpMethod(methodDoc))
 			.filter(ParserHelper::hasPathAnnotation)
 			.map(methodDoc -> classDocCache.findByType(methodDoc.returnType()))
 			.filter(Objects::nonNull)
@@ -133,7 +136,7 @@ public class Parser {
 	}
 
 	/**
-	 * This method creates a new .json file and possibly throws an exception if
+	 * This method creates a new file and possibly throws an exception if
 	 * something failed
 	 */
 	private File createFile(String fileName) throws IOException {
@@ -151,7 +154,7 @@ public class Parser {
 	}
 
 	/**
-	 * This method writes in a file (json or yaml) and possibly throws and exception
+	 * This method writes in a file (json or yaml) and possibly throws an exception
 	 * if something failed
 	 */
 	private void writeFile(String fileName) throws IOException {

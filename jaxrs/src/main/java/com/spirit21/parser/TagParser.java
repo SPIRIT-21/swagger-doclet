@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
@@ -16,12 +15,6 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 
 public class TagParser {
-	
-	private Pattern pattern;
-	
-	protected TagParser() {
-		pattern = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
-	}
 	
 	/**
 	 * This method sets all tags into the swagger object
@@ -44,7 +37,7 @@ public class TagParser {
 	 * This method creates the tag with the annotation value 
 	 */
 	private Tag createTag(String annotationValue) {
-		Matcher matcher = pattern.matcher(annotationValue);
+		Matcher matcher = Parser.pattern.matcher(annotationValue);
 		if (matcher.matches()) {
 			String group = matcher.group(1);
 			Tag tag = new Tag();

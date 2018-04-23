@@ -14,7 +14,7 @@ public class FormParameterHandler extends AbstractParameterHandler<FormParameter
 	}
 	
 	/** 
-	 * This method creates a new FormParameter sets the data and returns it
+	 * This method creates a new form parameter sets the data and returns it
 	 */
 	@Override
 	public FormParameter createNewParameter(Parameter parameter, MethodDoc methodDoc) {
