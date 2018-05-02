@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.spirit21.common.Consts;
 import com.spirit21.common.helper.ClassDocCache;
-import com.spirit21.common.helper.ParserHelper;
+import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.Type;
@@ -26,7 +26,7 @@ public enum PropertyHandler {
 		public Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
 				List<ClassDoc> definitions) {
 			RefProperty property = new RefProperty(type.simpleTypeName());
-			ParserHelper.addToDefinitionList(definitions, cache.findByType(type));
+			CommonHelper.addToDefinitionList(definitions, cache.findByType(type));
 			return property;
 		}
 	},

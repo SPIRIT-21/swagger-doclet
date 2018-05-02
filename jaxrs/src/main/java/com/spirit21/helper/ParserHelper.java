@@ -8,6 +8,7 @@ import javax.ws.rs.Path;
 
 import com.spirit21.common.Consts;
 import com.spirit21.common.helper.AnnotationHelper;
+import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.handler.annotation.HttpMethodHandler;
 import com.spirit21.parser.Parser;
 import com.sun.javadoc.AnnotationValue;
@@ -15,7 +16,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
-public class ParserHelper extends com.spirit21.common.helper.ParserHelper {
+public class ParserHelper extends CommonHelper {
 
 	/**
 	 * This method checks if a resource has any methods with HTTP-annotations
@@ -74,7 +75,6 @@ public class ParserHelper extends com.spirit21.common.helper.ParserHelper {
 		return getFullHttpMethod(programElementDoc) != null;
 	}
 	
-	// NOT COMMON
 	/**
 	 * This method checks if a programElementDoc (classDoc, methodDoc) has a javax.ws.rs.ApplicationPath annotation
 	 */

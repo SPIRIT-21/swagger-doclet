@@ -5,7 +5,7 @@ import java.util.List;
 import com.spirit21.common.Consts;
 import com.spirit21.common.handler.datatype.DataTypeFactory;
 import com.spirit21.common.helper.ClassDocCache;
-import com.spirit21.common.helper.ParserHelper;
+import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Type;
 
@@ -30,7 +30,7 @@ public class PropertyFactory {
 		} else {
 			String[] temp = new String[2];
 			temp[0] = Consts.REF;
-			ParserHelper.addToDefinitionList(definitions, type.asClassDoc());
+			CommonHelper.addToDefinitionList(definitions, type.asClassDoc());
 			return createProperty(type, definitions, cache);
 		}
 	}

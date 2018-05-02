@@ -9,19 +9,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spirit21.common.Consts;
 import com.spirit21.common.helper.AnnotationHelper;
+import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.handler.annotation.HttpMethodHandler;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
-public class ParserHelper extends com.spirit21.common.helper.ParserHelper {
+public class ParserHelper extends CommonHelper {
 
-	// EVENTUELL COMMON
+	/**
+	 * This method checks if a programElementDoc has a RequestMapping or and HttpMapping annotation
+	 */
 	public static boolean isHttpMethod(ProgramElementDoc programElementDoc) {
-		return hasRequestMappingAnnotation(programElementDoc) || getHttpMappingAnnotation(programElementDoc) != null;
+		return hasRequestMappingAnnotation(programElementDoc) 
+				|| getHttpMappingAnnotation(programElementDoc) != null;
 	}
 	
+	/**
+	 * This method gets the path of a method
+	 */
 	public static String[] getPath(String controllerMapping, MethodDoc methodDoc) {
 		AnnotationValue[] methodValues = getMappingValue(methodDoc);
 		
