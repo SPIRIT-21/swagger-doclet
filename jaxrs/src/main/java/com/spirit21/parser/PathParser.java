@@ -66,7 +66,7 @@ public class PathParser {
 		Path path = new Path();
 		
 		path.setParameters(new ArrayList<>(getPathParameters(classDoc)));
-		createOperation(swagger, path, classDoc);
+		createOperation(path, classDoc);
 		
 		tempPaths.put(ParserHelper.getPath(classDoc), path);
 	}
@@ -121,12 +121,12 @@ public class PathParser {
 	 * This method creates the operations to our path
 	 */
 	// TODO: Methods with HTTP AND Path annotation
-	private void createOperation(Swagger swagger, Path path, ClassDoc classDoc) {
+	private void createOperation(Path path, ClassDoc classDoc) {
 		Arrays.asList(classDoc.methods()).stream()
 			.filter(ParserHelper::isHttpMethod)
 			.filter(methodDoc -> !ParserHelper.hasPathAnnotation(methodDoc))
 			.forEach(methodDoc -> {
-				Operation operation = operationParser.createOperation(swagger, classDoc, methodDoc);
+				Operation operation = operationParser.createOperation(classDoc, methodDoc);
 				setOperationToPath(path, operation, methodDoc);
 			});
 	}

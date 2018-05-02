@@ -2,9 +2,11 @@ package com.spirit21.handler.parameter;
 
 import javax.ws.rs.DefaultValue;
 
-import com.spirit21.Consts;
-import com.spirit21.handler.property.PropertyFactory;
+import com.spirit21.common.Consts;
+import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.property.PropertyFactory;
 import com.spirit21.helper.ParserHelper;
+import com.spirit21.parser.Parser;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
@@ -32,7 +34,7 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 		asp.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 
 		// set property
-		asp.setProperty(PropertyFactory.createProperty(parameter.type()));
+		asp.setProperty(PropertyFactory.createProperty(parameter.type(), Parser.definitionClassDocs, Parser.classDocCache));
 	}
 	
 	/** 

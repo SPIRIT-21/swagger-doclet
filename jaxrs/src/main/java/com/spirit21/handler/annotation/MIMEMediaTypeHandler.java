@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-import com.spirit21.Consts;
+import com.spirit21.common.Consts;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;

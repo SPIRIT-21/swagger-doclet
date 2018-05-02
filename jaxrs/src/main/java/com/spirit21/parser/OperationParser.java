@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
-import com.spirit21.Consts;
-import com.spirit21.exception.OperationParserException;
+import com.spirit21.common.Consts;
+import com.spirit21.common.exception.OperationParserException;
+import com.spirit21.common.handler.javadoc.ResponseTagHandler;
 import com.spirit21.handler.annotation.MIMEMediaTypeHandler;
-import com.spirit21.handler.javadoc.ResponseTagHandler;
 import com.spirit21.handler.parameter.ParameterFactory;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.AnnotationValue;
@@ -24,7 +24,6 @@ import com.sun.javadoc.Tag;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
-import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import lombok.extern.java.Log;
@@ -44,20 +43,21 @@ public class OperationParser {
 	/**
 	 * This method creates an operation and calls other methods to set the operation properties
 	 */
-	protected Operation createOperation(Swagger swagger, ClassDoc classDoc, MethodDoc methodDoc) {
+	protected Operation createOperation(ClassDoc classDoc, MethodDoc methodDoc) {
 		Operation operation = new Operation();
 		
 		setOperationId(operation, methodDoc);
-		setTags(swagger, operation, classDoc);
+		setTags(operation, classDoc);
 		setMediaType(operation, methodDoc);
 		setDescription(operation, methodDoc);
 		
 		try {
 			setResponses(operation, methodDoc);
-			setParameters(operation, methodDoc);
 		} catch (OperationParserException e) {
 			log.log(Level.SEVERE, "Error while creating operation for a path!", e);
 		}
+		
+		setParameters(operation, methodDoc);
 		
 		return operation;
 	}
@@ -73,7 +73,7 @@ public class OperationParser {
 	/**
 	 * This method sets the tag(s) for the operation
 	 */
-	private void setTags(Swagger swagger, Operation operation, ClassDoc classDoc) {
+	private void setTags(Operation operation, ClassDoc classDoc) {
 		List<String> tags = new ArrayList<>();
 
 		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(classDoc);
@@ -139,7 +139,7 @@ public class OperationParser {
 	private void setResponseProperties(Tag tag, Response response) {
 		Arrays.asList(ResponseTagHandler.values()).stream()
 			.filter(rth -> rth.getName().equals(tag.name()))
-			.forEach(rth -> rth.setResponseData(response, tag));
+			.forEach(rth -> rth.setResponseData(response, tag, Parser.definitionClassDocs, Parser.classDocCache));
 	}
 
 	/**

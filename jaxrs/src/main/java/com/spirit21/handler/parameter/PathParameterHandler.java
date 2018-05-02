@@ -1,8 +1,10 @@
 package com.spirit21.handler.parameter;
 
-import com.spirit21.Consts;
-import com.spirit21.handler.property.PropertyFactory;
+import com.spirit21.common.Consts;
+import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.property.PropertyFactory;
 import com.spirit21.helper.ParserHelper;
+import com.spirit21.parser.Parser;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
@@ -40,7 +42,7 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 		pathParameter.setName(value);
 		
 		// set property
-		pathParameter.setProperty(PropertyFactory.createProperty(fieldDoc.type()));
+		pathParameter.setProperty(PropertyFactory.createProperty(fieldDoc.type(), Parser.definitionClassDocs, Parser.classDocCache));
 		
 		return pathParameter;
 	}
