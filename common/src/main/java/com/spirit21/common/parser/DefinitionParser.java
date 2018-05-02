@@ -1,6 +1,5 @@
 package com.spirit21.common.parser;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,7 @@ import java.util.Map;
 import com.spirit21.common.handler.property.PropertyFactory;
 import com.spirit21.common.helper.ClassDocCache;
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.FieldDoc;
 
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -39,11 +39,10 @@ public class DefinitionParser {
 	private Map<String, Property> getProperties(int index, List<ClassDoc> definitions, ClassDocCache cache) {
 		Map<String, Property> properties = new HashMap<>();
 
-		Arrays.asList(definitions.get(index).fields(false))
-			.forEach(fieldDoc -> {
-				Property property = PropertyFactory.createProperty(fieldDoc.type(), definitions, cache);
-				properties.put(fieldDoc.name(), property);
-			});
+		for (FieldDoc fieldDoc : definitions.get(index).fields(false)) {
+			Property property = PropertyFactory.createProperty(fieldDoc.type(), definitions, cache);
+			properties.put(fieldDoc.name(), property);
+		}
 		return properties;
 	}
 }

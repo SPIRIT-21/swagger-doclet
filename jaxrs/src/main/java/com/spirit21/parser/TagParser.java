@@ -17,7 +17,7 @@ import io.swagger.models.Tag;
 public class TagParser {
 	
 	/**
-	 * This method sets all tags into the swagger object
+	 * This method sets all tags into the swagger model
 	 */
 	protected void setTags(Swagger swagger) {
 		Set<Tag> tags = Parser.resourceClassDocs.entrySet().stream()

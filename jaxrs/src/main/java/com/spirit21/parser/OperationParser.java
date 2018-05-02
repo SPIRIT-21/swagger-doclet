@@ -43,11 +43,11 @@ public class OperationParser {
 	/**
 	 * This method creates an operation and calls other methods to set the operation properties
 	 */
-	protected Operation createOperation(ClassDoc classDoc, MethodDoc methodDoc) {
+	protected Operation createOperation(MethodDoc methodDoc) {
 		Operation operation = new Operation();
 		
 		setOperationId(operation, methodDoc);
-		setTags(operation, classDoc);
+		setTags(operation, methodDoc);
 		setMediaType(operation, methodDoc);
 		setDescription(operation, methodDoc);
 		
@@ -74,10 +74,10 @@ public class OperationParser {
 	/**
 	 * This method sets the tag(s) for the operation
 	 */
-	private void setTags(Operation operation, ClassDoc classDoc) {
+	private void setTags(Operation operation, MethodDoc methodDoc) {
 		List<String> tags = new ArrayList<>();
 
-		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(classDoc);
+		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(methodDoc.containingClass());
 		AnnotationValue aValue = ParserHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
 		String value = (String) ParserHelper.getAnnotationValueObject(aValue);
 		

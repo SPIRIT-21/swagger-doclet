@@ -44,5 +44,4 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	}
 	
 	protected abstract String getName();
-
 }
