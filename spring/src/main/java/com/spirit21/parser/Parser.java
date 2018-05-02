@@ -102,7 +102,7 @@ public class Parser {
 	}
 	
 	/**
-	 * This method finds all Controller ClassDoc's, saves them in a list and returns it
+	 * This method finds all controller classDocs, saves them in a list and returns it
 	 */
 	private List<ClassDoc> getControllerClassDocs() {
 		return Arrays.asList(rootDoc.classes()).stream()

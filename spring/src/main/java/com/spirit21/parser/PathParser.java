@@ -54,7 +54,7 @@ public class PathParser {
 	 * This method creates for every mapping path a path model for the swagger model
 	 */
 	protected void setPath(Swagger swagger) {
-		Parser.controllerClassDocs.forEach(this::seperateClassDocs);
+		Parser.controllerClassDocs.forEach(this::separateClassDocs);
 		createPath();
 		swagger.setPaths(paths);
 	}
@@ -62,9 +62,9 @@ public class PathParser {
 	
 	/**
 	 * This method separates every class doc to the path and a list of methods handling the
-	 * request for this path
+	 * requests for this path
 	 */
-	private void seperateClassDocs(ClassDoc classDoc) {
+	private void separateClassDocs(ClassDoc classDoc) {
 		for (MethodDoc methodDoc : classDoc.methods()) {
 			List<String> controllerMappings = getControllerMappings(classDoc);
 			
@@ -75,8 +75,8 @@ public class PathParser {
 					putInMapppingAndMethods(controllerMapping, methodDoc);
 				}
 				
-				String[] methodMappings = ParserHelper.getPath(controllerMapping, methodDoc);
-				Arrays.asList(methodMappings).forEach(methodMapping -> putInMapppingAndMethods(methodMapping, methodDoc));
+				List<String> methodMappings = ParserHelper.getPath(controllerMapping, methodDoc);
+				methodMappings.forEach(methodMapping -> putInMapppingAndMethods(methodMapping, methodDoc));
 			}
 		}
 	}
@@ -112,12 +112,12 @@ public class PathParser {
 	 * This method creates the operation object for our path
 	 */
 	private void createOperation(String pathName, List<MethodDoc> methodDocs, Path path) {
-		methodDocs.stream()
-			.filter(ParserHelper::isHttpMethod)
-			.forEach(methodDoc -> {
-				Map<String, Operation> operations = operationParser.createOperations(methodDoc, pathName);
-				operations.entrySet().forEach(e -> setOperationToPath(path, e.getValue(), e.getKey()));
-			});
+		for (MethodDoc methodDoc : methodDocs) {
+			Map<String, Operation> operations = operationParser.createOperations(methodDoc, pathName);
+			
+			operations.entrySet()
+				.forEach(entry -> setOperationToPath(path, entry.getValue(), entry.getKey()));
+		}
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class PathParser {
 	}
 	
 	/**
-	 * This method puts the mapping value and its method in the map
+	 * This method puts the mapping value and the methodDoc in the map
 	 */
 	private void putInMapppingAndMethods(String mappingValue, MethodDoc methodDoc) {
 		if (mappingAndMethods.containsKey(mappingValue)) {

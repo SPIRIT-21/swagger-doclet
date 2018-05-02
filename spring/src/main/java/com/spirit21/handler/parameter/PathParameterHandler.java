@@ -27,5 +27,4 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 	public String getName() {
 		return name;
 	}
-
 }

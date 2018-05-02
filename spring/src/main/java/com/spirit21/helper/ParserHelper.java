@@ -1,6 +1,8 @@
 package com.spirit21.helper;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
@@ -29,14 +31,14 @@ public class ParserHelper extends CommonHelper {
 	/**
 	 * This method gets the path of a method
 	 */
-	public static String[] getPath(String controllerMapping, MethodDoc methodDoc) {
+	public static List<String> getPath(String controllerMapping, MethodDoc methodDoc) {
 		AnnotationValue[] methodValues = getMappingValue(methodDoc);
 		
 		return Arrays.asList(methodValues).stream()
 				.map(aValue -> (String) getAnnotationValueObject(aValue))
 				.map(string -> controllerMapping + "/" + string)
 				.map(ParserHelper::replaceSlashes)
-				.toArray(String[]::new);
+				.collect(Collectors.toList());
 	}
 
 	/**

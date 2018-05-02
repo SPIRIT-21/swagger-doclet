@@ -42,11 +42,11 @@ public class OperationParser {
 	/**
 	 * This method creates a list of operations for one method
 	 */
-	protected Map<String, Operation> createOperations(MethodDoc methodDoc, String value) {
+	protected Map<String, Operation> createOperations(MethodDoc methodDoc, String pathName) {
 		Map<String, Operation> operations = new HashMap<>();
 
 		for (String httpMethod : ParserHelper.getHttpMethods(methodDoc)) {
-			Operation operation = createOperation(methodDoc, value, httpMethod);
+			Operation operation = createOperation(methodDoc, pathName, httpMethod);
 			operations.put(httpMethod, operation);
 		}
 		return operations;
@@ -56,11 +56,11 @@ public class OperationParser {
 	 * This method creates an operation and calls other methods to set the operation
 	 * properties
 	 */
-	private Operation createOperation(MethodDoc methodDoc, String value, String httpMethod) {
+	private Operation createOperation(MethodDoc methodDoc, String pathName, String httpMethod) {
 		Operation operation = new Operation();
 
-		operation.setOperationId(httpMethod + value);
-		setTags(operation, value);
+		operation.setOperationId(httpMethod + pathName);
+		setTags(operation, pathName);
 		setMediaType(operation, methodDoc);
 		setDescription(operation, methodDoc);
 

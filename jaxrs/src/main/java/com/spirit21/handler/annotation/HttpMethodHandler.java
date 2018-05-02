@@ -11,7 +11,7 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 
 /**
- *  This enum saves all http methods and sets the operation to path
+ * This enum saves all http methods and sets the operation to path
  */
 public enum HttpMethodHandler {
 	

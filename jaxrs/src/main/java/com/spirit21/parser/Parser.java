@@ -107,7 +107,7 @@ public class Parser {
 	/**
 	 * This method puts all resources in a map and afterwards all subResources 
 	 * NOTE: Can't do it like: collect(Collectors.toMap(c -> c, null)) because it throws a
-	 * NullPointerException if the value is null 
+	 * 		 NullPointerException if the value is null 
 	 * NOTE: Create temporary hashMap because during iteration you cannot put something in the map
 	 */
 	private Map<ClassDoc, ClassDoc> getResources() {
