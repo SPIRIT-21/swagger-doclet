@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
-import com.spirit21.Consts;
+import com.spirit21.common.Consts;
 import com.spirit21.helper.ParserHelper;
 
 import io.swagger.models.Swagger;

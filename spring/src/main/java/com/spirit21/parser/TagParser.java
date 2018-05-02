@@ -1,42 +1,88 @@
 package com.spirit21.parser;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.MethodDoc;
 
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 
 public class TagParser {
 
+	/**
+	 * This method sets all tags into the swagger object
+	 */
 	protected void setTags(Swagger swagger) {
-		for (ClassDoc classDoc : Parser.controllerClassDocs) {
-			String annotationValue = ParserHelper.getPathOrValueOfAnnotation(classDoc, RequestMapping.class.getName());
-			if (annotationValue != null) {
-				Tag tag = new Tag();
-				tag.setName(annotationValue);
-				swagger.addTag(tag);
-			} else {
-				for (MethodDoc methodDoc : classDoc.methods()) {
-					String s = ParserHelper.getFullPath(methodDoc);
-					if (!doesTagExist(swagger, s)) {
-						Tag tag = new Tag();
-						tag.setName(s);
-						swagger.addTag(tag);
-					}
-				}
-			}
-		}
+		Set<Tag> tags = new HashSet<>();
+
+		List<ClassDoc> withRequestMapping = getControllerWithRequestMapping();
+		List<ClassDoc> withoutRequestMapping = new ArrayList<>(Parser.controllerClassDocs);
+		withoutRequestMapping.removeAll(withRequestMapping);
+		
+		handleWithRequestMapping(withRequestMapping, tags);
+		handleWithoutRequestMapping(withoutRequestMapping, tags);
+		
+		swagger.setTags(new ArrayList<>(tags));
+	}
+	
+	/**
+	 * This method gets all controller classDocs with a RequestMapping annotation
+	 */
+	private List<ClassDoc> getControllerWithRequestMapping() {
+		return Parser.controllerClassDocs.stream()
+				.filter(ParserHelper::hasRequestMappingAnnotation)
+				.collect(Collectors.toList());
 	}
 
-	private boolean doesTagExist(Swagger swagger, String tagName) {
-		for (Tag tag : swagger.getTags()) {
-			if (tag.getName().equals(tagName)) {
-				return true;
-			}
+	/**
+	 * Handle classDocs with the RequestMapping annotation
+	 * It gets the mapping value and creates a tag with it
+	 */
+	private void handleWithRequestMapping(List<ClassDoc> withRequestMapping, Set<Tag> tags) {
+		withRequestMapping.stream()
+			.map(ParserHelper::getMappingValue)
+			.flatMap(Arrays::stream)
+			.map(aValue -> (String) aValue.value())
+			.map(this::createTag)
+			.filter(Objects::nonNull)
+			.forEach(tags::add);
+	}
+	
+	/**
+	 * Handle classDocs without the RequestMapping annotation
+	 * It iterates over the methods and creates with their mapping value the tag
+	 */
+	private void handleWithoutRequestMapping(List<ClassDoc> withoutRequestMapping, Set<Tag> tags) {
+		withoutRequestMapping.stream()
+			.map(ClassDoc::methods)
+			.flatMap(Arrays::stream)
+			.map(ParserHelper::getMappingValue)
+			.flatMap(Arrays::stream)
+			.map(aValue -> (String) aValue.value())
+			.map(this::createTag)
+			.filter(Objects::nonNull)
+			.forEach(tags::add);
+	}
+
+	/**
+	 * This method creates the tag with the annotation value
+	 */
+	private Tag createTag(String annotationValue) {
+		Matcher matcher = Parser.pattern.matcher(annotationValue);
+		if (matcher.matches()) {
+			String group = matcher.group(1);
+			Tag tag = new Tag();
+			tag.setName(group);
+			return tag;
 		}
-		return false;
+		return null;
 	}
 }

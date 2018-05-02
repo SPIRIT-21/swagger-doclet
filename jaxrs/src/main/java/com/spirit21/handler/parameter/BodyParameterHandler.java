@@ -1,6 +1,8 @@
 package com.spirit21.handler.parameter;
 
-import com.spirit21.handler.property.PropertyFactory;
+import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.property.PropertyFactory;
+import com.spirit21.parser.Parser;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
@@ -24,7 +26,7 @@ public class BodyParameterHandler implements ParameterAnnotationHandler {
 		bodyParameter.setDescription(ParameterAnnotationHandler.getDescriptionForParameters(methodDoc, parameter));
 		
 		// set schema
-		Property property = PropertyFactory.createProperty(parameter.type());
+		Property property = PropertyFactory.createProperty(parameter.type(), Parser.definitionClassDocs, Parser.classDocCache);
 		bodyParameter.setSchema(PropertyBuilder.toModel(property));
 		
 		return bodyParameter;

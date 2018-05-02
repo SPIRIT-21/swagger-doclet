@@ -3,7 +3,8 @@ package com.spirit21;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import com.spirit21.exception.ApiParserException;
+import com.spirit21.common.Consts;
+import com.spirit21.common.exception.ApiParserException;
 import com.spirit21.parser.Parser;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
@@ -42,6 +43,7 @@ public class Doclet {
 		for (String[] args : options) {
 			if (args[0].equals(option)) {
 				tagName = args[1];
+				break;
 			}
 		}
 		
@@ -75,7 +77,8 @@ public class Doclet {
 		}
 		
 		if (!outputType) {
-			log.info("There is no '-type x' parameter in commandline used. Please specify an outputType. For now is the json-format used.");
+			log.info("There is no '-type x' parameter in commandline used. "
+					+ "Please specify an outputType. For now is the json-format used.");
 		}
 		
 		return true;

@@ -1,86 +1,158 @@
 package com.spirit21.parser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.spirit21.common.Consts;
+import com.spirit21.common.exception.ApiParserException;
+import com.spirit21.common.helper.ClassDocCache;
+import com.spirit21.common.parser.ApiParser;
+import com.spirit21.common.parser.DefinitionParser;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;
 
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 
 public class Parser {
 
-	public static List<ClassDoc> controllerClassDocs;
-	public static List<ClassDoc> entityClassDocs;
-	protected static ClassDoc entryPointClassDoc;
-
 	private RootDoc rootDoc;
+
+	public static List<ClassDoc> controllerClassDocs;
+	
+	public static List<ClassDoc> definitionClassDocs;
+	public static ClassDocCache classDocCache;
+	protected static ClassDoc entryPointClassDoc;
+	protected static Pattern pattern;
+
 	private ApiParser apiParser;
 	private TagParser tagParser;
 	private PathParser pathParser;
 	private DefinitionParser definitionParser;
 
 	private Swagger swagger;
+	private String outputType;
 
-	public Parser(RootDoc rootDoc) {
+	/**
+	 * Inititalize
+	 */
+	public Parser(RootDoc rootDoc, String outputType) {
 		this.rootDoc = rootDoc;
-		swagger = new Swagger();
+		this.outputType = outputType;
+
+		definitionClassDocs = new ArrayList<>();
+		classDocCache = new ClassDocCache(Arrays.asList(rootDoc.classes()));
+
 		apiParser = new ApiParser();
 		tagParser = new TagParser();
 		pathParser = new PathParser();
 		definitionParser = new DefinitionParser();
-		entityClassDocs = new ArrayList<>();
+
+		swagger = new Swagger();
+		pattern = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
 	}
 
-	public boolean run() {
+	/**
+	 * This method runs all parser and generates finally a swagger file
+	 */
+	public boolean run() throws ApiParserException, IOException {
 		try {
 			entryPointClassDoc = getEntryPointClassDoc();
 			controllerClassDocs = getControllerClassDocs();
-
-			apiParser.setBasicInformation(swagger);
+			
+			apiParser.setBasicInformation(swagger, entryPointClassDoc);
 			tagParser.setTags(swagger);
 			pathParser.setPath(swagger);
-
-			// definitionParser
+			definitionParser.setDefinitions(swagger, definitionClassDocs, classDocCache);
+			
+			writeFile(apiParser.getFileName());
+			
 			return true;
-		} catch (Exception e) {
-			return false;
+		} catch (ApiParserException e) {
+			throw new ApiParserException("Error while parsing or searching the API entry point!", e);
+		} catch (IOException e) {
+			throw new IOException("Error while creating or writing the swagger file!", e);
 		}
 	}
 
-	private ClassDoc getEntryPointClassDoc() {
-		List<ClassDoc> tempList = new ArrayList<>();
-		for (ClassDoc classDoc : rootDoc.classes()) {
-			if (ParserHelper.hasAnnotation(classDoc, SpringBootApplication.class.getName())) {
-				tempList.add(classDoc);
-			}
-		}
+	/**
+	 * This method gets the classDoc of the entry point of the Spring Boot REST API
+	 * and throws possibly an exception if something failed.
+	 */
+	private ClassDoc getEntryPointClassDoc() throws ApiParserException {
+		List<ClassDoc> tempList = Arrays.asList(rootDoc.classes()).stream()
+				.filter(ParserHelper::hasSpringBootApplicationAnnotation)
+				.collect(Collectors.toList());
+
 		if (tempList.size() == 1) {
 			return tempList.get(0);
 		} else if (tempList.size() > 1) {
-			// EXCEPTION
-			return null;
+			throw new ApiParserException("Mutliple API entry points found! Only one entry point is allowed.");
 		} else {
-			// EXCEPTION
-			return null;
+			throw new ApiParserException("Your API does not have any entry point!");
 		}
 	}
-
+	
+	/**
+	 * This method finds all Controller ClassDoc's, saves them in a list and returns it
+	 */
 	private List<ClassDoc> getControllerClassDocs() {
-		List<ClassDoc> tempList = new ArrayList<>();
-		for (ClassDoc classDoc : rootDoc.classes()) {
-			if (ParserHelper.hasAnnotation(classDoc, RestController.class.getName())
-					|| (ParserHelper.hasAnnotation(classDoc, Controller.class.getName())
-							&& ParserHelper.hasAnnotation(classDoc, ResponseBody.class.getName()))) {
-				tempList.add(classDoc);
-			}
+		return Arrays.asList(rootDoc.classes()).stream()
+				.filter(ParserHelper::hasControllerAnnotation)
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * This method creates a new file and possibly throws an exception if 
+	 * something failed
+	 */
+	private File createFile(String fileName) throws IOException {
+		if (fileName.isEmpty()) {
+			fileName = Consts.STANDARD_FILE_NAME;
 		}
-		return tempList;
+		
+		File file = new File(fileName + "." + outputType);
+		
+		if (file.createNewFile()) {
+			return file;
+		} else {
+			throw new IOException("Could not create swagger file!");
+		}
+	}
+	
+	/**
+	 * This method writes in a file (json or yaml) and possibly throws an exception
+	 * if something failed
+	 */
+	private void writeFile(String fileName) throws IOException {
+		String output;
+		
+		switch (outputType) {
+		case "json":
+			output = Json.pretty(swagger);
+			break;
+		case "yaml":
+			output = Yaml.pretty().writeValueAsString(swagger);
+			break;
+		default:
+			outputType = "json";
+			output = Json.pretty(swagger);
+		}
+		
+		File file = createFile(fileName);
+		
+		try (FileWriter fw = new FileWriter(file)) {
+			fw.write(output);
+		} catch (IOException e) {
+			throw new IOException("Could not write in the swagger file!", e);
+		}
 	}
 }

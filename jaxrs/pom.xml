@@ -15,5 +15,9 @@
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.spirit21.swagger</groupId>
+			<artifactId>swagger-doclet-common</artifactId>
+		</dependency>
 	</dependencies>
 </project>

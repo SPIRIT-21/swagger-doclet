@@ -13,9 +13,11 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.spirit21.Consts;
-import com.spirit21.exception.ApiParserException;
-import com.spirit21.helper.ClassDocCache;
+import com.spirit21.common.Consts;
+import com.spirit21.common.exception.ApiParserException;
+import com.spirit21.common.helper.ClassDocCache;
+import com.spirit21.common.parser.ApiParser;
+import com.spirit21.common.parser.DefinitionParser;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;
@@ -58,7 +60,6 @@ public class Parser {
 		definitionParser = new DefinitionParser();
 
 		swagger = new Swagger();
-		
 		pattern = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
 	}
 
@@ -70,10 +71,10 @@ public class Parser {
 			entryPointClassDoc = getEntryPointClassDoc();
 			resourceClassDocs = getResources();
 
-			apiParser.setBasicInformation(swagger);
+			apiParser.setBasicInformation(swagger, entryPointClassDoc);
 			tagParser.setTags(swagger);
 			pathParser.setPath(swagger);
-			definitionParser.setDefinitions(swagger);
+			definitionParser.setDefinitions(swagger, definitionClassDocs, classDocCache);
 
 			writeFile(apiParser.getFileName());
 

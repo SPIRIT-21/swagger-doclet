@@ -8,6 +8,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
+import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
 import com.spirit21.helper.ParserHelper;
 import com.sun.javadoc.MethodDoc;
 
