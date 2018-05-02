@@ -8,7 +8,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ProgramElementDoc;
 
-public class ParserHelper {
+public class CommonHelper {
 	
 	/**
 	 * This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation

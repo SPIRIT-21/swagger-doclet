@@ -53,7 +53,7 @@ public class PathParser {
 		
 		Parser.resourceClassDocs.entrySet().stream()
 			.filter(entry -> ParserHelper.isResource(entry.getKey()))
-			.forEach(entry -> createPath(swagger, entry.getKey(), tempPaths));
+			.forEach(entry -> createPath(entry.getKey(), tempPaths));
 		
 		return tempPaths;
 	}
@@ -62,7 +62,7 @@ public class PathParser {
 	 * This method creates a path for a single resource, sets its path parameters, creates the operations
 	 * and put it in the map
 	 */
-	private void createPath(Swagger swagger, ClassDoc classDoc, Map<String, Path> tempPaths) {
+	private void createPath(ClassDoc classDoc, Map<String, Path> tempPaths) {
 		Path path = new Path();
 		
 		path.setParameters(new ArrayList<>(getPathParameters(classDoc)));

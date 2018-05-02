@@ -58,6 +58,7 @@ public class OperationParser {
 		}
 		
 		setParameters(operation, methodDoc);
+		setDeprecated(methodDoc, operation);
 		
 		return operation;
 	}
@@ -169,6 +170,17 @@ public class OperationParser {
 			parameters.removeAll(bodyParameters);
 			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
 						+ "' has more than one bodyParameter. Only one is allowed.");
+		}
+	}
+	
+	/**
+	 * This method sets the operation to value, if the method or the class is annotated
+	 * with the Deprecated annotation
+	 */
+	private void setDeprecated(MethodDoc methodDoc, Operation operation) {
+		if (ParserHelper.hasAnnotation(methodDoc.containingClass(), Deprecated.class.getName()) 
+				|| ParserHelper.hasAnnotation(methodDoc, Deprecated.class.getName())) {
+			operation.setDeprecated(true);
 		}
 	}
 }

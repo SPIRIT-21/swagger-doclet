@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.spirit21.common.Consts;
 import com.spirit21.common.helper.ClassDocCache;
-import com.spirit21.common.helper.ParserHelper;
+import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 
@@ -48,7 +48,7 @@ public enum ResponseTagHandler {
 			ref.set$ref(simpleName);
 			response.setSchema(ref);
 			
-			ParserHelper.addToDefinitionList(definitions, cache.findBySimpleName(simpleName));
+			CommonHelper.addToDefinitionList(definitions, cache.findBySimpleName(simpleName));
 		}
 	},
 	/**
