@@ -8,8 +8,8 @@ import com.spirit21.common.handler.javadoc.ApiTagHandler;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 
-import io.swagger.models.Info;
-import io.swagger.models.Swagger;
+import v2.io.swagger.models.Info;
+import v2.io.swagger.models.Swagger;
 
 public class ApiParser {
 
@@ -39,7 +39,12 @@ public class ApiParser {
 	 */
 	private void setInformation(Swagger swagger, Info info, Tag tag) {
 		if (tag.name().equals(Consts.FILE_NAME)) {
-			fileName = tag.text();
+			
+			if (tag.text() != null && !tag.text().isEmpty()) {
+				fileName = tag.text();
+			} else {
+				fileName = Consts.STANDARD_FILE_NAME;
+			}
 			return;
 		}
 		

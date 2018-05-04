@@ -10,9 +10,9 @@ import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 
-import io.swagger.models.Response;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.RefProperty;
+import v2.io.swagger.models.Response;
+import v2.io.swagger.models.properties.ArrayProperty;
+import v2.io.swagger.models.properties.RefProperty;
 
 /**
  * This enum saves the response tags of the javadoc comment of the http methods
