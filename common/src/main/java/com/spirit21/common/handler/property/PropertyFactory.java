@@ -9,8 +9,8 @@ import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Type;
 
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.PropertyBuilder;
+import v2.io.swagger.models.properties.Property;
+import v2.io.swagger.models.properties.PropertyBuilder;
 
 public class PropertyFactory {
 	

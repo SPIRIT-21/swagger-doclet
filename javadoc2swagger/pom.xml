@@ -2,23 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>javadoc-springboot-swagger-doclet</artifactId>
-
+	<artifactId>javadoc2swagger</artifactId>
 	<parent>
 		<groupId>com.spirit21.swagger</groupId>
 		<artifactId>swagger-doclet-parent</artifactId>
 		<version>0.2</version>
 	</parent>
 
+
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.spirit21.swagger</groupId>
 			<artifactId>swagger-doclet-common</artifactId>
@@ -27,15 +19,13 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-		
-		<!-- Needed because of dependencies -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>com.spirit21.swagger</groupId>
+			<artifactId>javadoc-springboot-swagger-doclet</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
+			<groupId>com.spirit21.swagger</groupId>
+			<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
 		</dependency>
 	</dependencies>
 </project>

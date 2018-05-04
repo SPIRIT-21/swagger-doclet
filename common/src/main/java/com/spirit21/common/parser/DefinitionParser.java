@@ -9,10 +9,10 @@ import com.spirit21.common.helper.ClassDocCache;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.FieldDoc;
 
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Swagger;
-import io.swagger.models.properties.Property;
+import v2.io.swagger.models.Model;
+import v2.io.swagger.models.ModelImpl;
+import v2.io.swagger.models.Swagger;
+import v2.io.swagger.models.properties.Property;
 
 public class DefinitionParser {
 

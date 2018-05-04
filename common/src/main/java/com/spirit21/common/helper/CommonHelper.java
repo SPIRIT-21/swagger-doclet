@@ -67,4 +67,26 @@ public class CommonHelper {
 	public static String replaceSlashes(String replace) {
 		return replace.replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
 	}
+	
+	/**
+	 * This method checks if the command line argument -type has a valid parameter
+	 */
+	public static String checkOutputType(String outputType) {
+		if (outputType.equals(Consts.JSON) || outputType.equals(Consts.YAML)) {
+			return outputType;
+		} else {
+			return Consts.JSON;
+		}
+	}
+	
+	/**
+	 * This method checks if the command line argument -version has a valid parameter
+	 */
+	public static String checkVersion(String version) {
+		if (version.equals(Consts.VERSION_2) || version.equals(Consts.VERSION_3)) {
+			return version;
+		} else {
+			return Consts.VERSION_3;
+		}
+	}
 }

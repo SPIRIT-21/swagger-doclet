@@ -9,6 +9,4 @@
 		<artifactId>swagger-doclet-parent</artifactId>
 		<version>0.2</version>
 	</parent>
-	
-	
 </project>

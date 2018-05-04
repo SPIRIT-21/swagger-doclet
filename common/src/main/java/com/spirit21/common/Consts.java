@@ -4,6 +4,8 @@ public class Consts {
 
 	// Commandline options
 	public static final String OUTPUT_TYPE = "-type";
+	public static final String VERSION = "-version";
+	public static final String BACKEND = "-backend";
 
 	// ApiParser constants
 	public static final String API_TITLE = "@apiTitle";
@@ -42,4 +44,16 @@ public class Consts {
 	// Regex constants
 	public static final String SLASHES = "[/]{2,}";
 	public static final String SLASHES_REPLACE = "/";
+	
+	// Output types
+	public static final String JSON = "json";
+	public static final String YAML = "yaml";
+	
+	// Swagger version
+	public static final String VERSION_2 = "2";
+	public static final String VERSION_3 = "3";
+	
+	// Backend types
+	public static final String SPRING = "spring";
+	public static final String JAXRS = "jaxrs";
 }

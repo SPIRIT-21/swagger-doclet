@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Tag;
 
-import io.swagger.models.parameters.Parameter;
+import v2.io.swagger.models.parameters.Parameter;
 
 public interface ParameterAnnotationHandler {
 

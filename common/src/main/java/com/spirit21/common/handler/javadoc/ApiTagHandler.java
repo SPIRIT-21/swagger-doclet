@@ -2,8 +2,8 @@ package com.spirit21.common.handler.javadoc;
 
 import com.spirit21.common.Consts;
 
-import io.swagger.models.Info;
-import io.swagger.models.Swagger;
+import v2.io.swagger.models.Info;
+import v2.io.swagger.models.Swagger;
 
 /**
  * This enum saves the values of the javadoc comment of the entry point of the REST API

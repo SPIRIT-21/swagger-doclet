@@ -10,11 +10,11 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.Type;
 
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
+import v2.io.swagger.models.properties.ArrayProperty;
+import v2.io.swagger.models.properties.MapProperty;
+import v2.io.swagger.models.properties.Property;
+import v2.io.swagger.models.properties.RefProperty;
+import v2.io.swagger.models.properties.StringProperty;
 
 /**
  * This enum handles all possible properties
@@ -61,7 +61,9 @@ public enum PropertyHandler {
 				List<ClassDoc> definitions) {
 			StringProperty property = new StringProperty();
 
-			Arrays.asList(type.asClassDoc().enumConstants()).stream().map(FieldDoc::name).forEach(property::_enum);
+			Arrays.asList(type.asClassDoc().enumConstants()).stream()
+				.map(FieldDoc::name)
+				.forEach(property::_enum);
 
 			return property;
 		}
