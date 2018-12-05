@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 
 	<name>swagger-doclet-parent</name>
-	<description>A application used to generate Swagger files of REST-API's</description>
+	<description>An application used to generate Swagger files out of REST-API's.</description>
 	<url>https://github.com/SPIRIT-21/swagger-doclet</url>
 
 	<distributionManagement>
@@ -63,7 +63,7 @@
 				<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
 				<version>0.2</version>
 			</dependency>
-			<!-- Needed because of swagger dependency -->
+			<!-- Needed because of the swagger dependency -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -74,12 +74,10 @@
 				<artifactId>jackson-dataformat-yaml</artifactId>
 				<version>2.9.5</version>
 			</dependency>
-			<!-- Lombok -->
 			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.16.20</version>
-				<scope>provided</scope>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.9.5</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -96,6 +94,13 @@
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser-v2-converter</artifactId>
 			<version>2.0.0-rc1</version>
+		</dependency>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.20</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

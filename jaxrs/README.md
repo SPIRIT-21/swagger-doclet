@@ -4,7 +4,7 @@ This JavaDoc Doclet is generating a Swagger API documentation of JAX-RS based RE
 ## Introduction
 The normal way of creating a Swagger documentation from Java source code would be <a href="https://github.com/swagger-api/swagger-core">Swagger Core</a> annotations. But there are some issues with them.
 
-First, Swagger annotations are compiled into the JAR / WAR of your server and consume disk space. Second, they don't look good. Third, there are redundant data if you are both documenting your code with Javadoc and using Swagger Annotations, so there is more work for developers to maintain them.
+First, Swagger annotations are compiled into the JAR / WAR of your server and consume disk space. Second, they don't look good. Third, there is redundant data if you are documenting your code with Javadoc and Swagger Annotations. so there is more work for developers to maintain them.
 
 With this doclet it is possible to place Swagger information in the Javadoc comments to generate a Swagger documentation.
 

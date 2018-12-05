@@ -1,17 +1,16 @@
 package com.spirit21.spring.handler.parameter;
 
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.parameter.AbstractParameterHandler;
+import com.spirit21.spring.Consts;
 import com.sun.javadoc.MethodDoc;
 
 import v2.io.swagger.models.parameters.Parameter;
 import v2.io.swagger.models.parameters.QueryParameter;
 
-public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> implements ParameterAnnotationHandler {
+public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> {
 	
-	private final String name;
-
 	public QueryParameterHandler(String name) {
-		this.name = name;
+		super(name, name, Consts.DEFAULT_VALUE);
 	}
 	
 	/** 
@@ -22,10 +21,5 @@ public class QueryParameterHandler extends AbstractParameterHandler<QueryParamet
 		QueryParameter queryParameter = new QueryParameter();
 		handleParameter(queryParameter, parameter, methodDoc);
 		return queryParameter;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 }

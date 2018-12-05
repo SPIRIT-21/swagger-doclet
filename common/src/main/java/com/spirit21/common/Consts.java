@@ -6,6 +6,7 @@ public class Consts {
 	public static final String OUTPUT_TYPE = "-type";
 	public static final String VERSION = "-version";
 	public static final String BACKEND = "-backend";
+	public static final String FILENAME = "-filename";
 
 	// ApiParser constants
 	public static final String API_TITLE = "@apiTitle";

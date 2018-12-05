@@ -1,7 +1,9 @@
 package com.spirit21.jaxrs.handler.parameter;
 
+import javax.ws.rs.DefaultValue;
+
 import com.spirit21.common.Consts;
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.parameter.AbstractParameterHandler;
 import com.spirit21.common.handler.property.PropertyFactory;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.jaxrs.parser.Parser;
@@ -12,14 +14,12 @@ import com.sun.javadoc.Parameter;
 
 import v2.io.swagger.models.parameters.PathParameter;
 
-public class PathParameterHandler extends AbstractParameterHandler<PathParameter> implements ParameterAnnotationHandler {
-
-	private final String name;
+public class PathParameterHandler extends AbstractParameterHandler<PathParameter> {
 
 	public PathParameterHandler(String name) {
-		this.name = name;
+		super(name, DefaultValue.class.getName(), Consts.VALUE);
 	}
-	
+
 	/** 
 	 * This method creates a new path parameter sets the data and returns it
 	 */
@@ -45,10 +45,5 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 		pathParameter.setProperty(PropertyFactory.createProperty(fieldDoc.type(), Parser.definitionClassDocs, Parser.classDocCache));
 		
 		return pathParameter;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
 	}
 }

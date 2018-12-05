@@ -18,10 +18,10 @@ public class ParameterFactory {
 	private List<ParameterAnnotationHandler> handlers;
 	
 	public ParameterFactory() {
-		handlers = new ArrayList<>();
-		handlers.add(new BodyParameterHandler(RequestBody.class.getName()));
-		handlers.add(new HeaderParameterHandler(RequestHeader.class.getName()));
-		handlers.add(new QueryParameterHandler(RequestParam.class.getName()));
+		this.handlers = new ArrayList<>();
+		this.handlers.add(new BodyParameterHandler(RequestBody.class.getName()));
+		this.handlers.add(new HeaderParameterHandler(RequestHeader.class.getName()));
+		this.handlers.add(new QueryParameterHandler(RequestParam.class.getName()));
 	}
 	
 	public Parameter getParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {

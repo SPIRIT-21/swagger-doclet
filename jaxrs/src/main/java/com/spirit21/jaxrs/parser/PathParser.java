@@ -38,11 +38,11 @@ public class PathParser {
 	 * Initialize
 	 */
 	protected PathParser() {
-		paths = new LinkedHashMap<>();
-		mappingAndMethods = new LinkedHashMap<>();
+		this.paths = new LinkedHashMap<>();
+		this.mappingAndMethods = new LinkedHashMap<>();
 		
-		operationParser = new OperationParser();
-		pathParameterHandler = new PathParameterHandler(PathParam.class.getName());
+		this.operationParser = new OperationParser();
+		this.pathParameterHandler = new PathParameterHandler(PathParam.class.getName());
 	}
 	
 	/**

@@ -20,11 +20,11 @@ public class ParameterFactory {
 	private List<ParameterAnnotationHandler> handlers;
 
 	public ParameterFactory() {
-		handlers = new ArrayList<>();
-		handlers.add(new FormParameterHandler(FormParam.class.getName()));
-		handlers.add(new HeaderParameterHandler(HeaderParam.class.getName()));
-		handlers.add(new QueryParameterHandler(QueryParam.class.getName()));
-		bph = new BodyParameterHandler();
+		this.handlers = new ArrayList<>();
+		this.handlers.add(new FormParameterHandler(FormParam.class.getName()));
+		this.handlers.add(new HeaderParameterHandler(HeaderParam.class.getName()));
+		this.handlers.add(new QueryParameterHandler(QueryParam.class.getName()));
+		this.bph = new BodyParameterHandler();
 	}
 	
 	/**
