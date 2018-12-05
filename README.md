@@ -52,7 +52,7 @@ These are all parameters and they can be set like it is shown in this example:
 		<th>Required</th>
 	</tr>
 	<tr>
-		<td>-backend</td>
+		<td>&#x2011;backend</td>
 		<td>This parameter determines whether it generates the Swagger file for a Spring Boot project or for a JAX-RS project. This parameter is required. When the parameter is invalid or is not set, this tool throws an exception.</td>
 		<td>
 			<ul>
@@ -88,7 +88,7 @@ These are all parameters and they can be set like it is shown in this example:
 		<td>No</td>
 	</tr>
 	<tr>
-		<td>-filename</td>
+		<td>&#x2011;filename</td>
 		<td>This parameter sets the name of the file which will be generated. If you do not use this parameter this program will use the name out your code at the starting point out of your application (see  <a href="#basic-api-information">below</a>). If there is not any file name given the default value will be used.</td>
 		<td>
 		Everything you want 		
