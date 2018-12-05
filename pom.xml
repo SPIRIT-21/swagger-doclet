@@ -4,7 +4,7 @@
 
 	<groupId>com.spirit21.swagger</groupId>
 	<artifactId>swagger-doclet-parent</artifactId>
-	<version>0.2</version>
+	<version>0.3</version>
 	<packaging>pom</packaging>
 
 	<name>swagger-doclet-parent</name>
@@ -51,17 +51,17 @@
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>swagger-doclet-common</artifactId>
-				<version>0.2</version>
+				<version>0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>javadoc-springboot-swagger-doclet</artifactId>
-				<version>0.2</version>
+				<version>0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
-				<version>0.2</version>
+				<version>0.3</version>
 			</dependency>
 			<!-- Needed because of the swagger dependency -->
 			<dependency>
