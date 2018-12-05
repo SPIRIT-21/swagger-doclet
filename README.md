@@ -1,3 +1,4 @@
+
 # Generate Swagger out of REST-API Backends
 
 ## Introduction
@@ -32,6 +33,7 @@ Include this plugin into the pom.xml of the project:
 				<additionalparam>-backend BACKEND_TYPE</additionalparam>
 			</configuration>
 		</plugin>
+		...
 	</plugins>
 </build>
 ```
@@ -85,12 +87,21 @@ These are all parameters and they can be set like it is shown in this example:
 		<td>json</td>
 		<td>No</td>
 	</tr>
+	<tr>
+		<td>-filename</td>
+		<td>This parameter sets the name of the file which will be generated. If you do not use this parameter this program will use the name out your code at the starting point out of your application (see  <a href="#basic-api-information">below</a>). If there is not any file name given the default value will be used.</td>
+		<td>
+		Everything you want 		
+		</td>
+		<td>the value out of your code or 'generated-swagger'</td>
+		<td>No</td>
+	</tr>
 </table>
 
 These parameters can be set like it is shown in this example:
 
 ```xml
-<additionalparam>-backend spring -type yaml -version 3</additionalparam>
+<additionalparam>-backend spring -type yaml -version 3 -filename openapi</additionalparam>
 ```
 
 #### Parameters between the configuration-tags
@@ -140,36 +151,14 @@ After this is done you can include the dependency as mentioned above and execute
 Without other dependencies you do not need any extra configuration. Just run `mvn javadoc:javadoc` on the project in the command line.
 
 ## How this Swagger Generation Tool works
-This tool generates a Swagger file by executing the above mentioned command. This tool looks for specific information which should look like:
+This tool generates a Swagger file by executing the above mentioned command. This tool looks for specific information. Where the information must be located and how the information should look like you can find in the specific project which you find below:
 
-### Basic API information
-For a valid Swagger documentation you need to provide at least a title and a version. To provide this information please place your basic API information in the Javadoc of the entry point of the API like it is shown here:
-
-```java
-/**
- * @apiTitle API title
- * @apiVersion version
- * 
- * @apiDescription API description
- * @apiHost localhost:8080
- * @apiBasePath /example/api/v1
- * @fileName swagger-file-name
-*/
-...
-public class CLASSNAME {
-	...
-}
-```
-
-### Parameters
-Parameters
-
-## Swagger Generation out of a JAX-RS Backend
+### Swagger Generation out of a JAX-RS Backend
 This subproject creates a Swagger file out of a JAX-RS REST-API.
 
 You find more information here: [javadoc-jaxrs-swagger-doclet](https://github.com/SPIRIT-21/swagger-doclet/tree/master/jaxrs)
 
-## Swagger Generation out of a Spring Boot Backend
+### Swagger Generation out of a Spring Boot Backend
 This subproject creates a Swagger file of a Spring Boot REST-API.
 
 You find more information here: [javadoc-springboot-swagger-doclet](https://github.com/SPIRIT-21/swagger-doclet/tree/master/spring)
