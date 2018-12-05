@@ -1,0 +1,92 @@
+package com.spirit21.common.helper;
+
+import java.util.List;
+
+import com.spirit21.common.Consts;
+import com.sun.javadoc.AnnotationValue;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Parameter;
+import com.sun.javadoc.ProgramElementDoc;
+
+public class CommonHelper {
+	
+	/**
+	 * This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation
+	 */
+	public static boolean hasAnnotation(ProgramElementDoc programElementDoc, String annotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		return annotationHelper.isAnnotatedBy(annotation);
+	}
+	
+	/**
+	 * This method gets the annotationValue of a specific annotation of a programElementDoc
+	 */
+	public static AnnotationValue getAnnotationValue(ProgramElementDoc programElementDoc, String annotation, String specificAnnotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
+		return annotationHelper.getAnnotationValue(annotation, specificAnnotation);
+	}
+
+	/**
+	 * This method checks if a parameter has a specific annotation
+	 */
+	public static boolean hasAnnotation(Parameter parameter, String annotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
+		return annotationHelper.isAnnotatedBy(annotation);
+	}
+	
+	/**
+	 * This method gets the annotationValue of a specific annotation of a parameter
+	 */
+	public static AnnotationValue getAnnotationValue(Parameter parameter, String annotation, String specificAnnotation) {
+		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
+		return annotationHelper.getAnnotationValue(annotation, specificAnnotation);
+	}
+	
+	/**
+	 * This method gets the value of the AnnotationValue object
+	 */
+	public static Object getAnnotationValueObject(AnnotationValue aValue) {
+		if (aValue != null) {
+			return aValue.value();
+		}
+		return null;
+	}
+	
+	/**
+	 * This method adds a classDoc to the definitionClassDoc list in the Parser
+	 */
+	public static void addToDefinitionList(List<ClassDoc> definitionClassDocs, ClassDoc classDoc) {
+		if (classDoc != null && !definitionClassDocs.contains(classDoc)) {
+			definitionClassDocs.add(classDoc);
+		}
+	}
+	
+	/**
+	 * This method helps to replace multiple slashes with one
+	 */
+	public static String replaceSlashes(String replace) {
+		return replace.replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
+	}
+	
+	/**
+	 * This method checks if the command line argument -type has a valid parameter
+	 */
+	public static String checkOutputType(String outputType) {
+		if (outputType.equals(Consts.JSON) || outputType.equals(Consts.YAML)) {
+			return outputType;
+		} else {
+			return Consts.JSON;
+		}
+	}
+	
+	/**
+	 * This method checks if the command line argument -version has a valid parameter
+	 */
+	public static String checkVersion(String version) {
+		if (version.equals(Consts.VERSION_2) || version.equals(Consts.VERSION_3)) {
+			return version;
+		} else {
+			return Consts.VERSION_3;
+		}
+	}
+}

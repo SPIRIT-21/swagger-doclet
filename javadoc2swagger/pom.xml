@@ -2,8 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
-
+	<artifactId>javadoc2swagger</artifactId>
 	<parent>
 		<groupId>com.spirit21.swagger</groupId>
 		<artifactId>swagger-doclet-parent</artifactId>
@@ -12,12 +11,16 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
+			<groupId>com.spirit21.swagger</groupId>
+			<artifactId>swagger-doclet-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.spirit21.swagger</groupId>
-			<artifactId>swagger-doclet-common</artifactId>
+			<artifactId>javadoc-springboot-swagger-doclet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.spirit21.swagger</groupId>
+			<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
 		</dependency>
 	</dependencies>
 </project>

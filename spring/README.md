@@ -1,6 +1,6 @@
 
-# Doclet for generating Swagger from JAX-RS and Javadoc comments
-This JavaDoc Doclet is generating a Swagger API documentation of JAX-RS based RESTful Web Services. Additional information that is not contained in JAX-RS annotations is placed in the Javadoc comments.
+# Doclet for generating Swagger from Spring Boot and Javadoc comments
+This JavaDoc Doclet is generating a Swagger API documentation of Spring Boot RESTful Web Services. Additional information that is not contained in Spring Boot annotations is placed in the Javadoc comments.
 
 ## Configuration
 Include the plugin to your POM:
@@ -20,7 +20,7 @@ Include the plugin to your POM:
 		</docletArtifact>
 		
 		<useStandardDocletOptions>false</useStandardDocletOptions>
-		<additionalparam>-backend jaxrs<additionalparam>
+		<additionalparam>-backend spring<additionalparam>
 	</configuration>
 </plugin>
 ```
@@ -43,7 +43,7 @@ For a valid Swagger documentation, you need to at least provide a title and a ve
  * @fileName swagger-file-name
 */
 ...
-@ApplicationPath("/example/api/v1")
+@SpringBootApplication
 public class CLASSNAME {
 	...
 }
@@ -52,56 +52,48 @@ public class CLASSNAME {
 **Important**: Only one entry point of you API is allowed.
 
 ### Resources
-For defining a resource, a `@Path` annotation must be provided. When using a path parameter, a `@PathParam` annotation must be provided. Here is one example:
+For defining a resource, a `@RestController` or a `@Controller` annotation must be provided. To map this resource to a path the `@RequestMapping(..)` annotation mus be provided. When using a path parameter, a `@PathVariable` annotation must be provided. Here is one example:
 
 ```java
-@Path("resource/{id}")
+@RestController
+@RequestMapping("resource/{id}")
 public class Resource {
 	
-	@PathParam("id")
-	private Integer id;
-	
-	private SubResource subResource;
-	
-	@Path("{secondId}")
-	public SubResource getSubResource(@PathParam("secondId") Integer secondId){
-		subResource.setSecondId(secondId);
-		return subResource;
+	@RequestMapping("/{secondId}")
+	public void test(@PathVariable("secondId") Integer secondId){
+		..
 	}
 }
 ```
 
 ```java
-@Path("resource/{id}/{secondId}")
+@Controller
+@RequestMapping("resource/{id}/{secondId}")
 public class SubResource {
 	
-	@PathParam("id")
-	private Integer id;
-	@PathParam("secondId")
-	private Integer secondId;
+	@GetMapping
+	public void test(){
+		..
+	}
 }
 ```
 
 The swagger tags and the swagger paths will be generated out of the resources.
 	
 ### Operations
-If a method in a resource is annotated with a JAX-RS HTTP-method annotation, then this program detects it as a operation.
-Following HTTP-Method annotations will be detected: `@GET` / `@POST` / `@PUT` / `@DELETE` / `@HEAD` / `@OPTIONS`
+If a method in a resource is annotated with a Spring Boot HTTP-method annotation, then this program detects it as a operation.
+Following HTTP-Method annotations will be detected: `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` / `@RequestMapping(method = {RequestMethod.GET/HEAD/POST/PUT/PATCH/DELETE/OPTIONS}`
 
 ```java
-@Path("path/{id}")
+@Controller
+@RequestMapping("path/{id}")
 public class Resource {
-	
-	@PathParam("id")
-	private Integer id;
 	
 	/** 
 	 * DESCRIPTION
 	 * ...
 	 */
-	@GET
-	@Produces("...")
-	@Consumes("...")
+	@RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, produces = {..}, consumes = {..})
 	public void name() {
 
 	}
@@ -110,9 +102,7 @@ public class Resource {
 	 * DESCRIPTION
 	 * ...
 	 */
-	@POST
-	@Produces("...")
-	@Consumes("...")
+	@PostMapping(path = {..}, produces = {..}, consumes = {..})
 	public void namePost() {
 
 	}	
@@ -121,30 +111,27 @@ public class Resource {
 	 * DESCRIPTION
 	 * ...
 	 */
-	@Path("/{secondId}")
-	@GET
-	@Produces("...")
-	@Consumes("...")
-	public void name2(@PathParam Integer secondId) {
+	@GetMapping("/{secondId}")
+	public void name2(@PathVariable Integer secondId) {
 
 	}
 }
 ```
 
-Out of this example the doclet will recognize three operations:
+Out of this example the doclet will recognize these operations:
 
 <ul>
-	<li>GET on path/{id}</li>
-	<li>POST on path/{id}</li>
-	<li>GET on path/{id}/{secondId}</li> 
+	<li>GET on path/{id}/{secondId}</li>
+	<li>GET and POST on path/{id}</li>
+	<li>POST on path/{id}/...</li> 
 </ul> 
 
-The values in the `@Produces` and `@Consumes` will be automatically used for the Swagger specification. 
+The produces and consumes values in the `@Get/Post/Put/Delete/PatchMapping` and `@RequestMapping` annotations will be automatically used for the Swagger specification. 
 The description of the method in the javadoc will also be automatically recognized for the Swagger file.
+**Important**: There are multiple paths in the mapping annotation possible. For all of those paths will be an operation generated.  
 
 ### Parameters
-Parameters are obtained by the parameter list of the java function. Use the `@QueryParam` / `@HeaderParam` / `@FormParam` / `@PathParam` annotation for parameters.
-If none of them are used the parameter is a BodyParameter. (**Important**: only one BodyParameter is allowed!)
+Parameters are obtained by the parameter list of the java function. Use the `@RequestBody` / `@RequestHeader` / `@RequestParam` / `@PathVariable` annotation for parameters.
 If you want to provide a description for a parameter, use the built-in `@param` Javadoc tag, followed by the name and finally the description. Example:
 
 ```java
@@ -158,7 +145,6 @@ public void method(Integer i){
 	..
 }
 ```
-The path parameters of an operation in the parameter list of the java function, in the field of the resource class and in its parent resources will be automatically recognized.
 
 ### Responses
 At least one response has to be defined in the Javadoc code. Use the tags `@responseCode` and `@responseMessage`. Provide a schema of your response type with the tag `@responseSchema` followed by a link tag pointing to the class with the schema. Use the tag `@responseType` followed by `array` if an array of object is returned. Following example uses all possible tags:
