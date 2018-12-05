@@ -1,17 +1,18 @@
 package com.spirit21.jaxrs.handler.parameter;
 
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import javax.ws.rs.DefaultValue;
+
+import com.spirit21.common.Consts;
+import com.spirit21.common.handler.parameter.AbstractParameterHandler;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Parameter;
 
 import v2.io.swagger.models.parameters.QueryParameter;
 
-public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> implements ParameterAnnotationHandler {
-
-	private final String name;
+public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> {
 
 	public QueryParameterHandler(String name) {
-		this.name = name;
+		super(name, DefaultValue.class.getName(), Consts.VALUE);
 	}
 	
 	/** 
@@ -22,10 +23,5 @@ public class QueryParameterHandler extends AbstractParameterHandler<QueryParamet
 		QueryParameter queryParameter = new QueryParameter();
 		handleParameter(queryParameter, parameter, methodDoc);
 		return queryParameter;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
 	}
 }

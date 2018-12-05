@@ -1,16 +1,15 @@
 package com.spirit21.spring.handler.parameter;
 
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.parameter.AbstractParameterHandler;
+import com.spirit21.spring.Consts;
 import com.sun.javadoc.MethodDoc;
 
 import v2.io.swagger.models.parameters.PathParameter;
 
-public class PathParameterHandler extends AbstractParameterHandler<PathParameter> implements ParameterAnnotationHandler {
-	
-	private final String name;
+public class PathParameterHandler extends AbstractParameterHandler<PathParameter> {
 	
 	public PathParameterHandler(String name) {
-		this.name = name;
+		super(name, name, Consts.DEFAULT_VALUE);
 	}
 	
 	/** 
@@ -21,10 +20,5 @@ public class PathParameterHandler extends AbstractParameterHandler<PathParameter
 		PathParameter pathParameter = new PathParameter();
 		handleParameter(pathParameter, parameter, methodDoc);
 		return pathParameter;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 }

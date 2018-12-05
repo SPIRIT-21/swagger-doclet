@@ -38,7 +38,7 @@ public class OperationParser {
 	 * Initialize
 	 */
 	protected OperationParser() {
-		parameterFactory = new ParameterFactory();
+		this.parameterFactory = new ParameterFactory();
 	}
 
 	/**

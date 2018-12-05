@@ -1,10 +1,15 @@
 package com.spirit21;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
 import com.spirit21.common.Consts;
+import com.spirit21.common.exception.ApiParserException;
 import com.spirit21.common.exception.SwaggerException;
 import com.spirit21.common.helper.CommonHelper;
-import com.spirit21.jaxrs.JaxRsDoclet;
-import com.spirit21.spring.SpringBootDoclet;
+import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
@@ -14,30 +19,46 @@ import lombok.extern.java.Log;
 @Log
 public class Doclet {
 
-	
 	/**
 	 * Entry point of the Doclet
-	 * This method gets the output format, swagger version and the backend-type
+	 * This method gets the output format, swagger version, filename and the backend-type
 	 * Then it invokes the associated parser
 	 * Standard output format is json
 	 * Standard swagger version is 3
 	 */
 	public static boolean start(RootDoc rootDoc) throws SwaggerException {
-		String outputType = getOption(rootDoc.options(), Consts.OUTPUT_TYPE);
-		outputType = CommonHelper.checkOutputType(outputType);
+		Map<String, String> arguments = new HashMap<>();
 		
-		String version = getOption(rootDoc.options(), Consts.VERSION);
-		version = CommonHelper.checkVersion(version);
+		arguments.put(Consts.OUTPUT_TYPE, CommonHelper.checkOutputType(getOption(rootDoc.options(), Consts.OUTPUT_TYPE)));
+		arguments.put(Consts.VERSION, CommonHelper.checkVersion(getOption(rootDoc.options(), Consts.VERSION)));
+		arguments.put(Consts.FILENAME, getOption(rootDoc.options(), Consts.FILENAME));
 		
 		String backend = getOption(rootDoc.options(), Consts.BACKEND);
+		AbstractParser parser = null;
 		
-		// TODO
 		if (backend.equals(Consts.SPRING)) {
-			return SpringBootDoclet.start(rootDoc, outputType, version);
+			parser = new com.spirit21.spring.parser.Parser(rootDoc, arguments);
 		} else if (backend.equals(Consts.JAXRS)){
-			return JaxRsDoclet.start(rootDoc, outputType, version);
+			parser = new com.spirit21.jaxrs.parser.Parser(rootDoc, arguments);
 		} else {
 			throw new SwaggerException("Invalid backend type. Please specify a correct backend type (jaxrs or spring).");
+		}
+		
+		return runParser(parser);
+	}
+	
+	/**
+	 * This method runs the Parser and possibly throws an exception if something went wrong
+	 */
+	private static boolean runParser(AbstractParser parser) {
+		try {
+			return parser.run();
+		} catch (ApiParserException e) {
+			log.log(Level.SEVERE, "Failed to parse your API entry point.", e);
+			return false;
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Failed to write or to create the swagger file.", e);
+			return false;
 		}
 	}
 	
@@ -69,6 +90,8 @@ public class Doclet {
 			return 2;
 		} else if (option.equals(Consts.BACKEND)) {
 			return 2;
+		} else if (option.equals(Consts.FILENAME)) {
+			return 2;
 		}
 		return 0;
 	}
@@ -81,6 +104,7 @@ public class Doclet {
 		boolean outputType = false;
 		boolean version = false;
 		boolean backend = false;
+		boolean filename = false;
 
 		for (String[] args : options) {
 			if (args[0].equals(Consts.OUTPUT_TYPE)) {
@@ -89,6 +113,8 @@ public class Doclet {
 				version = true;
 			} else if (args[0].equals(Consts.BACKEND)) {
 				backend = true;
+			} else if (args[0].equals(Consts.FILENAME)) {
+				filename = true;
 			}
 		}
 		
@@ -103,6 +129,10 @@ public class Doclet {
 		if (!backend) {
 			log.info("There is no '-backend x' parameter in commandline used. "
 					+ "Please specify a backend type.");
+		}
+		if (!filename) {
+			log.info("There is no '-filename x' parameter in commandline used."
+					+ "Please specify a file name.");
 		}
 		return true;
 	}

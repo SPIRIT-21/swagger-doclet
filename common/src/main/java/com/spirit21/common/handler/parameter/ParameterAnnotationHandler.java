@@ -11,7 +11,7 @@ import v2.io.swagger.models.parameters.Parameter;
 public interface ParameterAnnotationHandler {
 
 	/**
-	 * This method gets the javadoc description of the Parameter
+	 * This method gets the javadoc description of the parameter
 	 */
 	public static String getDescriptionForParameters(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
 		return Arrays.asList(methodDoc.paramTags()).stream()

@@ -42,13 +42,13 @@ public class PathParser {
 	 * Initialize
 	 */
 	protected PathParser() {
-		paths = new LinkedHashMap<>();
-		mappingAndMethods = new LinkedHashMap<>();
+		this.paths = new LinkedHashMap<>();
+		this.mappingAndMethods = new LinkedHashMap<>();
 		
-		operationParser = new OperationParser();
-		pathParameterHandler = new PathParameterHandler(PathVariable.class.getName());
+		this.operationParser = new OperationParser();
+		this.pathParameterHandler = new PathParameterHandler(PathVariable.class.getName());
 		
-		pattern = Pattern.compile("(?<=\\{)([a-zA-Z0-9_-]+)(?=\\})");
+		this.pattern = Pattern.compile("(?<=\\{)([a-zA-Z0-9_-]+)(?=\\})");
 	}
 
 	/**
@@ -59,7 +59,6 @@ public class PathParser {
 		createPath();
 		swagger.setPaths(paths);
 	}
-	
 	
 	/**
 	 * This method separates every class doc to the path and a list of methods handling the
