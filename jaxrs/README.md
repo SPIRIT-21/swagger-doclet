@@ -1,4 +1,3 @@
-
 # Doclet for generating Swagger from JAX-RS and Javadoc comments
 This JavaDoc Doclet is generating a Swagger API documentation of JAX-RS based RESTful Web Services. Additional information that is not contained in JAX-RS annotations is placed in the Javadoc comments.
 
@@ -24,6 +23,7 @@ Include the plugin to your POM:
 	</configuration>
 </plugin>
 ```
+You can look up the version of the maven-javadoc-plugin <a href="https://search.maven.org/artifact/org.apache.maven.plugins/maven-javadoc-plugin/3.0.1/maven-plugin">here</a>.
 More information about other parameters you can find [here](https://github.com/SPIRIT-21/swagger-doclet/#parameters).
 
 ## Usage
@@ -159,6 +159,7 @@ public void method(Integer i){
 }
 ```
 The path parameters of an operation in the parameter list of the java function, in the field of the resource class and in its parent resources will be automatically recognized.
+**Important**: If a parameter has the `@Context` annotation it will be ignored.
 
 ### Responses
 At least one response has to be defined in the Javadoc code. Use the tags `@responseCode` and `@responseMessage`. Provide a schema of your response type with the tag `@responseSchema` followed by a link tag pointing to the class with the schema. Use the tag `@responseType` followed by `array` if an array of object is returned. Following example uses all possible tags:
