@@ -1,4 +1,4 @@
-# Doclet for generating Swagger from Spring Boot and Javadoc comments
+# Doclet for generating Swagger from Spring Boot and Javadoc comments (v0.4)
 This JavaDoc Doclet is generating a Swagger API documentation of Spring Boot RESTful Web Services. Additional information that is not contained in Spring Boot annotations is placed in the Javadoc comments.
 
 ## Configuration
@@ -15,7 +15,7 @@ Include the plugin to your POM:
 		<docletArtifact>
 			<groupId>com.spirit21.swagger</groupId>
 			<artifactId>javadoc2swagger</artifactId>
-			<version>VERSION</version>
+			<version>0.4</version>
 		</docletArtifact>
 		
 		<useStandardDocletOptions>false</useStandardDocletOptions>
