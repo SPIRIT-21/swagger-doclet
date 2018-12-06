@@ -1,5 +1,4 @@
-
-# Generate Swagger out of REST-API Backends
+# Generate Swagger out of REST-API Backends (v0.4)
 
 ## Introduction
 The normal way of creating Swagger documentation from Java source code would be <a href="https://github.com/swagger-api/swagger-core">Swagger Core</a> annotations. But there are some issues with them.
@@ -26,7 +25,7 @@ Include this plugin into the pom.xml of the project:
 				<docletArtifact>
 					<groupId>com.spirit21.swagger</groupId>
 					<artifactId>javadoc2swagger</artifactId>
-					<version>VERSION</version>
+					<version>0.4</version>
 				</docletArtifact>
 				
 				<useStandardDocletOptions>false</useStandardDocletOptions>
@@ -37,6 +36,8 @@ Include this plugin into the pom.xml of the project:
 	</plugins>
 </build>
 ```
+
+You can look up the version of the maven-javadoc-plugin <a href="https://search.maven.org/artifact/org.apache.maven.plugins/maven-javadoc-plugin/3.0.1/maven-plugin">here</a>.
 
 ### Parameters
 
@@ -89,7 +90,7 @@ These are all parameters and they can be set like it is shown in this example:
 	</tr>
 	<tr>
 		<td>&#x2011;filename</td>
-		<td>This parameter sets the name of the file which will be generated. If you do not use this parameter this program will use the name out your code at the starting point out of your application (see  <a href="#basic-api-information">below</a>). If there is not any file name given the default value will be used.</td>
+		<td>This parameter sets the name of the file which will be generated. If you do not use this parameter this program will use the name out your code at the starting point out of your application (see  <a href="https://github.com/SPIRIT-21/swagger-doclet/tree/master/jaxrs#basic-api-information">here</a> or <a href="https://github.com/SPIRIT-21/swagger-doclet/tree/master/spring#basic-api-information">here</a>). If there is not any file name given the default value will be used.</td>
 		<td>
 		Everything you want 		
 		</td>
@@ -128,7 +129,7 @@ If the source artifact is unavailable you have to prepare the dependency. You ha
 <plugin>
 	<artifactId>maven-source-plugin</artifactId>
 	<version>2.1.1</version>
-   <executions>
+	<executions>
    		<execution>
       		<id>bundle-sources</id>
          	<phase>package</phase>

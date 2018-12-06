@@ -1,5 +1,4 @@
-
-# Doclet for generating Swagger from Spring Boot and Javadoc comments
+# Doclet for generating Swagger from Spring Boot and Javadoc comments (v0.4)
 This JavaDoc Doclet is generating a Swagger API documentation of Spring Boot RESTful Web Services. Additional information that is not contained in Spring Boot annotations is placed in the Javadoc comments.
 
 ## Configuration
@@ -16,7 +15,7 @@ Include the plugin to your POM:
 		<docletArtifact>
 			<groupId>com.spirit21.swagger</groupId>
 			<artifactId>javadoc2swagger</artifactId>
-			<version>VERSION</version>
+			<version>0.4</version>
 		</docletArtifact>
 		
 		<useStandardDocletOptions>false</useStandardDocletOptions>
@@ -24,6 +23,7 @@ Include the plugin to your POM:
 	</configuration>
 </plugin>
 ```
+You can look up the version of the maven-javadoc-plugin <a href="https://search.maven.org/artifact/org.apache.maven.plugins/maven-javadoc-plugin/3.0.1/maven-plugin">here</a>.
 More information about other parameters you can find [here](https://github.com/SPIRIT-21/swagger-doclet/#parameters).
 
 ## Usage
@@ -52,7 +52,7 @@ public class CLASSNAME {
 **Important**: Only one entry point of you API is allowed.
 
 ### Resources
-For defining a resource, a `@RestController` or a `@Controller` annotation must be provided. To map this resource to a path the `@RequestMapping(..)` annotation mus be provided. When using a path parameter, a `@PathVariable` annotation must be provided. Here is one example:
+For defining a resource, a `@RestController` or a `@Controller` annotation must be provided. To map this resource to a path the `@RequestMapping(..)` annotation must be provided. When using a path parameter, a `@PathVariable` annotation must be provided. Here is one example:
 
 ```java
 @RestController
@@ -82,7 +82,7 @@ The swagger tags and the swagger paths will be generated out of the resources.
 	
 ### Operations
 If a method in a resource is annotated with a Spring Boot HTTP-method annotation, then this program detects it as a operation.
-Following HTTP-Method annotations will be detected: `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` / `@RequestMapping(method = {RequestMethod.GET/HEAD/POST/PUT/PATCH/DELETE/OPTIONS}`
+Following HTTP-Method annotations will be detected: `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` / `@RequestMapping(method = {RequestMethod.GET/HEAD/POST/PUT/PATCH/DELETE/OPTIONS})`
 
 ```java
 @Controller
@@ -127,7 +127,7 @@ Out of this example the doclet will recognize these operations:
 </ul> 
 
 The produces and consumes values in the `@Get/Post/Put/Delete/PatchMapping` and `@RequestMapping` annotations will be automatically used for the Swagger specification. 
-The description of the method in the javadoc will also be automatically recognized for the Swagger file.
+The description of the method in the javadoc will also be automatically recognized for the Swagger file.<br/>
 **Important**: There are multiple paths in the mapping annotation possible. For all of those paths will be an operation generated.  
 
 ### Parameters
