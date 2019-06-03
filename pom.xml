@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -23,9 +24,27 @@
 	</distributionManagement>
 
 	<properties>
+		<!-- Project related properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- Dependencies related properties -->		
+		<javaee-api.version>8.0.1</javaee-api.version>
+		<spring-boot.version>2.1.5.RELEASE</spring-boot.version>
+		<spring-boot-starter-web.version>2.1.5.RELEASE</spring-boot-starter-web.version>
+		<commons-lang3.version>3.9</commons-lang3.version>
+		<jackson-dataformat-yaml.version>2.9.9</jackson-dataformat-yaml.version>
+		<jackson-databind.version>2.9.9</jackson-databind.version>
+		<tools.version>1.8</tools.version>
+		<swagger-parser-v2-converter.version>2.0.12</swagger-parser-v2-converter.version>
+		<lombok.version>1.18.8</lombok.version>
+		
+		<!-- Release profile related properties -->
+		<gpg-plugin.version>1.6</gpg-plugin.version>
+		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -34,50 +53,50 @@
 			<dependency>
 				<groupId>javax</groupId>
 				<artifactId>javaee-api</artifactId>
-				<version>7.0</version>
+				<version>${javaee-api.version}</version>
 			</dependency>
 			<!-- Spring Boot backend -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot</artifactId>
-				<version>2.0.0.RELEASE</version>
+				<version>${spring-boot.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
-				<version>2.0.0.RELEASE</version>
+				<version>${spring-boot-starter-web.version}</version>
 			</dependency>
-			<!-- Children projects -->
+			<!-- Child projects -->
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>swagger-doclet-common</artifactId>
-				<version>0.3</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>javadoc-springboot-swagger-doclet</artifactId>
-				<version>0.3</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.spirit21.swagger</groupId>
 				<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
-				<version>0.3</version>
+				<version>${project.version}</version>
 			</dependency>
-			<!-- Needed because of the swagger dependency -->
+			<!-- Needed for utility -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
+				<version>${commons-lang3.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
 				<artifactId>jackson-dataformat-yaml</artifactId>
-				<version>2.9.5</version>
+				<version>${jackson-dataformat-yaml.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.9.5</version>
+				<version>${jackson-databind.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -86,20 +105,20 @@
 		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
-			<version>1.8.0_144</version>
+			<version>${tools.version}</version>
 			<scope>system</scope>
 			<systemPath>${java.home}/../lib/tools.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>io.swagger</groupId>
+			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser-v2-converter</artifactId>
-			<version>2.0.0-rc1</version>
+			<version>${swagger-parser-v2-converter.version}</version>
 		</dependency>
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.20</version>
+			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -112,7 +131,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>${gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -127,7 +146,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
+						<version>${maven-source-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -140,7 +159,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
+						<version>${maven-javadoc-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -155,6 +174,37 @@
 		</profile>
 	</profiles>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>doc-templates</directory>
+									<includes>
+										<include>README.md</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -166,7 +216,7 @@
 		<developer>
 			<name>Michael Weidmann</name>
 			<email>mweidmann@spirit21.com</email>
-			<organization>SPIRIT/21 AG</organization>
+			<organization>SPIRIT/21 GmbH</organization>
 			<organizationUrl>https://www.spirit21.com</organizationUrl>
 		</developer>
 	</developers>

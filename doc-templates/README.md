@@ -1,4 +1,4 @@
-# Generate Swagger out of REST-API Backends (v0.4)
+# Generate Swagger out of REST-API Backends (v@project.version@)
 
 ## Introduction
 The normal way of creating Swagger documentation from Java source code would be <a href="https://github.com/swagger-api/swagger-core">Swagger Core</a> annotations. But there are some issues with them.
@@ -25,7 +25,7 @@ Include this plugin into the pom.xml of the project:
 				<docletArtifact>
 					<groupId>com.spirit21.swagger</groupId>
 					<artifactId>javadoc2swagger</artifactId>
-					<version>0.4</version>
+					<version>@project.version@</version>
 				</docletArtifact>
 				
 				<useStandardDocletOptions>false</useStandardDocletOptions>
