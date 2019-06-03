@@ -16,24 +16,38 @@ import com.sun.javadoc.RootDoc;
 
 import lombok.extern.java.Log;
 
+
+/**
+ * Entry class for the doclet.
+ * 
+ * @author mweidmann
+ */
 @Log
 public class Doclet {
-
+	
+	private static String[][] options;
+	
 	/**
-	 * Entry point of the Doclet
-	 * This method gets the output format, swagger version, filename and the backend-type
-	 * Then it invokes the associated parser
-	 * Standard output format is json
-	 * Standard swagger version is 3
+	 * Entry method of the Doclet.
+	 * Parses the output format, swagger version, filename and the backend-type out of the passed options.
+	 * Then it invokes the associated parser.
+	 * 
+	 * Standard output format is json.
+	 * Standard swagger version is 3.
+	 *
+	 * @param rootDoc Represents the root of the program structure information. 
+	 * @return A boolean whether the swagger file was successfully generated.
+	 * @throws SwaggerException if something went wrong.
 	 */
 	public static boolean start(RootDoc rootDoc) throws SwaggerException {
 		Map<String, String> arguments = new HashMap<>();
+		options = rootDoc.options();
 		
-		arguments.put(Consts.OUTPUT_TYPE, CommonHelper.checkOutputType(getOption(rootDoc.options(), Consts.OUTPUT_TYPE)));
-		arguments.put(Consts.VERSION, CommonHelper.checkVersion(getOption(rootDoc.options(), Consts.VERSION)));
-		arguments.put(Consts.FILENAME, getOption(rootDoc.options(), Consts.FILENAME));
+		arguments.put(Consts.OUTPUT_TYPE, CommonHelper.checkOutputType(getOption(Consts.OUTPUT_TYPE)));
+		arguments.put(Consts.VERSION, CommonHelper.checkVersion(getOption(Consts.VERSION)));
+		arguments.put(Consts.FILENAME, getOption(Consts.FILENAME));
 		
-		String backend = getOption(rootDoc.options(), Consts.BACKEND);
+		String backend = getOption(Consts.BACKEND);
 		AbstractParser parser = null;
 		
 		if (backend.equals(Consts.SPRING)) {
@@ -48,7 +62,10 @@ public class Doclet {
 	}
 	
 	/**
-	 * This method runs the Parser and possibly throws an exception if something went wrong
+	 * Runs the parser and throws an exception if something went wrong.
+	 * 
+	 * @param parser The parser which will be called.
+	 * @return A boolean whether the swagger file was successfully generated.
 	 */
 	private static boolean runParser(AbstractParser parser) {
 		try {
@@ -63,25 +80,27 @@ public class Doclet {
 	}
 	
 	/**
-	 * This method gets the value of a command line argument
+	 * Gets the value for a option if it exists.
+	 * 
+	 * @param option The option for which the value is searched. 
+	 * @return The found value or an empty string if nothing was found.
 	 */
-	private static String getOption(String[][] options, String option) {
-		String tagName = "";
-		
+	private static String getOption(String option) {
 		for (String[] args : options) {
 			if (args[0].equals(option)) {
-				tagName = args[1];
-				break;
+				return args[1];
 			}
 		}
 		
-		return tagName;
+		return "";
 	}
 	
 	/**
-	 * Required method to allow custom commandline parameter like '-type x'. This
-	 * method determines the number of parts of the option. For example '-test that
-	 * this' has 3 parts, while '-type x' has 2 parts. This method is automatically invoked.
+	 * Required method to allow custom options like '-type x'. This method determines the number of parts of the option.
+	 * For example '-test that this' has 3 parts, while '-type x' has 2 parts. This method is automatically invoked.
+	 *
+	 * @param option The allowed option.
+	 * @return A number describing the number of parts of the option.
 	 */
 	public static int optionLength(String option) {
 		if (option.equals(Consts.OUTPUT_TYPE)) {
@@ -97,10 +116,13 @@ public class Doclet {
 	}
 	
 	/**
-	 * Optional method which is also automatically invoked. It checks the existence
-	 * of the outputType parameter.
+	 * Optional method which is also automatically invoked.
+	 * It checks if the passed options are valid.
+	 * 
+	 * @param reporter Reporter for reporting erroneous options.
+	 * @return A boolean whether the check was successful or not.
 	 */
-	public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
+	public static boolean validOptions(DocErrorReporter reporter) {
 		boolean outputType = false;
 		boolean version = false;
 		boolean backend = false;
@@ -119,26 +141,24 @@ public class Doclet {
 		}
 		
 		if (!outputType) {
-			log.info("There is no '-type x' parameter in commandline used. "
-					+ "Please specify an output format. For now is the json-format used.");
+			log.log(Level.INFO, "There is no '-type x' option used. Please specify an output format. For now is the json-format used.");
 		}
 		if (!version) {
-			log.info("There is no '-version x' parameter in commandline used. "
-					+ "Please specify a swagger version. For now is swagger version 3 used.");
+			log.log(Level.INFO, "There is no '-version x' option used. Please specify a swagger version. For now is swagger version 3 used.");
 		}
 		if (!backend) {
-			log.info("There is no '-backend x' parameter in commandline used. "
-					+ "Please specify a backend type.");
+			log.log(Level.INFO, "There is no '-backend x' option used. Please specify a backend type.");
 		}
 		if (!filename) {
-			log.info("There is no '-filename x' parameter in commandline used."
-					+ "Please specify a file name.");
+			log.log(Level.INFO, "There is no '-filename x' option used. Please specify a file name.");
 		}
 		return true;
 	}
 	
 	/**
-	 * Required method which allows the doclet to get the generics of a List/Map...
+	 * Required method which allows the Doclet to access the generics a Doc Element.
+	 * 
+	 * @return The language version for accessing generics.
 	 */
 	public static LanguageVersion languageVersion() {
 		return LanguageVersion.JAVA_1_5;
