@@ -1,38 +1,42 @@
 package com.spirit21.common.handler.datatype;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * A factory which returns the correct type and format (in swagger form) for a passed type.
+ * 
+ * @author mweidmann
+ */
 public class DataTypeFactory {
 
-	private List<TypeHandler> handlers;
-	
-	/** 
-	 * The constructor adds all handlers in one list
+	private List<AbstractTypeHandler<?>> handlers;
+
+	/**
+	 * The constructor adds all handlers in one list.
 	 */
 	public DataTypeFactory() {
-		handlers = new ArrayList<>();
-		handlers.add(new CollectionHandler());
-		handlers.add(new BooleanHandler());
-		handlers.add(new DateHandler());
-		handlers.add(new NumberHandler());
-		handlers.add(new ObjectHandler());
-		handlers.add(new StringHandler());
+		handlers.add(new CollectionTypeHandler());
+		handlers.add(new DateTypeHandler());
+		handlers.add(new NumberTypeHandler());
+		handlers.add(new ObjectTypeHandler());
+		handlers.add(new PrimitiveTypeHandler());
+		handlers.add(new StringTypeHandler());
 	}
-	
+
 	/**
-	 * Tries all handlers on a given type name and returns a typeAndFormat array
+	 * Iterates over all type handlers. For each handler the getTypeAndFormat
+	 * function is called. If the array is not empty, the correct typeAndFormat
+	 * array was found.
+	 * 
+	 * @param typeName The name of the type.
+	 * @return The correctly filled typeAndFormat array or an empty array.
 	 */
 	public String[] getDataType(String typeName) {
-		String[] typeAndFormat = null;
-		
-		for (TypeHandler typeHandler : handlers) {
-			typeAndFormat = typeHandler.getTypeAndFormat(typeName);
-			
-			if (typeAndFormat != null) {
-				break;
-			}
-		}
-		return typeAndFormat;
+		return handlers.stream()
+				.map(typeHandler -> typeHandler.getTypeAndFormat(typeName))
+				.filter(Objects::nonNull)
+				.findFirst()
+				.orElse(new String[0]);
 	}
 }
