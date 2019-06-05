@@ -1,5 +1,6 @@
 package com.spirit21.common.handler.datatype;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -58,6 +59,12 @@ public class DateTypeHandler extends AbstractTypeHandler<DateTypes> {
 			}
 		},
 		OFFSET_TIME(OffsetTime.class.getName()) {
+			@Override
+			public String[] getTypeAndFormat() {
+				return new String[] { Consts.STRING, Consts.DATE };
+			}
+		},
+		INSTANT(Instant.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
 				return new String[] { Consts.STRING, Consts.DATE };
