@@ -29,7 +29,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<!-- Dependencies related properties -->		
+		<!-- Dependency related properties -->		
 		<javaee-api.version>8.0.1</javaee-api.version>
 		<spring-boot.version>2.1.5.RELEASE</spring-boot.version>
 		<spring-boot-starter-web.version>2.1.5.RELEASE</spring-boot-starter-web.version>

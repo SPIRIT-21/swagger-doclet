@@ -72,27 +72,31 @@ public class PrimitiveTypeHandler extends AbstractTypeHandler<PrimitiveTypes> {
 		};
 		
 		private final String primitiveName;
-		private final String typeName;
+		private final String objectName;
 
-		private PrimitiveTypes(String primitiveName, String typeName) {
+		private PrimitiveTypes(String primitiveName, String objectName) {
 			this.primitiveName = primitiveName;
-			this.typeName = typeName;
+			this.objectName = objectName;
 		}
 
 		public String getPrimitiveName() {
 			return primitiveName;
 		}
+		
+		public String getObjectName() {
+			return objectName;
+		}
 
 		@Override
 		public String getTypeName() {
-			return typeName;
+			return "";
 		}
 	}
 	
 	@Override
 	public String[] getTypeAndFormat(String typeName) {
 		return Arrays.asList(PrimitiveTypes.values()).stream()
-				.filter(enumValue -> typeName.equals(enumValue.getTypeName()) || typeName.equals(enumValue.getPrimitiveName()))
+				.filter(enumValue -> typeName.equals(enumValue.getObjectName()) || typeName.equals(enumValue.getPrimitiveName()))
 				.map(PrimitiveTypes::getTypeAndFormat)
 				.findFirst()
 				.orElse(new String[0]);

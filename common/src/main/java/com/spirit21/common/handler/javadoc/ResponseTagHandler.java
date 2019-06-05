@@ -10,22 +10,26 @@ import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 
-import v2.io.swagger.models.Response;
-import v2.io.swagger.models.properties.ArrayProperty;
-import v2.io.swagger.models.properties.RefProperty;
+import io.swagger.models.Response;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.RefProperty;
 
 /**
- * This enum saves the response tags of the javadoc comment of the http methods
- * and sets the value to the response
+ * Handles the tags of the JavaDoc comment of a response of an interface.
+ * Then it saves the values in the Response model.
+ * 
+ * @author mweidmann
  */
+// TODO: Refactor deprecated methods.
+// TODO: Static access to ClassDocCache and definitions.
 public enum ResponseTagHandler {
 	
 	/**
-	 * This value creates the response message and sets it in the response object
+	 * Creates the response message and set it into the Response object.
 	 */
 	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {
 		@Override
-		public void setResponseData(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
 			String responseMessage = Arrays.asList(tag.inlineTags()).stream()
 					.map(Tag::text)
 					.collect(Collectors.joining());
@@ -34,12 +38,11 @@ public enum ResponseTagHandler {
 		}
 	},
 	/**
-	 * This value creates a RefProperty and adds the classDoc to the Parser.definitionClassDoc list
-	 * if the list does not contain the classDoc
+	 * Creates a RefProperty and adds the classDoc to the Parser.defintionClassDoc list.
 	 */
 	RESPONSE_SCHEMA(Consts.RESPONSE_SCHEMA) {
 		@Override
-		public void setResponseData(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
 			String simpleName = Arrays.asList(tag.inlineTags()).stream()
 						.map(Tag::text)
 						.collect(Collectors.joining());
@@ -52,12 +55,12 @@ public enum ResponseTagHandler {
 		}
 	},
 	/**
-	 * If the response type tag exists, this value creates an array property, 
-	 * set its properties and set it in the response model
+	 * Creates an ArrayProperty and set the schema of the response to it.
+	 * Then the schema of the response will be overwritten with the created ArrayProperty.
 	 */
 	RESPONSE_TYPE(Consts.RESPONSE_TYPE) {
 		@Override
-		public void setResponseData(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
 			if (response.getSchema() != null) {
 				ArrayProperty arrayProperty = new ArrayProperty();
 				arrayProperty.setItems(response.getSchema());
@@ -66,15 +69,15 @@ public enum ResponseTagHandler {
 		}
 	};
 
-	private final String name;
+	private final String tagName;
 
-	private ResponseTagHandler(String name) {
-		this.name = name;
+	private ResponseTagHandler(String tagName) {
+		this.tagName = tagName;
 	}
 
-	public String getName() {
-		return name;
+	public String getTagName() {
+		return tagName;
 	}
 
-	public abstract void setResponseData(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache);
+	public abstract void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache);
 }

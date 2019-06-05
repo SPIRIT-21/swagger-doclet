@@ -16,7 +16,6 @@ import com.sun.javadoc.RootDoc;
 
 import lombok.extern.java.Log;
 
-
 /**
  * Entry class for the doclet.
  * 

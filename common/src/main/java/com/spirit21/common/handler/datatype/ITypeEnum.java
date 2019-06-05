@@ -1,5 +1,10 @@
 package com.spirit21.common.handler.datatype;
 
+/**
+ * Interface which will be implemented in every enum of every handler which contains type information.
+ * 
+ * @author mweidmann
+ */
 public interface ITypeEnum {
 	
 	/**
