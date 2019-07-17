@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spirit21.common.Consts;
 import com.spirit21.common.exception.ApiParserException;
-import com.spirit21.common.exception.SwaggerException;
+import com.spirit21.common.exception.SwaggerDocletException;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.DocErrorReporter;
@@ -36,9 +37,9 @@ public class Doclet {
 	 *
 	 * @param rootDoc Represents the root of the program structure information.
 	 * @return A boolean whether the swagger file was successfully generated.
-	 * @throws SwaggerException if something went wrong.
+	 * @throws SwaggerDocletException if something went wrong.
 	 */
-	public static boolean start(RootDoc rootDoc) throws SwaggerException {
+	public static boolean start(RootDoc rootDoc) {
 		Map<String, String> arguments = new HashMap<>();
 		options = rootDoc.options();
 
@@ -54,7 +55,8 @@ public class Doclet {
 		} else if (backend.equals(Consts.BACKEND_JAXRS)) {
 			parser = new com.spirit21.jaxrs.parser.Parser(rootDoc, arguments);
 		} else {
-			throw new SwaggerException("Invalid backend type. Please specify a correct backend type (jaxrs or spring).");
+			log.log(Level.SEVERE, "Invalid backend type. Please specify a correct backend type (jaxrs or spring).");
+			return false;
 		}
 
 		return runParser(parser);
@@ -71,6 +73,9 @@ public class Doclet {
 			return parser.run();
 		} catch (ApiParserException e) {
 			log.log(Level.SEVERE, "Failed to parse the API entry point.", e);
+			return false;
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, "Failed to serialize the Swagger object.", e);
 			return false;
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Failed to write or to create the swagger file.", e);

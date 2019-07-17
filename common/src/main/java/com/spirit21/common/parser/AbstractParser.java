@@ -73,7 +73,7 @@ public abstract class AbstractParser {
 	 * @throws ApiParserException if the parsing of the entry point went wrong.
 	 * @throws IOException if during the creation or writing of the resulting file something went wrong.
 	 */
-	public abstract boolean run() throws ApiParserException, IOException;
+	public abstract boolean run() throws ApiParserException, IOException, JsonProcessingException;
 	
 	/**
 	 * Gets the ClassDoc for the entry point of the REST API. If more than one entry point was found
@@ -91,9 +91,9 @@ public abstract class AbstractParser {
 		if (tmpList.size() == 1) {
 			return tmpList.get(0);
 		} else if (tmpList.size() > 1) {
-			throw new ApiParserException("Mutliple API entry points found! Only one entry point is allowed.");
+			throw new ApiParserException("Mutliple API entry points found. Only one entry point is allowed.");
 		} else {
-			throw new ApiParserException("Your API does not have any entry point!");
+			throw new ApiParserException("Your API does not have any entry point. Please specify one entry point.");
 		}
 	}
 	

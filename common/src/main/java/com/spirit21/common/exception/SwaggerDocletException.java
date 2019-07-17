@@ -5,15 +5,15 @@ package com.spirit21.common.exception;
  * 
  * @author mweidmann
  */
-public class SwaggerException extends Exception {
+public class SwaggerDocletException extends Exception {
 
 	private static final long serialVersionUID = -400117595015479058L;
 
-	public SwaggerException(String message, Throwable cause) {
+	public SwaggerDocletException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public SwaggerException(String message) {
+	public SwaggerDocletException(String message) {
 		super(message);
 	}
 }

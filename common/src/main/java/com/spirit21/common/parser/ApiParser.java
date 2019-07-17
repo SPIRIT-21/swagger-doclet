@@ -35,7 +35,7 @@ public class ApiParser {
 		try {
 			checkInfoObject(info);
 		} catch (ApiParserException e) {
-			throw new ApiParserException("You need to provide general information about your API!", e);
+			throw new ApiParserException("You need to provide general information about your API.", e);
 		}
 		
 		swagger.setInfo(info);
@@ -74,9 +74,9 @@ public class ApiParser {
 	 */
 	private void checkInfoObject(Info info) throws ApiParserException {
 		if (info.getVersion() == null || info.getVersion().isEmpty()) {
-			throw new ApiParserException("You need to provide general information about your API! Version is required.");
+			throw new ApiParserException("You need to provide general information about your API. Version is required.");
 		} else if (info.getTitle() == null || info.getTitle().isEmpty()) {
-			throw new ApiParserException("You need to provide general information about your API! Title is required.");
+			throw new ApiParserException("You need to provide general information about your API. Title is required.");
 		}
 	}
 

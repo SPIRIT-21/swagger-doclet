@@ -5,7 +5,7 @@ package com.spirit21.common.exception;
  * 
  * @author mweidmann
  */
-public class OperationParserException extends SwaggerException {
+public class OperationParserException extends SwaggerDocletException {
 
 	private static final long serialVersionUID = -7392355797842943736L;
 
