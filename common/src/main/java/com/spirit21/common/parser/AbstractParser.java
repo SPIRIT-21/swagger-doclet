@@ -73,7 +73,7 @@ public abstract class AbstractParser {
 	 * @throws ApiParserException if the parsing of the entry point went wrong.
 	 * @throws IOException if during the creation or writing of the resulting file something went wrong.
 	 */
-	public abstract boolean run() throws ApiParserException, IOException, JsonProcessingException;
+	public abstract boolean run() throws ApiParserException, IOException;
 	
 	/**
 	 * Gets the ClassDoc for the entry point of the REST API. If more than one entry point was found

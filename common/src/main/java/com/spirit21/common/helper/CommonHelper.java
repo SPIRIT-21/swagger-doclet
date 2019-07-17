@@ -110,7 +110,7 @@ public class CommonHelper {
 	}
 	
 	/**
-	 * Replaces multiple slashes in a string with one slash.
+	 * Replaces multiple successive slashes in a string with one slash.
 	 * Reason is for example the naming of a resource path. Some people write a trailing slash, others don't.
 	 * 
 	 * @param replace The String in which the multiple slashes should be replaced.
