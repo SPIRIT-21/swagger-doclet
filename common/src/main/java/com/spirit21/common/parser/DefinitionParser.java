@@ -1,46 +1,64 @@
 package com.spirit21.common.parser;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.spirit21.common.handler.property.PropertyFactory;
-import com.spirit21.common.helper.ClassDocCache;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.FieldDoc;
 
-import v2.io.swagger.models.Model;
-import v2.io.swagger.models.ModelImpl;
-import v2.io.swagger.models.Swagger;
-import v2.io.swagger.models.properties.Property;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.Swagger;
+import io.swagger.models.properties.Property;
 
+/**
+ * Parses all ClassDocs which were added to the DEFINITION_CLASS_DOCS list during the conversion process.
+ * From these ClassDocs swagger models are created.
+ * 
+ * @author mweidmann
+ */
 public class DefinitionParser {
 
 	/**
-	 * This method creates the definitions map and the models.
-	 * After that it sets it to the swagger object
-	 * NOTE: Did it with this for loop because only so you can add something
-	 * 		 to a list, while looping over it 
+	 * Creates for every ClassDoc in the DEFINITION_CLASS_DOCS list a swagger definition.
+	 * Therefore a Map is created and for every ClassDoc a swagger Model will be created.
+	 * Then the properties of the Model are set. Lastly, the Map is set into the Swagger object.
+	 * NOTE: Implemented with a while loop due to insertion in the list during iteration.
+	 * 
+	 * @param swagger The Swagger object in which the definitions will be set.
 	 */
-	public void setDefinitions(Swagger swagger, List<ClassDoc> definitionClassDocs, ClassDocCache cache) {
-		Map<String, Model> definitions = new HashMap<>();
-	
-		for (int i = 0; i < definitionClassDocs.size(); i++) {
-			ModelImpl model = new ModelImpl();
-			model.setProperties(getProperties(i, definitionClassDocs, cache));
-			definitions.put(definitionClassDocs.get(i).name(), model);
+	public void run(Swagger swagger) {
+		Map<String, Model> swaggerDefinitions = new HashMap<>();
+		ClassDoc classDoc = null;
+		Integer index = 0;
+		
+		while (index < AbstractParser.DEFINITION_CLASS_DOCS.size()) {
+			classDoc = AbstractParser.DEFINITION_CLASS_DOCS.get(index);
+			
+			ModelImpl modelImpl = new ModelImpl();
+			modelImpl.setProperties(getProperties(classDoc));
+			swaggerDefinitions.put(classDoc.name(), modelImpl);
+			
+			index++;
 		}
-		swagger.setDefinitions(definitions);
+		
+		swagger.setDefinitions(swaggerDefinitions);
 	}
 	
 	/**
-	 * This method creates the properties map for a model
+	 * Creates out of a ClassDoc the swagger properties for a swagger model.
+	 * Therefore a map is created and for every FieldDoc of the ClassDoc a swagger Property is created.
+	 * Then the created swagger Property will be added to the map.
+	 * 
+	 * @param classDoc The ClassDoc for which the swagger properties should be created.
+	 * @return The swagger properties in a map.
 	 */
-	private Map<String, Property> getProperties(int index, List<ClassDoc> definitions, ClassDocCache cache) {
+	private Map<String, Property> getProperties(ClassDoc classDoc) {
 		Map<String, Property> properties = new HashMap<>();
-
-		for (FieldDoc fieldDoc : definitions.get(index).fields(false)) {
-			Property property = PropertyFactory.createProperty(fieldDoc.type(), definitions, cache);
+		
+		for (FieldDoc fieldDoc : classDoc.fields(false)) {
+			Property property = PropertyFactory.createSwaggerProperty(fieldDoc.type());
 			properties.put(fieldDoc.name(), property);
 		}
 		return properties;

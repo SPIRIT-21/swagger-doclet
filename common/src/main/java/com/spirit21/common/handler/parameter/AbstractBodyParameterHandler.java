@@ -1,7 +1,6 @@
 package com.spirit21.common.handler.parameter;
 
 import com.spirit21.common.handler.property.PropertyFactory;
-import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.MethodDoc;
 
 import io.swagger.models.parameters.BodyParameter;
@@ -14,21 +13,25 @@ import io.swagger.models.properties.PropertyBuilder;
  * 
  * @author mweidmann
  */
-public abstract class AbstractBodyParameterHandler implements IParameterHandler {
+public abstract class AbstractBodyParameterHandler extends AbstractHandler {
 	
+	public AbstractBodyParameterHandler(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
+		super(methodDoc, javaDocParameter);
+	}
+
 	@Override
-	public Parameter createNewSwaggerParameter(com.sun.javadoc.Parameter parameter, MethodDoc methodDoc) {
+	public Parameter createNewSwaggerParameter() {
 		// Create swagger body parameter.
 		BodyParameter bodyParameter = new BodyParameter();
 
 		// Set the name of the parameter.
-		bodyParameter.setName(parameter.name());
+		bodyParameter.setName(javaDocParameter.name());
 
 		// Set the description of the parameter.
-		bodyParameter.setDescription(IParameterHandler.getDescriptionForParameters(methodDoc, parameter));
+		bodyParameter.setDescription(getDescriptionForJavaDocParameter());
 
 		// Set the schema of the parameter.
-		Property property = PropertyFactory.createProperty(parameter.type(), AbstractParser.definitionClassDocs, AbstractParser.classDocCache);
+		Property property = PropertyFactory.createSwaggerProperty(javaDocParameter.type());
 		bodyParameter.setSchema(PropertyBuilder.toModel(property));
 
 		return bodyParameter;

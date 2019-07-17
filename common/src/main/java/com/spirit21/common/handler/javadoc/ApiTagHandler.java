@@ -13,31 +13,31 @@ import io.swagger.models.Swagger;
  */
 public enum ApiTagHandler {
 
-	API_TITLE(Consts.API_TITLE) {
+	API_TITLE_TAG(Consts.API_PARSER_TITLE) {
 		@Override
 		public void setTagValueToSwaggerModel(Swagger swagger, Info info, String value) {
 			info.setTitle(value);
 		}
 	},
-	API_DESCRIPTION(Consts.API_DESCRIPTION) {
+	API_DESCRIPTION_TAG(Consts.API_PARSER_DESCRIPTION) {
 		@Override
 		public void setTagValueToSwaggerModel(Swagger swagger, Info info, String value) {
 			info.setDescription(value);
 		}
 	},
-	API_HOST(Consts.API_HOST) {
+	API_HOST_TAG(Consts.API_PARSER_HOST) {
 		@Override
 		public void setTagValueToSwaggerModel(Swagger swagger, Info info, String value) {
 			swagger.setHost(value);
 		}
 	},
-	API_BASE_PATH(Consts.API_BASE_PATH) {
+	API_BASE_PATH_TAG(Consts.API_PARSER_BASE_PATH) {
 		@Override
 		public void setTagValueToSwaggerModel(Swagger swagger, Info info, String value) {
 			swagger.setBasePath(value);
 		}
 	},
-	API_VERSION(Consts.API_VERSION) {
+	API_VERSION_TAG(Consts.API_PARSER_VERSION) {
 		@Override
 		public void setTagValueToSwaggerModel(Swagger swagger, Info info, String value) {
 			info.setVersion(value);

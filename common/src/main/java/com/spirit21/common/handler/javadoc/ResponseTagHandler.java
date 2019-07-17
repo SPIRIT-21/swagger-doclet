@@ -1,13 +1,11 @@
 package com.spirit21.common.handler.javadoc;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.spirit21.common.Consts;
-import com.spirit21.common.helper.ClassDocCache;
 import com.spirit21.common.helper.CommonHelper;
-import com.sun.javadoc.ClassDoc;
+import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.Tag;
 
 import io.swagger.models.Response;
@@ -15,21 +13,22 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.RefProperty;
 
 /**
- * Handles the tags of the JavaDoc comment of a response of an interface.
+ * Handles the tags of the JavaDoc comment of a response.
  * Then it saves the values in the Response model.
  * 
  * @author mweidmann
  */
 // TODO: Refactor deprecated methods.
-// TODO: Static access to ClassDocCache and definitions.
 public enum ResponseTagHandler {
 	
 	/**
-	 * Creates the response message and set it into the Response object.
+	 * Parses the response message out of the JavaDoc tag. Then the response message will be set.
+	 * 
+	 * @author mweidmann
 	 */
-	RESPONSE_MESSAGE(Consts.RESPONSE_MESSAGE) {
+	RESPONSE_MESSAGE_TAG(Consts.OPERATION_PARSER_RESPONSE_MESSAGE) {
 		@Override
-		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToResponseModel(Tag tag, Response response) {
 			String responseMessage = Arrays.asList(tag.inlineTags()).stream()
 					.map(Tag::text)
 					.collect(Collectors.joining());
@@ -38,29 +37,33 @@ public enum ResponseTagHandler {
 		}
 	},
 	/**
-	 * Creates a RefProperty and adds the classDoc to the Parser.defintionClassDoc list.
+	 * Creates a RefProperty out the parsed class name from the JavaDoc tag.
+	 * Then the parsed class will be added to the Parser.defintionClassDoc list.
+	 * 
+	 * @author mweidmann
 	 */
-	RESPONSE_SCHEMA(Consts.RESPONSE_SCHEMA) {
+	RESPONSE_SCHEMA_TAG(Consts.OPERATION_PARSER_RESPONSE_SCHEMA) {
 		@Override
-		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToResponseModel(Tag tag, Response response) {
 			String simpleName = Arrays.asList(tag.inlineTags()).stream()
 						.map(Tag::text)
 						.collect(Collectors.joining());
 			
-			RefProperty ref = new RefProperty();
-			ref.set$ref(simpleName);
-			response.setSchema(ref);
+			RefProperty refProperty = new RefProperty();
+			refProperty.set$ref(simpleName);
+			response.setSchema(refProperty);
 			
-			CommonHelper.addToDefinitionList(definitions, cache.findBySimpleName(simpleName));
+			CommonHelper.addToDefinitionList(AbstractParser.CLASS_DOC_CACHE.findBySimpleName(simpleName));
 		}
 	},
 	/**
-	 * Creates an ArrayProperty and set the schema of the response to it.
-	 * Then the schema of the response will be overwritten with the created ArrayProperty.
+	 * Creates an ArrayProperty, configures it and sets the schema of the response to the property.
+	 * 
+	 * @author mweidmann
 	 */
-	RESPONSE_TYPE(Consts.RESPONSE_TYPE) {
+	RESPONSE_TYPE_TAG(Consts.OPERATION_PARSER_RESPONSE_TYPE) {
 		@Override
-		public void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache) {
+		public void setTagValueToResponseModel(Tag tag, Response response) {
 			if (response.getSchema() != null) {
 				ArrayProperty arrayProperty = new ArrayProperty();
 				arrayProperty.setItems(response.getSchema());
@@ -78,6 +81,12 @@ public enum ResponseTagHandler {
 	public String getTagName() {
 		return tagName;
 	}
-
-	public abstract void setTagValueToSwaggerModel(Response response, Tag tag, List<ClassDoc> definitions, ClassDocCache cache);
+	
+	/**
+	 * Parses the JavaDoc comment tag and puts the tag value into the swagger response model.
+	 * 
+	 * @param tag The JavaDoc comment tag out of which the information will be parsed.
+	 * @param response The swagger response model in which the information will be set.
+	 */
+	public abstract void setTagValueToResponseModel(Tag tag, Response response);
 }

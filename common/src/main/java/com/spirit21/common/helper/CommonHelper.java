@@ -1,41 +1,64 @@
 package com.spirit21.common.helper;
 
-import java.util.List;
-
 import com.spirit21.common.Consts;
+import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ProgramElementDoc;
 
+/**
+ * A helper class with only static helper methods. These helper functions are in the common 
+ * package because they are partially needed across the project.
+ * 
+ * @author mweidmann
+ */
 public class CommonHelper {
 	
 	/**
-	 * This method checks if a programElementDoc (classDoc, methodDoc) has a specific annotation
+	 * Checks if a ProgramElementDoc (ClassDoc, MethodDoc) is annotated by a specific annotation.
+	 * 
+	 * @param programElementDoc The element which should be checked if it is annotated.
+	 * @param annotationName The name of the annotation.
+	 * @return True if it is annotated, otherwise false.
 	 */
-	public static boolean hasAnnotation(ProgramElementDoc programElementDoc, String annotation) {
+	public static boolean hasAnnotation(ProgramElementDoc programElementDoc, String annotationName) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.isAnnotatedBy(annotation);
+		return annotationHelper.isAnnotatedBy(annotationName);
 	}
 	
 	/**
-	 * This method gets the annotationValue of a specific annotation of a programElementDoc
+	 * Gets the value for an annotation of a ProgramElementDoc (ClassDoc, MethodDoc).
+	 * 
+	 * @param programElementDoc The element from which the annotation will be taken.
+	 * @param annotationName The name of the annotation.
+	 * @param annotationValueName The name of the property of the annotation.
+	 * @return The value of the property of the annotation or null if it does not exist or the annotation is not present. 
 	 */
-	public static AnnotationValue getAnnotationValue(ProgramElementDoc programElementDoc, String annotation, String specificAnnotation) {
+	public static AnnotationValue getAnnotationValue(ProgramElementDoc programElementDoc, String annotationName, String annotationValueName) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.getAnnotationValue(annotation, specificAnnotation);
+		return annotationHelper.getAnnotationValue(annotationName, annotationValueName);
 	}
 
 	/**
-	 * This method checks if a parameter has a specific annotation
+	 * Checks if a Parameter(Doc) is annotated by a specific annotation.
+	 * 
+	 * @param parameter The parameter which should be checked if it is annotated.
+	 * @param annotationName The name of the annotation.
+	 * @return True if it is annotated, otherwise false.
 	 */
-	public static boolean hasAnnotation(Parameter parameter, String annotation) {
+	public static boolean hasAnnotation(Parameter parameter, String annotationName) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
-		return annotationHelper.isAnnotatedBy(annotation);
+		return annotationHelper.isAnnotatedBy(annotationName);
 	}
 	
 	/**
-	 * This method gets the annotationValue of a specific annotation of a parameter
+	 * Gets the value for an annotation of a Parameter(Doc).
+	 * 
+	 * @param parameter The parameter from which the annotation will be taken.
+	 * @param annotation The name of the annotation.
+	 * @param specificAnnotation The name of the property of the annotation.
+	 * @return The value of the property of the annotation or null if it does not exist or the annotation is not present.
 	 */
 	public static AnnotationValue getAnnotationValue(Parameter parameter, String annotation, String specificAnnotation) {
 		AnnotationHelper annotationHelper = new AnnotationHelper(parameter.annotations());
@@ -43,50 +66,57 @@ public class CommonHelper {
 	}
 	
 	/**
-	 * This method gets the value of the AnnotationValue object
+	 * Gets the value out of an AnnotationValue object.
+	 * Mostly it is a String but it can be any other type.
+	 * 
+	 * @param annotationValue The AnnotationValue object from where the value will be taken.
+	 * @return The value of the AnnotationValue object or null if the AnnotationValue is null.
 	 */
-	public static Object getAnnotationValueObject(AnnotationValue aValue) {
-		if (aValue != null) {
-			return aValue.value();
-		}
-		return null;
+	public static Object getAnnotationValueObject(AnnotationValue annotationValue) {
+		return annotationValue != null ? annotationValue.value() : null;
 	}
 	
 	/**
-	 * This method adds a classDoc to the definitionClassDoc list in the Parser
+	 * Checks if the CLI argument '-type' was correctly set by the user.
+	 * Valid values are: 'json' or 'yaml'.
+	 * 
+	 * @param outputTypeArgument The from the user specified output type.
+	 * @return If the user entered a valid argument then it will be returned. Otherwise the default value 'json'.
 	 */
-	public static void addToDefinitionList(List<ClassDoc> definitionClassDocs, ClassDoc classDoc) {
-		if (classDoc != null && !definitionClassDocs.contains(classDoc)) {
-			definitionClassDocs.add(classDoc);
+	public static String checkOutputType(String outputTypeArgument) {
+		return outputTypeArgument.equals(Consts.OUTPUT_FORMAT_YAML) ? Consts.OUTPUT_FORMAT_YAML : Consts.OUTPUT_FORMAT_JSON;
+	}
+	
+	/**
+	 * Checks if the CLI argument '-version' was correctly set by the user.
+	 * Valid values are: '2' or '3'.
+	 * 
+	 * @param versionArgument The from the user specified version.
+	 * @return If the user entered a valid argument then it will be returned. Otherwise the default value '3'.
+	 */
+	public static String checkVersion(String versionArgument) {
+		return versionArgument.equals(Consts.SWAGGER_VERSION_2) ? Consts.SWAGGER_VERSION_2 : Consts.SWAGGER_VERSION_3;
+	}
+	
+	/**
+	 * Adds a ClassDoc to the definitionClassDoc list in the Parser if it does not exist in the list.
+	 * 
+	 * @param classDoc The ClassDoc which should be added to the list.
+	 */
+	public static void addToDefinitionList(ClassDoc classDoc) {
+		if (classDoc != null && !AbstractParser.DEFINITION_CLASS_DOCS.contains(classDoc)) {
+			AbstractParser.DEFINITION_CLASS_DOCS.add(classDoc);
 		}
 	}
 	
 	/**
-	 * This method helps to replace multiple slashes with one
+	 * Replaces multiple slashes in a string with one slash.
+	 * Reason is for example the naming of a resource path. Some people write a trailing slash, others don't.
+	 * 
+	 * @param replace The String in which the multiple slashes should be replaced.
+	 * @return A new string with the replaced slashes.
 	 */
-	public static String replaceSlashes(String replace) {
-		return replace.replaceAll(Consts.SLASHES, Consts.SLASHES_REPLACE);
-	}
-	
-	/**
-	 * This method checks if the command line argument -type has a valid parameter
-	 */
-	public static String checkOutputType(String outputType) {
-		if (outputType.equals(Consts.JSON) || outputType.equals(Consts.YAML)) {
-			return outputType;
-		} else {
-			return Consts.JSON;
-		}
-	}
-	
-	/**
-	 * This method checks if the command line argument -version has a valid parameter
-	 */
-	public static String checkVersion(String version) {
-		if (version.equals(Consts.VERSION_2) || version.equals(Consts.VERSION_3)) {
-			return version;
-		} else {
-			return Consts.VERSION_3;
-		}
+	public static String replaceMultipleSlashes(String replace) {
+		return replace.replaceAll(Consts.REGEX_SLASHES, Consts.REGEX_SLASHES_REPLACE);
 	}
 }

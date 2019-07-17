@@ -3,36 +3,52 @@ package com.spirit21.common.helper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Type;
 
+/**
+ * A helper which provides functionality to cache all ClassDocs. 
+ * 
+ * @author mweidmann
+ */
 public class ClassDocCache {
 	
-	private Map<String, ClassDoc> typeNameToClass = new HashMap<>();
+	private Map<String, ClassDoc> classNameToClassDoc;
 	
-	public ClassDocCache(List<ClassDoc> classDocs) {
-		classDocs.forEach(classDoc -> typeNameToClass.put(classDoc.qualifiedTypeName(), classDoc));
+	public ClassDocCache() {
+		this.classNameToClassDoc = new HashMap<>();
 	}
 	
 	/**
-	 * This method finds a classDoc by type
+	 * Initializes the ClassDocCache. It saves all ClassDocs in the above defined data structure.
+	 * 
+	 * @param classDocs All ClassDocs of the project saved in a List.
+	 */
+	public void init(List<ClassDoc> classDocs) {
+		classDocs.forEach(classDoc -> classNameToClassDoc.put(classDoc.qualifiedTypeName(), classDoc));
+	}
+	
+	/**
+	 * Tries to find a cached ClassDoc by a passed type.
+	 * 
+	 * @param type The type for which the ClassDoc will be searched.
+	 * @return The found ClassDoc or null if nothing was found.
 	 */
 	public ClassDoc findByType(Type type) {
-		String typeName = type.qualifiedTypeName();
-		return typeNameToClass.get(typeName);
+		return classNameToClassDoc.get(type.qualifiedTypeName());
 	}
 	
 	/**
-	 * This method finds a classDoc by the simple class name
+	 * Tries to find a cached ClassDoc by a passed simple name of a ClassDoc.
+	 * 
+	 * @param classDocName The simple name of the ClassDoc which is searched.
+	 * @return The found ClassDoc or null if nothing was found.
 	 */
-	public ClassDoc findBySimpleName(String simpleName) {
-		for (Entry<String, ClassDoc> entry : typeNameToClass.entrySet()) {
-			if (entry.getValue().simpleTypeName().equals(simpleName)) {
-				return entry.getValue();
-			}
-		}
-		return null;
+	public ClassDoc findBySimpleName(String classDocName) {
+		return classNameToClassDoc.values().stream()
+				.filter(value -> value.simpleTypeName().equals(classDocName))
+				.findFirst()
+				.orElse(null);
 	}
 }

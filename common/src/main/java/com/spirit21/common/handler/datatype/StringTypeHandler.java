@@ -23,7 +23,7 @@ public class StringTypeHandler extends AbstractTypeHandler<StringType> {
 		STRING(String.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.STRING, null };
+				return new String[] { Consts.DATA_TYPE_STRING, null };
 			}
 		};
 		

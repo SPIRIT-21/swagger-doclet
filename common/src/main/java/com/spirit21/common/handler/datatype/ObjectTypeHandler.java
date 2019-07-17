@@ -23,7 +23,7 @@ public class ObjectTypeHandler extends AbstractTypeHandler<ObjectType> {
 		OBJECT(Object.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.OBJECT, null };
+				return new String[] { Consts.DATA_TYPE_OBJECT, null };
 			}
 		};
 

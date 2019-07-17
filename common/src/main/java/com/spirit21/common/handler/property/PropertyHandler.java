@@ -1,71 +1,91 @@
 package com.spirit21.common.handler.property;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.spirit21.common.Consts;
-import com.spirit21.common.helper.ClassDocCache;
 import com.spirit21.common.helper.CommonHelper;
-import com.sun.javadoc.ClassDoc;
+import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.Type;
 
-import v2.io.swagger.models.properties.ArrayProperty;
-import v2.io.swagger.models.properties.MapProperty;
-import v2.io.swagger.models.properties.Property;
-import v2.io.swagger.models.properties.RefProperty;
-import v2.io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 
 /**
- * This enum handles all possible properties
+ * Handles all possible swagger property types.
+ * 
+ * @author mweidmann
  */
 public enum PropertyHandler {
-
-	REF(Consts.REF) {
+	
+	/**
+	 * Handles ref properties by creating a RefProperty and add it to the Parser.defintionClassDocs list.
+	 * 
+	 * @author mweidmann
+	 */
+	REF_PROPERTY(Consts.PROPERTY_TYPE_REF) {
 		@Override
-		public Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
-				List<ClassDoc> definitions) {
-			RefProperty property = new RefProperty(type.simpleTypeName());
-			CommonHelper.addToDefinitionList(definitions, cache.findByType(type));
-			return property;
+		public Property createProperty(Type type, String[] typeAndFormat) {
+			RefProperty refProperty = new RefProperty(type.simpleTypeName());
+			CommonHelper.addToDefinitionList(AbstractParser.CLASS_DOC_CACHE.findByType(type));
+			return refProperty;
 		}
 	},
-	ARRAY(Consts.ARRAY) {
+	/**
+	 * Handles array properties by creating an ArrayProperty. Then the type of the array will be set by creating a swagger property.
+	 * 
+	 * @author mweidmann
+	 */
+	ARRAY_PROPERTY(Consts.PROPERTY_TYPE_ARRAY) {
 		@Override
-		public Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
-				List<ClassDoc> definitions) {
-			ArrayProperty property = new ArrayProperty();
-
-			for (Type newType : type.asParameterizedType().typeArguments()) {
-				property.setItems(PropertyFactory.createProperty(newType, definitions, cache));
-			}
-			return property;
+		public Property createProperty(Type type, String[] typeAndFormat) {
+			ArrayProperty arrayProperty = new ArrayProperty();
+			
+			Arrays.asList(type.asParameterizedType().typeArguments()).stream()
+				.map(PropertyFactory::createSwaggerProperty)
+				.forEach(arrayProperty::setItems);
+			
+			return arrayProperty;
 		}
 	},
-	MAP(Consts.MAP) {
+	/**
+	 * Handles map properties by creating a MapProperty. After that a property of the value of the map will be created.
+	 * The created generic property will be set in the MapProperty.
+	 * 
+	 * @author mweidmann
+	 */
+	MAP_PROPERTY(Consts.PROPERTY_TYPE_MAP) {
 		@Override
-		public Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
-				List<ClassDoc> definitions) {
-			MapProperty property = new MapProperty();
+		public Property createProperty(Type type, String[] typeAndFormat) {
+			MapProperty mapProperty = new MapProperty();
 
-			Type genericOfMap = type.asParameterizedType().typeArguments()[1];
-			Property prop = PropertyFactory.createProperty(genericOfMap, definitions, cache);
+			// Hardcoded array access at 1 because this gets the type of the Map value.
+			Type valueOfMap = type.asParameterizedType().typeArguments()[1];
+			Property propertyValueOfMap = PropertyFactory.createSwaggerProperty(valueOfMap);
 
-			property.additionalProperties(prop);
-			return property;
+			mapProperty.additionalProperties(propertyValueOfMap);
+			return mapProperty;
 		}
 	},
-	ENUM(Consts.ENUM) {
+	/**
+	 * Handle enum properties by creating a StringProperty.
+	 * By iterating over the enum constants all of them will be set to the StringProperty.
+	 * 
+	 * @author mweidmann
+	 */
+	ENUM_PROPERTY(Consts.PROPERTY_TYPE_ENUM) {
 		@Override
-		public Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
-				List<ClassDoc> definitions) {
-			StringProperty property = new StringProperty();
+		public Property createProperty(Type type, String[] typeAndFormat) {
+			StringProperty stringProperty = new StringProperty();
 
 			Arrays.asList(type.asClassDoc().enumConstants()).stream()
 				.map(FieldDoc::name)
-				.forEach(property::_enum);
+				.forEach(stringProperty::_enum);
 
-			return property;
+			return stringProperty;
 		}
 	};
 
@@ -78,7 +98,13 @@ public enum PropertyHandler {
 	public String getTypeName() {
 		return typeName;
 	}
-
-	public abstract Property createProperty(String[] typeAndFormat, Type type, ClassDocCache cache,
-			List<ClassDoc> definitions);
+	
+	/**
+	 * Creates a swagger property out of a JavaDoc type and the typeAndFormat array.
+	 * 
+	 * @param type The JavaDoc Type which should be converted to a swagger property.
+	 * @param typeAndFormat Contains information which type and format the JavaDoc type has.
+	 * @return The created swagger property.
+	 */
+	public abstract Property createProperty(Type type, String[] typeAndFormat);
 }

@@ -28,25 +28,25 @@ public class CollectionTypeHandler extends AbstractTypeHandler<CollectionTypes> 
 		COLLECTION(Collection.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.ARRAY, null };
+				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		LIST(List.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.ARRAY, null };
+				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		SET(Set.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.ARRAY, null };
+				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		MAP(Map.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.MAP, null };
+				return new String[] { Consts.PROPERTY_TYPE_MAP, null };
 			}
 		};
 

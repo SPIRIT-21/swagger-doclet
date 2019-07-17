@@ -26,13 +26,13 @@ public class NumberTypeHandler extends AbstractTypeHandler<NumberTypes> {
 		BIG_INTEGER(BigInteger.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.NUMBER, null };
+				return new String[] { Consts.DATA_TYPE_NUMBER, null };
 			}
 		},
 		BIG_DECIMAL(BigDecimal.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.NUMBER, null };
+				return new String[] { Consts.DATA_TYPE_NUMBER, null };
 			}
 		};
 

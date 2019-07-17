@@ -1,6 +1,7 @@
 package com.spirit21;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -17,49 +18,48 @@ import com.sun.javadoc.RootDoc;
 import lombok.extern.java.Log;
 
 /**
- * Entry class for the doclet.
+ * Entry class for the Doclet.
  * 
  * @author mweidmann
  */
 @Log
 public class Doclet {
-	
+
 	private static String[][] options;
-	
+
 	/**
-	 * Entry method of the Doclet.
-	 * Parses the output format, swagger version, filename and the backend-type out of the passed options.
-	 * Then it invokes the associated parser.
+	 * Entry method of the Doclet. Parses the output format, swagger version,
+	 * filename and the backend-type out of the passed options. Then it invokes the
+	 * associated parser.
 	 * 
-	 * Standard output format is json.
-	 * Standard swagger version is 3.
+	 * Standard output format is json. Standard swagger version is 3.
 	 *
-	 * @param rootDoc Represents the root of the program structure information. 
+	 * @param rootDoc Represents the root of the program structure information.
 	 * @return A boolean whether the swagger file was successfully generated.
 	 * @throws SwaggerException if something went wrong.
 	 */
 	public static boolean start(RootDoc rootDoc) throws SwaggerException {
 		Map<String, String> arguments = new HashMap<>();
 		options = rootDoc.options();
-		
-		arguments.put(Consts.OUTPUT_TYPE, CommonHelper.checkOutputType(getOption(Consts.OUTPUT_TYPE)));
-		arguments.put(Consts.VERSION, CommonHelper.checkVersion(getOption(Consts.VERSION)));
-		arguments.put(Consts.FILENAME, getOption(Consts.FILENAME));
-		
-		String backend = getOption(Consts.BACKEND);
+
+		arguments.put(Consts.CLI_OUTPUT_FORMAT, CommonHelper.checkOutputType(getOption(Consts.CLI_OUTPUT_FORMAT)));
+		arguments.put(Consts.CLI_SWAGGER_VERSION, CommonHelper.checkVersion(getOption(Consts.CLI_SWAGGER_VERSION)));
+		arguments.put(Consts.CLI_FILE_NAME, getOption(Consts.CLI_FILE_NAME));
+
+		String backend = getOption(Consts.CLI_BACKEND_TYPE);
 		AbstractParser parser = null;
-		
-		if (backend.equals(Consts.SPRING)) {
+
+		if (backend.equals(Consts.BACKEND_SPRING)) {
 			parser = new com.spirit21.spring.parser.Parser(rootDoc, arguments);
-		} else if (backend.equals(Consts.JAXRS)){
+		} else if (backend.equals(Consts.BACKEND_JAXRS)) {
 			parser = new com.spirit21.jaxrs.parser.Parser(rootDoc, arguments);
 		} else {
 			throw new SwaggerException("Invalid backend type. Please specify a correct backend type (jaxrs or spring).");
 		}
-		
+
 		return runParser(parser);
 	}
-	
+
 	/**
 	 * Runs the parser and throws an exception if something went wrong.
 	 * 
@@ -70,55 +70,52 @@ public class Doclet {
 		try {
 			return parser.run();
 		} catch (ApiParserException e) {
-			log.log(Level.SEVERE, "Failed to parse your API entry point.", e);
+			log.log(Level.SEVERE, "Failed to parse the API entry point.", e);
 			return false;
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Failed to write or to create the swagger file.", e);
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Gets the value for a option if it exists.
 	 * 
-	 * @param option The option for which the value is searched. 
+	 * @param option The option for which the value is searched.
 	 * @return The found value or an empty string if nothing was found.
 	 */
 	private static String getOption(String option) {
-		for (String[] args : options) {
-			if (args[0].equals(option)) {
-				return args[1];
-			}
-		}
-		
-		return "";
+		return Arrays.asList(options).stream()
+				.filter(args -> args[0].equals(option))
+				.map(args -> args[1])
+				.findFirst()
+				.orElse("");
 	}
-	
+
 	/**
-	 * Required method to allow custom options like '-type x'. This method determines the number of parts of the option.
-	 * For example '-test that this' has 3 parts, while '-type x' has 2 parts. This method is automatically invoked.
+	 * Required method to allow custom options like '-type x'. This method
+	 * determines the number of parts of the option. For example '-test that this'
+	 * has 3 parts, while '-type x' has 2 parts. This method is automatically
+	 * invoked.
 	 *
 	 * @param option The allowed option.
 	 * @return A number describing the number of parts of the option.
 	 */
 	public static int optionLength(String option) {
-		if (option.equals(Consts.OUTPUT_TYPE)) {
-			return 2;
-		} else if (option.equals(Consts.VERSION)) {
-			return 2;
-		} else if (option.equals(Consts.BACKEND)) {
-			return 2;
-		} else if (option.equals(Consts.FILENAME)) {
+		if (option.equals(Consts.CLI_OUTPUT_FORMAT) 
+				|| option.equals(Consts.CLI_SWAGGER_VERSION) 
+				|| option.equals(Consts.CLI_BACKEND_TYPE)
+				|| option.equals(Consts.CLI_FILE_NAME)) {
 			return 2;
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * Optional method which is also automatically invoked.
-	 * It checks if the passed options are valid.
+	 * Optional method which is also automatically invoked. It checks if the passed
+	 * options are valid.
 	 * 
-	 * @param reporter Reporter for reporting erroneous options.
+	 * @param reporter Reporter for reporting erroneous options. Is needed for the Doclet invocation.
 	 * @return A boolean whether the check was successful or not.
 	 */
 	public static boolean validOptions(DocErrorReporter reporter) {
@@ -128,17 +125,17 @@ public class Doclet {
 		boolean filename = false;
 
 		for (String[] args : options) {
-			if (args[0].equals(Consts.OUTPUT_TYPE)) {
+			if (args[0].equals(Consts.CLI_OUTPUT_FORMAT)) {
 				outputType = true;
-			} else if (args[0].equals(Consts.VERSION)) {
+			} else if (args[0].equals(Consts.CLI_SWAGGER_VERSION)) {
 				version = true;
-			} else if (args[0].equals(Consts.BACKEND)) {
+			} else if (args[0].equals(Consts.CLI_BACKEND_TYPE)) {
 				backend = true;
-			} else if (args[0].equals(Consts.FILENAME)) {
+			} else if (args[0].equals(Consts.CLI_FILE_NAME)) {
 				filename = true;
 			}
 		}
-		
+
 		if (!outputType) {
 			log.log(Level.INFO, "There is no '-type x' option used. Please specify an output format. For now is the json-format used.");
 		}
@@ -153,7 +150,7 @@ public class Doclet {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Required method which allows the Doclet to access the generics a Doc Element.
 	 * 
