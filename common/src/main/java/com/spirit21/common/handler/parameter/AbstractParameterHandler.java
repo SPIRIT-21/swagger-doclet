@@ -1,11 +1,10 @@
 package com.spirit21.common.handler.parameter;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.property.PropertyFactory;
 import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Parameter;
 
 import io.swagger.models.parameters.AbstractSerializableParameter;
 
@@ -23,8 +22,7 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	private final String defaultValueAnnotationName;
 	private final String defaultValueAnnotationProperty;
 	
-	public AbstractParameterHandler(MethodDoc methodDoc, Parameter javaDocParameter, String httpParameterName, String defaultValueAnnotationName, String defaultValueAnnotationProperty) {
-		super(methodDoc, javaDocParameter);
+	public AbstractParameterHandler(String httpParameterName, String defaultValueAnnotationName, String defaultValueAnnotationProperty) {
 		this.httpParameterName = httpParameterName;
 		this.defaultValueAnnotationName = defaultValueAnnotationName;
 		this.defaultValueAnnotationProperty = defaultValueAnnotationProperty;
@@ -34,21 +32,23 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	 * Sets the name, default value, description and the property to a passed Swagger parameter object.
 	 * 
 	 * @param swaggerParameter The swagger parameter in which the data will be set.
+	 * @param methodDoc The MethodDoc which contains the parameter.
+	 * @param javaDocParameter The JavaDoc parameter which should be converted to a swagger parameter.
 	 */
-	protected void setDataToSwaggerParameter(AbstractSerializableParameter<T> swaggerParameter) {
+	protected void setDataToSwaggerParameter(AbstractSerializableParameter<T> swaggerParameter, MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		// Set the parameter name.
-		AnnotationValue aValue = CommonHelper.getAnnotationValue(javaDocParameter, getHttpParameterType(), Consts.ANNOTATION_PROPERTY_NAME_VALUE);
+		AnnotationValue aValue = CommonHelper.getAnnotationValue(javaDocParameter, getHttpParameterType(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 		String value = (String) CommonHelper.getAnnotationValueObject(aValue);
 		swaggerParameter.setName(value);
 		
 		// Set the default value.
-		String defaultValue = getDefaultValue();
+		String defaultValue = getDefaultValue(javaDocParameter);
 		if (defaultValue != null) {
 			swaggerParameter.setDefaultValue(defaultValue);
 		}
 
 		// Set the description.
-		swaggerParameter.setDescription(getDescriptionForJavaDocParameter());
+		swaggerParameter.setDescription(getDescriptionForJavaDocParameter(methodDoc, javaDocParameter));
 
 		// Set the property.
 		swaggerParameter.setProperty(PropertyFactory.createSwaggerProperty(javaDocParameter.type()));
@@ -57,10 +57,10 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	/**
 	 * Gets the default value of a parameterDoc.
 	 * 
-	 * @param parameterDoc The parameterDoc from where the default value is retrieved.
+	 * @param javaDocParameter The parameterDoc from where the default value is retrieved.
 	 * @return A string which contains the default value for a parameter or null.
 	 */
-	protected String getDefaultValue() {
+	protected String getDefaultValue(com.sun.javadoc.Parameter javaDocParameter) {
 		AnnotationValue aValue = CommonHelper.getAnnotationValue(javaDocParameter, defaultValueAnnotationName, defaultValueAnnotationProperty);
 		return (String) CommonHelper.getAnnotationValueObject(aValue);
 	}

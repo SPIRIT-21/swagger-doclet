@@ -1,27 +1,20 @@
 package com.spirit21.common;
 
-public class Consts {
+public class CommonConsts {
 
-	// All possible Command-line options.
+	// Possible Command-line options.
 	public static final String CLI_OUTPUT_FORMAT = "-type";
 	public static final String CLI_SWAGGER_VERSION = "-version";
-	public static final String CLI_BACKEND_TYPE = "-backend";
 	public static final String CLI_FILE_NAME = "-filename";
 
 	// Default file name.
 	public static final String DEFAULT_FILE_NAME = "generated-swagger-file";
 
-	// All possible output formats.
+	// Possible output format.
 	public static final String OUTPUT_FORMAT_JSON = "json";
-	public static final String OUTPUT_FORMAT_YAML = "yaml";
 
-	// All possible/supported swagger versions.
-	public static final String SWAGGER_VERSION_2 = "2";
+	// Possible/supported swagger version.
 	public static final String SWAGGER_VERSION_3 = "3";
-
-	// All possible/supported Backend types.
-	public static final String BACKEND_SPRING = "spring";
-	public static final String BACKEND_JAXRS = "jaxrs";
 
 	// ApiParser constants for the entry point ClassDoc.
 	// These tags are used in the JavaDoc of the entry point ClassDoc of the REST API.

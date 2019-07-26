@@ -1,6 +1,6 @@
 package com.spirit21.common.handler.datatype;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.datatype.ObjectTypeHandler.ObjectType;;
 
 /**
@@ -23,7 +23,7 @@ public class ObjectTypeHandler extends AbstractTypeHandler<ObjectType> {
 		OBJECT(Object.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_OBJECT, null };
+				return new String[] { CommonConsts.DATA_TYPE_OBJECT, null };
 			}
 		};
 

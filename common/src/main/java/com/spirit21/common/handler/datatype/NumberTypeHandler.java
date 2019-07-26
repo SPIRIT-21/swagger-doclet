@@ -3,7 +3,7 @@ package com.spirit21.common.handler.datatype;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.datatype.NumberTypeHandler.NumberTypes;
 
 /**
@@ -26,13 +26,13 @@ public class NumberTypeHandler extends AbstractTypeHandler<NumberTypes> {
 		BIG_INTEGER(BigInteger.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_NUMBER, null };
+				return new String[] { CommonConsts.DATA_TYPE_NUMBER, null };
 			}
 		},
 		BIG_DECIMAL(BigDecimal.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_NUMBER, null };
+				return new String[] { CommonConsts.DATA_TYPE_NUMBER, null };
 			}
 		};
 

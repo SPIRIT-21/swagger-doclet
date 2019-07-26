@@ -2,7 +2,7 @@ package com.spirit21.common.handler.property;
 
 import java.util.Arrays;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.datatype.DataTypeFactory;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
@@ -11,6 +11,11 @@ import com.sun.javadoc.Type;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 
+/**
+ * Factory which creates a swagger property out of a JavaDoc Type.
+ * 
+ * @author mweidmann
+ */
 public class PropertyFactory {
 	
 	/**
@@ -32,7 +37,7 @@ public class PropertyFactory {
 			return PropertyBuilder.build(typeAndFormat[0], typeAndFormat[1], null);
 		} else {
 			String[] tmp = new String[2];
-			tmp[0] = Consts.PROPERTY_TYPE_REF;
+			tmp[0] = CommonConsts.PROPERTY_TYPE_REF;
 			
 			CommonHelper.addToDefinitionList(type.asClassDoc());
 			return createSwaggerProperty(type);
@@ -69,9 +74,9 @@ public class PropertyFactory {
 		String[] typeAndFormat = new String[2];
 		
 		if (type.asClassDoc().isEnum()) {
-			typeAndFormat[0] = Consts.PROPERTY_TYPE_ENUM;
+			typeAndFormat[0] = CommonConsts.PROPERTY_TYPE_ENUM;
 		} else {
-			typeAndFormat[0] = Consts.PROPERTY_TYPE_REF;
+			typeAndFormat[0] = CommonConsts.PROPERTY_TYPE_REF;
 		}
 		return typeAndFormat;
 	}

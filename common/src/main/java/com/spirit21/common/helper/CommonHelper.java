@@ -1,6 +1,6 @@
 package com.spirit21.common.helper;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
@@ -77,28 +77,6 @@ public class CommonHelper {
 	}
 	
 	/**
-	 * Checks if the CLI argument '-type' was correctly set by the user.
-	 * Valid values are: 'json' or 'yaml'.
-	 * 
-	 * @param outputTypeArgument The from the user specified output type.
-	 * @return If the user entered a valid argument then it will be returned. Otherwise the default value 'json'.
-	 */
-	public static String checkOutputType(String outputTypeArgument) {
-		return outputTypeArgument.equals(Consts.OUTPUT_FORMAT_YAML) ? Consts.OUTPUT_FORMAT_YAML : Consts.OUTPUT_FORMAT_JSON;
-	}
-	
-	/**
-	 * Checks if the CLI argument '-version' was correctly set by the user.
-	 * Valid values are: '2' or '3'.
-	 * 
-	 * @param versionArgument The from the user specified version.
-	 * @return If the user entered a valid argument then it will be returned. Otherwise the default value '3'.
-	 */
-	public static String checkVersion(String versionArgument) {
-		return versionArgument.equals(Consts.SWAGGER_VERSION_2) ? Consts.SWAGGER_VERSION_2 : Consts.SWAGGER_VERSION_3;
-	}
-	
-	/**
 	 * Adds a ClassDoc to the definitionClassDoc list in the Parser if it does not exist in the list.
 	 * 
 	 * @param classDoc The ClassDoc which should be added to the list.
@@ -117,6 +95,6 @@ public class CommonHelper {
 	 * @return A new string with the replaced slashes.
 	 */
 	public static String replaceMultipleSlashes(String replace) {
-		return replace.replaceAll(Consts.REGEX_SLASHES, Consts.REGEX_SLASHES_REPLACE);
+		return replace.replaceAll(CommonConsts.REGEX_SLASHES, CommonConsts.REGEX_SLASHES_REPLACE);
 	}
 }

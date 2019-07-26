@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.ApiParserException;
 import com.spirit21.common.helper.ClassDocCache;
 import com.sun.javadoc.ClassDoc;
@@ -55,6 +55,7 @@ public abstract class AbstractParser {
 		this.swagger = new Swagger();
 		this.apiParser = new ApiParser();
 		this.definitionParser = new DefinitionParser();
+		
 		this.arguments = arguments;
 	}
 	
@@ -105,7 +106,7 @@ public abstract class AbstractParser {
 	 * @throws IOException if the creation of the file fails.
 	 */
 	private File createFile(String fileName) throws IOException {
-		File file = new File(fileName + "." + arguments.get(Consts.CLI_OUTPUT_FORMAT));
+		File file = new File(fileName + "." + arguments.get(CommonConsts.CLI_OUTPUT_FORMAT));
 		
 		if (file.createNewFile()) {
 			return file;
@@ -124,7 +125,7 @@ public abstract class AbstractParser {
 	protected void writeFile(String fileName) throws IOException {
 		String output = null;
 		
-		if (arguments.get(Consts.CLI_SWAGGER_VERSION).equals(Consts.SWAGGER_VERSION_3)) {
+		if (arguments.get(CommonConsts.CLI_SWAGGER_VERSION).equals(CommonConsts.SWAGGER_VERSION_3)) {
 			output = getSwaggerV3String();
 		} else {
 			output = getSwaggerV2String();
@@ -146,7 +147,7 @@ public abstract class AbstractParser {
 	 * @throws JsonProcessingException if the stringification to YAML fails.
 	 */
 	private String getSwaggerV2String() throws JsonProcessingException {
-		if (arguments.get(Consts.CLI_OUTPUT_FORMAT).equals(Consts.OUTPUT_FORMAT_JSON)) {
+		if (arguments.get(CommonConsts.CLI_OUTPUT_FORMAT).equals(CommonConsts.OUTPUT_FORMAT_JSON)) {
 			return Json.pretty(swagger);
 		} else {
 			return Yaml.pretty().writeValueAsString(swagger);
@@ -168,7 +169,7 @@ public abstract class AbstractParser {
 		SwaggerParseResult swaggerParseResult = swaggerConverter.convert(swaggerDeserializationResult);
 		OpenAPI openApi = swaggerParseResult.getOpenAPI();
 		
-		if (arguments.get(Consts.CLI_OUTPUT_FORMAT).equals(Consts.OUTPUT_FORMAT_JSON)) {
+		if (arguments.get(CommonConsts.CLI_OUTPUT_FORMAT).equals(CommonConsts.OUTPUT_FORMAT_JSON)) {
 			return Json.pretty(openApi);
 		} else {
 			return Yaml.pretty().writeValueAsString(openApi);
@@ -188,7 +189,7 @@ public abstract class AbstractParser {
 	 * @return A valid file name.
 	 */
 	protected String getFileName(String filenameFromCode) {
-		boolean isArgumentValid = arguments.get(Consts.CLI_FILE_NAME) != null && !arguments.get(Consts.CLI_FILE_NAME).isEmpty();
-		return isArgumentValid ? arguments.get(Consts.CLI_FILE_NAME) : filenameFromCode;
+		boolean isArgumentValid = arguments.get(CommonConsts.CLI_FILE_NAME) != null && !arguments.get(CommonConsts.CLI_FILE_NAME).isEmpty();
+		return isArgumentValid ? arguments.get(CommonConsts.CLI_FILE_NAME) : filenameFromCode;
  	}
 }

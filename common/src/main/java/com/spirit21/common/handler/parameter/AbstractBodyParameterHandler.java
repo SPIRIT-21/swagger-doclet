@@ -14,13 +14,9 @@ import io.swagger.models.properties.PropertyBuilder;
  * @author mweidmann
  */
 public abstract class AbstractBodyParameterHandler extends AbstractHandler {
-	
-	public AbstractBodyParameterHandler(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
-		super(methodDoc, javaDocParameter);
-	}
 
 	@Override
-	public Parameter createNewSwaggerParameter() {
+	public Parameter createNewSwaggerParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		// Create swagger body parameter.
 		BodyParameter bodyParameter = new BodyParameter();
 
@@ -28,7 +24,7 @@ public abstract class AbstractBodyParameterHandler extends AbstractHandler {
 		bodyParameter.setName(javaDocParameter.name());
 
 		// Set the description of the parameter.
-		bodyParameter.setDescription(getDescriptionForJavaDocParameter());
+		bodyParameter.setDescription(getDescriptionForJavaDocParameter(methodDoc, javaDocParameter));
 
 		// Set the schema of the parameter.
 		Property property = PropertyFactory.createSwaggerProperty(javaDocParameter.type());

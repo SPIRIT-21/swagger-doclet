@@ -3,7 +3,7 @@ package com.spirit21.common.handler.javadoc;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.Tag;
@@ -26,7 +26,7 @@ public enum ResponseTagHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	RESPONSE_MESSAGE_TAG(Consts.OPERATION_PARSER_RESPONSE_MESSAGE) {
+	RESPONSE_MESSAGE_TAG(CommonConsts.OPERATION_PARSER_RESPONSE_MESSAGE) {
 		@Override
 		public void setTagValueToResponseModel(Tag tag, Response response) {
 			String responseMessage = Arrays.asList(tag.inlineTags()).stream()
@@ -42,7 +42,7 @@ public enum ResponseTagHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	RESPONSE_SCHEMA_TAG(Consts.OPERATION_PARSER_RESPONSE_SCHEMA) {
+	RESPONSE_SCHEMA_TAG(CommonConsts.OPERATION_PARSER_RESPONSE_SCHEMA) {
 		@Override
 		public void setTagValueToResponseModel(Tag tag, Response response) {
 			String simpleName = Arrays.asList(tag.inlineTags()).stream()
@@ -61,7 +61,7 @@ public enum ResponseTagHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	RESPONSE_TYPE_TAG(Consts.OPERATION_PARSER_RESPONSE_TYPE) {
+	RESPONSE_TYPE_TAG(CommonConsts.OPERATION_PARSER_RESPONSE_TYPE) {
 		@Override
 		public void setTagValueToResponseModel(Tag tag, Response response) {
 			if (response.getSchema() != null) {

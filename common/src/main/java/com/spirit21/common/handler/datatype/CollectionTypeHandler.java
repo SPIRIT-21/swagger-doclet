@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.datatype.CollectionTypeHandler.CollectionTypes;
 
 /**
@@ -28,25 +28,25 @@ public class CollectionTypeHandler extends AbstractTypeHandler<CollectionTypes> 
 		COLLECTION(Collection.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
+				return new String[] { CommonConsts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		LIST(List.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
+				return new String[] { CommonConsts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		SET(Set.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.PROPERTY_TYPE_ARRAY, null };
+				return new String[] { CommonConsts.PROPERTY_TYPE_ARRAY, null };
 			}
 		},
 		MAP(Map.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.PROPERTY_TYPE_MAP, null };
+				return new String[] { CommonConsts.PROPERTY_TYPE_MAP, null };
 			}
 		};
 

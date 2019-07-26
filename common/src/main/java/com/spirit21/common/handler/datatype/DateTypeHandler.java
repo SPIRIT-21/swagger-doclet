@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Date;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.handler.datatype.DateTypeHandler.DateTypes;
 
 /**
@@ -31,43 +31,43 @@ public class DateTypeHandler extends AbstractTypeHandler<DateTypes> {
 		DATE(Date.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		},
 		LOCAL_DATE_TIME(LocalDateTime.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE_TIME };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE_TIME };
 			}
 		},
 		LOCAL_DATE(LocalDate.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		},
 		OFFSET_DATE_TIME(OffsetDateTime.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		},
 		LOCAL_TIME(LocalTime.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		},
 		OFFSET_TIME(OffsetTime.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		},
 		INSTANT(Instant.class.getName()) {
 			@Override
 			public String[] getTypeAndFormat() {
-				return new String[] { Consts.DATA_TYPE_STRING, Consts.DATA_TYPE_DATE };
+				return new String[] { CommonConsts.DATA_TYPE_STRING, CommonConsts.DATA_TYPE_DATE };
 			}
 		};
 

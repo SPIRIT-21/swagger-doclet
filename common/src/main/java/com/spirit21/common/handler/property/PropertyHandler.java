@@ -2,7 +2,7 @@ package com.spirit21.common.handler.property;
 
 import java.util.Arrays;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.FieldDoc;
@@ -26,7 +26,7 @@ public enum PropertyHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	REF_PROPERTY(Consts.PROPERTY_TYPE_REF) {
+	REF_PROPERTY(CommonConsts.PROPERTY_TYPE_REF) {
 		@Override
 		public Property createProperty(Type type, String[] typeAndFormat) {
 			RefProperty refProperty = new RefProperty(type.simpleTypeName());
@@ -39,7 +39,7 @@ public enum PropertyHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	ARRAY_PROPERTY(Consts.PROPERTY_TYPE_ARRAY) {
+	ARRAY_PROPERTY(CommonConsts.PROPERTY_TYPE_ARRAY) {
 		@Override
 		public Property createProperty(Type type, String[] typeAndFormat) {
 			ArrayProperty arrayProperty = new ArrayProperty();
@@ -57,7 +57,7 @@ public enum PropertyHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	MAP_PROPERTY(Consts.PROPERTY_TYPE_MAP) {
+	MAP_PROPERTY(CommonConsts.PROPERTY_TYPE_MAP) {
 		@Override
 		public Property createProperty(Type type, String[] typeAndFormat) {
 			MapProperty mapProperty = new MapProperty();
@@ -76,7 +76,7 @@ public enum PropertyHandler {
 	 * 
 	 * @author mweidmann
 	 */
-	ENUM_PROPERTY(Consts.PROPERTY_TYPE_ENUM) {
+	ENUM_PROPERTY(CommonConsts.PROPERTY_TYPE_ENUM) {
 		@Override
 		public Property createProperty(Type type, String[] typeAndFormat) {
 			StringProperty stringProperty = new StringProperty();

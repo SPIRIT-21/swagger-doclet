@@ -11,7 +11,7 @@
 	</parent>
 
 	<dependencies>
-		<!-- Needed because of the swagger dependency -->
+		<!-- Needed for swagger dependency -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>

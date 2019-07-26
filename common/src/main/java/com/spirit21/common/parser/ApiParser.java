@@ -2,7 +2,7 @@ package com.spirit21.common.parser;
 
 import java.util.Arrays;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.ApiParserException;
 import com.spirit21.common.handler.javadoc.ApiTagHandler;
 
@@ -52,11 +52,11 @@ public class ApiParser {
 	 * @param tagText The value of the used tag. For example: "A little description of the API".
 	 */
 	private void setBasicInformation(Swagger swagger, Info info, String tagName, String tagText) {
-		if (tagName.equals(Consts.API_PARSER_FILE_NAME)) {
+		if (tagName.equals(CommonConsts.API_PARSER_FILE_NAME)) {
 			if (tagText != null && !tagText.isEmpty()) {
 				fileName = tagText;
 			} else {
-				fileName = Consts.DEFAULT_FILE_NAME;
+				fileName = CommonConsts.DEFAULT_FILE_NAME;
 			}
 		}
 		

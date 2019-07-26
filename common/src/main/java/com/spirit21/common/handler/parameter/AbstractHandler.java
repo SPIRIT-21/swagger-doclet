@@ -14,29 +14,15 @@ import io.swagger.models.parameters.Parameter;
  * @author mweidmann
  */
 public abstract class AbstractHandler {
-
-	/**
-	 * The parameter for this specific handler.
-	 */
-	protected com.sun.javadoc.Parameter javaDocParameter;
-
-	/**
-	 * The method which contains the parameter.
-	 */
-	protected MethodDoc methodDoc;
-
-	public AbstractHandler(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
-		this.methodDoc = methodDoc;
-		this.javaDocParameter = javaDocParameter;
-	}
-
+	
 	/**
 	 * Gets the description for a parameter of the JavaDoc comment of a method.
 	 * 
-	 * @return The description of the parameter or an empty string if no description
-	 *         was found.
+	 * @param methodDoc The MethodDoc which contains the parameter.
+	 * @param javaDocParameter The JavaDoc parameter which should be converted to a swagger parameter.
+	 * @return The description of the parameter or an empty string if no description was found.
 	 */
-	protected String getDescriptionForJavaDocParameter() {
+	protected String getDescriptionForJavaDocParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		return Arrays.asList(methodDoc.paramTags()).stream()
 				.filter(tag -> tag.parameterName().equals(javaDocParameter.name()))
 				.map(Tag::inlineTags)
@@ -46,11 +32,13 @@ public abstract class AbstractHandler {
 	}
 	
 	/**
-	 * Creates a new Swagger (Query/Body/Path/..)Parameter out of a DocletParameter.
+	 * Creates a new Swagger (Query/Body/Path/..)Parameter out of a JavaDoc Parameter.
 	 * 
+	 * @param methodDoc The MethodDoc which contains the parameter.
+	 * @param javaDocParameter The JavaDoc parameter which should be converted to a swagger parameter.
 	 * @return The generated Swagger Parameter.
 	 */
-	public abstract Parameter createNewSwaggerParameter();
+	public abstract Parameter createNewSwaggerParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter);
 
 	/**
 	 * Get the HTTP parameter type, e.g. Body, Query, Path, ...
