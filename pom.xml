@@ -82,7 +82,7 @@
 				<artifactId>javadoc-jaxrs-swagger-doclet</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- Needed for utility -->
+			<!-- Needed for swagger dependency -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
