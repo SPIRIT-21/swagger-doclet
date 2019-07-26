@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.ApiParserException;
-import com.spirit21.common.exception.SwaggerDocletException;
-import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
@@ -37,15 +35,14 @@ public class Doclet {
 	 *
 	 * @param rootDoc Represents the root of the program structure information.
 	 * @return A boolean whether the swagger file was successfully generated.
-	 * @throws SwaggerDocletException if something went wrong.
 	 */
 	public static boolean start(RootDoc rootDoc) {
 		Map<String, String> arguments = new HashMap<>();
 		options = rootDoc.options();
 
-		arguments.put(Consts.CLI_OUTPUT_FORMAT, CommonHelper.checkOutputType(getOption(Consts.CLI_OUTPUT_FORMAT)));
-		arguments.put(Consts.CLI_SWAGGER_VERSION, CommonHelper.checkVersion(getOption(Consts.CLI_SWAGGER_VERSION)));
-		arguments.put(Consts.CLI_FILE_NAME, getOption(Consts.CLI_FILE_NAME));
+		arguments.put(CommonConsts.CLI_OUTPUT_FORMAT, Utility.checkOutputType(getOption(CommonConsts.CLI_OUTPUT_FORMAT)));
+		arguments.put(CommonConsts.CLI_SWAGGER_VERSION, Utility.checkVersion(getOption(CommonConsts.CLI_SWAGGER_VERSION)));
+		arguments.put(CommonConsts.CLI_FILE_NAME, getOption(CommonConsts.CLI_FILE_NAME));
 
 		String backend = getOption(Consts.CLI_BACKEND_TYPE);
 		AbstractParser parser = null;
@@ -107,10 +104,10 @@ public class Doclet {
 	 * @return A number describing the number of parts of the option.
 	 */
 	public static int optionLength(String option) {
-		if (option.equals(Consts.CLI_OUTPUT_FORMAT) 
-				|| option.equals(Consts.CLI_SWAGGER_VERSION) 
+		if (option.equals(CommonConsts.CLI_OUTPUT_FORMAT) 
+				|| option.equals(CommonConsts.CLI_SWAGGER_VERSION) 
 				|| option.equals(Consts.CLI_BACKEND_TYPE)
-				|| option.equals(Consts.CLI_FILE_NAME)) {
+				|| option.equals(CommonConsts.CLI_FILE_NAME)) {
 			return 2;
 		}
 		return 0;
@@ -130,13 +127,13 @@ public class Doclet {
 		boolean filename = false;
 
 		for (String[] args : options) {
-			if (args[0].equals(Consts.CLI_OUTPUT_FORMAT)) {
+			if (args[0].equals(CommonConsts.CLI_OUTPUT_FORMAT)) {
 				outputType = true;
-			} else if (args[0].equals(Consts.CLI_SWAGGER_VERSION)) {
+			} else if (args[0].equals(CommonConsts.CLI_SWAGGER_VERSION)) {
 				version = true;
 			} else if (args[0].equals(Consts.CLI_BACKEND_TYPE)) {
 				backend = true;
-			} else if (args[0].equals(Consts.CLI_FILE_NAME)) {
+			} else if (args[0].equals(CommonConsts.CLI_FILE_NAME)) {
 				filename = true;
 			}
 		}
