@@ -9,11 +9,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.spring.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
 
-import v2.io.swagger.models.Swagger;
-import v2.io.swagger.models.Tag;
+import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
 
 public class TagParser {
 
@@ -38,7 +41,7 @@ public class TagParser {
 	 */
 	private List<ClassDoc> getControllerWithRequestMapping() {
 		return Parser.controllerClassDocs.stream()
-				.filter(ParserHelper::hasRequestMappingAnnotation)
+				.filter(classDoc -> CommonHelper.hasAnnotation(classDoc, RequestMapping.class.getName()))
 				.collect(Collectors.toList());
 	}
 
@@ -76,7 +79,7 @@ public class TagParser {
 	 * This method creates the tag with the annotation value
 	 */
 	private Tag createTag(String annotationValue) {
-		Matcher matcher = Parser.pattern.matcher(annotationValue);
+		Matcher matcher = Parser.PATTERN_TAG_NAME.matcher(annotationValue);
 		if (matcher.matches()) {
 			String group = matcher.group(1);
 			Tag tag = new Tag();

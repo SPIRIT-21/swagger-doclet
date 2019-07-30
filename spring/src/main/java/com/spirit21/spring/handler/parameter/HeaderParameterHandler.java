@@ -4,22 +4,24 @@ import com.spirit21.common.handler.parameter.AbstractParameterHandler;
 import com.spirit21.spring.Consts;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.parameters.HeaderParameter;
-import v2.io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
 
+/**
+ * Header parameter handler for Spring Boot's header parameters.
+ * 
+ * @author mweidmann
+ */
 public class HeaderParameterHandler extends AbstractParameterHandler<HeaderParameter> {
 	
-	public HeaderParameterHandler(String name) {
-		super(name, name, Consts.DEFAULT_VALUE);
+	public HeaderParameterHandler(String httpParameterName) {
+		super(httpParameterName, httpParameterName, Consts.DEFAULT_VALUE);
 	}
-
-	/**
-	 * This method creates a new header parameter, sets the data of it and returns it
-	 */
+	
 	@Override
-	public Parameter createNewParameter(com.sun.javadoc.Parameter parameter, MethodDoc methodDoc) {
+	public Parameter createNewSwaggerParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		HeaderParameter headerParameter = new HeaderParameter();
-		handleParameter(headerParameter, parameter, methodDoc);
+		setDataToSwaggerParameter(headerParameter, methodDoc, javaDocParameter);
 		return headerParameter;
 	}
 }

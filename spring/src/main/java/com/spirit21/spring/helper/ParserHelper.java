@@ -2,14 +2,14 @@ package com.spirit21.spring.helper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.AnnotationHelper;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.spring.handler.annotation.HttpMethodHandler;
@@ -18,71 +18,79 @@ import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
+/**
+ * A utility class which contains methods helping during the parsing process.
+ * 
+ * @author mweidmann
+ */
 public class ParserHelper {
 
 	/**
-	 * This method checks if a programElementDoc has a RequestMapping or and HttpMapping annotation
+	 * Private constructor to hide the implicit public one.
 	 */
-	public static boolean isHttpMethod(ProgramElementDoc programElementDoc) {
-		return hasRequestMappingAnnotation(programElementDoc) 
-				|| getHttpMappingAnnotation(programElementDoc) != null;
+	private ParserHelper() { }
+	
+	/**
+	 * Checks if a ProgramElementDoc is a Spring Boot controller. Therefore the annotations
+	 * are checked for RestController or Controller.
+	 * 
+	 * @param programElementDoc The element which should be checked.
+	 * @return True if it is a Controller, otherwise false.
+	 */
+	public static boolean isController(ProgramElementDoc programElementDoc) {
+		return CommonHelper.hasAnnotation(programElementDoc, RestController.class.getName())
+				|| CommonHelper.hasAnnotation(programElementDoc, Controller.class.getName());
 	}
 	
 	/**
-	 * This method gets the path of a method
+	 * Checks if a ProgramElementDoc is annotated by a RequestMapping or HttpMapping annotation.
+	 * 
+	 * @param programElementDoc The element which should be checked.
+	 * @return True if it is annotated, otherwise false.
 	 */
-	public static List<String> getPath(String controllerMapping, MethodDoc methodDoc) {
-		AnnotationValue[] methodValues = getMappingValue(methodDoc);
+	public static boolean isHttpMethod(ProgramElementDoc programElementDoc) {
+		return CommonHelper.hasAnnotation(programElementDoc, RequestMapping.class.getName())
+				|| getFullHttpMappingAnnotation(programElementDoc) != null;
+	}
+	
+	/**
+	 * Gets all mappings (that means including the controller mapping path) of a method.
+	 * For example if the controller has the mapping "/controller" and the method these mappings
+	 * { "/mapping1", "/mapping2" }, then these paths are generated: { "/controller/mapping1", "/controller/mapping2"}.
+	 * 
+	 * @param controllerMapping The mapping of the controller.
+	 * @param methodDoc The method from which all the mappings are generated.
+	 * 
+	 * @return A list which contains all full-mappings of a MethodDoc.
+	 */
+	// TODO: methodMappingAnnotationValues is a redundant computation.
+	public static List<String> getAllFullMappingsOfMethod(String controllerMapping, MethodDoc methodDoc) {
+		AnnotationValue[] methodMappingAnnotationValues = getMappingValue(methodDoc);
 		
-		return Arrays.asList(methodValues).stream()
-				.map(aValue -> (String) CommonHelper.getAnnotationValueObject(aValue))
-				.map(string -> controllerMapping + "/" + string)
-				.map(CommonHelper::replaceSlashes)
+		return Arrays.asList(methodMappingAnnotationValues).stream()
+				.map(methodMappingAnnotationValue -> (String) CommonHelper.getAnnotationValueObject(methodMappingAnnotationValue))
+				.filter(Objects::nonNull)
+				.map(methodMapping -> controllerMapping + "/" + methodMapping)
+				.map(CommonHelper::replaceMultipleSlashes)
 				.collect(Collectors.toList());
-	}
-
-	/**
-	 * This method checks if a programElementDoc (classDoc, methodDoc) has a
-	 * SpringBootApplication annotation
-	 */
-	public static boolean hasSpringBootApplicationAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.isAnnotatedBy(SpringBootApplication.class.getName());
-	}
-
-	/**
-	 * This method checks if a programElementDoc (classDoc, methodDoc) is a
-	 * Controller
-	 */
-	public static boolean hasControllerAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-
-		return annotationHelper.isAnnotatedBy(RestController.class.getName())
-				|| annotationHelper.isAnnotatedBy(Controller.class.getName());
-	}
-
-	/**
-	 * This method checks if a programElementDoc (classDoc, methodDoc) has a
-	 * RequestMapping annotation
-	 */
-	public static boolean hasRequestMappingAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-		return annotationHelper.isAnnotatedBy(RequestMapping.class.getName());
 	}
 
 	/**
 	 * This method gets the full HTTP-Method of a programElementDoc (classDoc,
 	 * methodDoc) (e.g. org.springframework.web.bind.annotation.GetMapping...)
 	 */
-	public static String getHttpMappingAnnotation(ProgramElementDoc programElementDoc) {
-		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
-
-		for (HttpMethodHandler hmh : HttpMethodHandler.values()) {
-			if (annotationHelper.isAnnotatedBy(hmh.getFullName())) {
-				return hmh.getFullName();
-			}
-		}
-		return null;
+	/**
+	 * 
+	 * 
+	 * @param programElementDoc
+	 * @return
+	 */
+	public static String getFullHttpMappingAnnotation(ProgramElementDoc programElementDoc) {
+		return Arrays.asList(HttpMethodHandler.values()).stream()
+				.map(HttpMethodHandler::getFullHttpMethodName)
+				.filter(fullHttpMethodName -> CommonHelper.hasAnnotation(programElementDoc, fullHttpMethodName))
+				.findFirst()
+				.orElse(null);
 	}
 
 	/**
@@ -90,19 +98,21 @@ public class ParserHelper {
 	 * programElementDoc
 	 */
 	public static AnnotationValue[] getMappingValue(ProgramElementDoc programElementDoc) {
+		String annotation = null;
+
+		if (CommonHelper.hasAnnotation(programElementDoc, RequestMapping.class.getName())) {
+			annotation = RequestMapping.class.getName();
+		} else if (getFullHttpMappingAnnotation(programElementDoc) != null) {
+			annotation = getFullHttpMappingAnnotation(programElementDoc);
+		}
+		
 		AnnotationHelper annotationHelper = new AnnotationHelper(programElementDoc.annotations());
 
 		AnnotationValue[] value = null;
-		String annotation = null;
-
-		if (hasRequestMappingAnnotation(programElementDoc)) {
-			annotation = RequestMapping.class.getName();
-		} else if (getHttpMappingAnnotation(programElementDoc) != null) {
-			annotation = getHttpMappingAnnotation(programElementDoc);
-		}
+		
 
 		value = (AnnotationValue[]) getAnnotationValueOfTwoSpecifics(annotationHelper, annotation, 
-				Consts.VALUE, com.spirit21.spring.Consts.PATH);
+				CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE, com.spirit21.spring.Consts.PATH);
 
 		if (value != null && value.length != 0) {
 			return value;
@@ -133,9 +143,9 @@ public class ParserHelper {
 	 * This method gets the simple http Method, e.g.: get, post
 	 */
 	public static String[] getHttpMethods(ProgramElementDoc programElementDoc) {
-		String httpMappingAnnotation = getHttpMappingAnnotation(programElementDoc);
+		String httpMappingAnnotation = getFullHttpMappingAnnotation(programElementDoc);
 
-		if (hasRequestMappingAnnotation(programElementDoc)) {
+		if (CommonHelper.hasAnnotation(programElementDoc, RequestMapping.class.getName())) {
 			AnnotationValue aValue = CommonHelper.getAnnotationValue(programElementDoc, 
 					RequestMapping.class.getName(), com.spirit21.spring.Consts.METHOD);
 			AnnotationValue[] aValues = (AnnotationValue[]) CommonHelper.getAnnotationValueObject(aValue);
@@ -148,8 +158,8 @@ public class ParserHelper {
 		
 		} else if (httpMappingAnnotation != null) {
 			return Arrays.asList(HttpMethodHandler.values()).stream()
-					.filter(hmh -> hmh.getFullName().equals(httpMappingAnnotation))
-					.map(HttpMethodHandler::getSimpleName)
+					.filter(hmh -> hmh.getFullHttpMethodName().equals(httpMappingAnnotation))
+					.map(HttpMethodHandler::getSimpleHttpMethodName)
 					.toArray(String[]::new);
 		}
 		return null;

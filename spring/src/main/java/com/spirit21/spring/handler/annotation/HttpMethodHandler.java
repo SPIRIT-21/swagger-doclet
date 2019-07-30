@@ -6,72 +6,81 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Path;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 
 /**
- * This method saves all HttpMethods and sets the correct operation to path
+ * Handles all possible Spring Boot HTTP methods by setting a swagger operation to a path.
+ * 
+ * @author mweidmann
  */
+// TODO: maybe create consts variables for the first parameter?
 public enum HttpMethodHandler {
 
-	GET(GetMapping.class.getName(), "get") {
+	GET("get", GetMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setGet(operation);
 		}
 	},
-	POST(PostMapping.class.getName(), "post") {
+	POST("post", PostMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setPost(operation);
 		}
 	},
-	PUT(PutMapping.class.getName(), "put") {
+	PUT("put", PutMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setPut(operation);
 		}
 	},
-	DELETE(DeleteMapping.class.getName(), "delete") {
+	DELETE("delete", DeleteMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setDelete(operation);
 		}
 	},
-	PATCH(PatchMapping.class.getName(), "patch") {
+	PATCH("patch", PatchMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setPatch(operation);
 		}
 	},
-	HEAD("", "head") {
+	HEAD("head", "") {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setHead(operation);
 		}
 	},
-	OPTIONS("", "options") {
+	OPTIONS("options", "") {
 		@Override
-		public void setOperationToPath(Path path, Operation operation) {
+		public void setOperationToPath(Operation operation, Path path) {
 			path.setOptions(operation);
 		}
 	};
 
-	private final String fullName;
-	private final String simpleName;
+	private final String simpleHttpMethodName;
+	private final String fullHttpMethodName;
 	
-	private HttpMethodHandler(String fullName, String simpleName) {
-		this.fullName = fullName;
-		this.simpleName = simpleName;
+	private HttpMethodHandler(String simpleHttpMethodName, String fullHttpMethodName) {
+		this.simpleHttpMethodName = simpleHttpMethodName;
+		this.fullHttpMethodName = fullHttpMethodName;
 	}
 	
-	public String getFullName() {
-		return fullName;
+	public String getSimpleHttpMethodName() {
+		return simpleHttpMethodName;
+	}
+	
+	public String getFullHttpMethodName() {
+		return fullHttpMethodName;
 	}
 
-	public String getSimpleName() {
-		return simpleName;
-	}
-
-	public abstract void setOperationToPath(Path path, Operation operation);
+	/**
+	 * Adds the passed fully configured swagger operation to the passed swagger path.
+	 * 
+	 * @param operation The operation which should be set to the path object.
+	 * @param path The swagger path in which the operation should be set.
+	 */
+	public abstract void setOperationToPath(Operation operation, Path path);
 }

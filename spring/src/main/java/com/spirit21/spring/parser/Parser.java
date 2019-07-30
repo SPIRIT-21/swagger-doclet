@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.spirit21.common.exception.ApiParserException;
+import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.common.parser.AbstractParser;
 import com.spirit21.spring.helper.ParserHelper;
 import com.sun.javadoc.ClassDoc;
@@ -35,13 +38,13 @@ public class Parser extends AbstractParser {
 	@Override
 	public boolean run() throws ApiParserException, IOException {
 		try {
-			entryPointClassDoc = getEntryPointClassDoc(ParserHelper::hasSpringBootApplicationAnnotation);
+			entryPointClassDoc = getEntryPointClassDoc(classDoc -> CommonHelper.hasAnnotation(classDoc, SpringBootApplication.class.getName()));
 			controllerClassDocs = getControllerClassDocs();
 			
-			apiParser.setBasicInformation(swagger, entryPointClassDoc);
+			apiParser.run(swagger);
 			tagParser.setTags(swagger);
 			pathParser.setPath(swagger);
-			definitionParser.setDefinitions(swagger, definitionClassDocs, classDocCache);
+			definitionParser.run(swagger);
 			
 			writeFile(getFileName(apiParser.getFileName()));
 			
@@ -58,7 +61,7 @@ public class Parser extends AbstractParser {
 	 */
 	private List<ClassDoc> getControllerClassDocs() {
 		return Arrays.asList(rootDoc.classes()).stream()
-				.filter(ParserHelper::hasControllerAnnotation)
+				.filter(ParserHelper::isController)
 				.collect(Collectors.toList());
 	}
 }

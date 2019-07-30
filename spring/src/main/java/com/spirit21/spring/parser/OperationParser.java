@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.OperationParserException;
 import com.spirit21.common.handler.javadoc.ResponseTagHandler;
 import com.spirit21.common.helper.CommonHelper;
@@ -22,11 +22,11 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Tag;
 
+import io.swagger.models.Operation;
+import io.swagger.models.Response;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
 import lombok.extern.java.Log;
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Response;
-import v2.io.swagger.models.parameters.BodyParameter;
-import v2.io.swagger.models.parameters.Parameter;
 
 @Log
 public class OperationParser {
@@ -82,7 +82,7 @@ public class OperationParser {
 	private void setTags(Operation operation, String value) {
 		List<String> tags = new ArrayList<>();
 
-		Matcher matcher = Parser.pattern.matcher(value);
+		Matcher matcher = Parser.PATTERN_TAG_NAME.matcher(value);
 		if (matcher.matches()) {
 			tags.add(matcher.group(1));
 		}
@@ -95,10 +95,10 @@ public class OperationParser {
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
 		String annotation = null;
 
-		if (ParserHelper.hasRequestMappingAnnotation(methodDoc)) {
+		if (CommonHelper.hasAnnotation(methodDoc, RequestMapping.class.getName())) {
 			annotation = RequestMapping.class.getName();
-		} else if (ParserHelper.getHttpMappingAnnotation(methodDoc) != null) {
-			annotation = ParserHelper.getHttpMappingAnnotation(methodDoc);
+		} else if (ParserHelper.getFullHttpMappingAnnotation(methodDoc) != null) {
+			annotation = ParserHelper.getFullHttpMappingAnnotation(methodDoc);
 		}
 
 		AnnotationValue aProduces = CommonHelper.getAnnotationValue(methodDoc, annotation, com.spirit21.spring.Consts.PRODUCES);
@@ -131,7 +131,7 @@ public class OperationParser {
 		Response currentResponse = null;
 
 		for (Tag tag : methodDoc.tags()) {
-			if (tag.name().equals(Consts.RESPONSE_CODE)) {
+			if (tag.name().equals(CommonConsts.OPERATION_PARSER_RESPONSE_CODE)) {
 				currentResponse = new Response();
 				responses.put(tag.text(), currentResponse);
 				continue;
@@ -153,8 +153,8 @@ public class OperationParser {
 	 */
 	private void setResponseProperties(Tag tag, Response response) {
 		Arrays.asList(ResponseTagHandler.values()).stream()
-			.filter(rth -> rth.getName().equals(tag.name()))
-			.forEach(rth -> rth.setResponseData(response, tag, Parser.definitionClassDocs, Parser.classDocCache));
+			.filter(rth -> rth.getTagName().equals(tag.name()))
+			.forEach(rth -> rth.setTagValueToResponseModel(tag, response));
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class OperationParser {
 	private void setParameters(Operation operation, MethodDoc methodDoc) {
 		List<Parameter> parameters = Arrays.asList(methodDoc.parameters()).stream()
 				.filter(param -> !CommonHelper.hasAnnotation(param, PathVariable.class.getName()))
-				.map(param -> parameterFactory.getParameter(methodDoc, param))
+				.map(param -> parameterFactory.createSwaggerParameter(methodDoc, param))
 				.collect(Collectors.toList());
 
 		checkBodyParameters(parameters, methodDoc);

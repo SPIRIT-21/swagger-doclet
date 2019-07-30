@@ -7,29 +7,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.parameter.AbstractHandler;
 import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.Parameter;
 
+/**
+ * Factory which creates a swagger (HTTP) parameter out of a JavaDoc parameter.
+ * 
+ * @author mweidmann
+ */
 public class ParameterFactory {
 	
-	private List<ParameterAnnotationHandler> handlers;
+	private List<AbstractHandler> parameterHandlers = new ArrayList<>();
 	
 	public ParameterFactory() {
-		this.handlers = new ArrayList<>();
-		this.handlers.add(new BodyParameterHandler(RequestBody.class.getName()));
-		this.handlers.add(new HeaderParameterHandler(RequestHeader.class.getName()));
-		this.handlers.add(new QueryParameterHandler(RequestParam.class.getName()));
+		this.parameterHandlers.add(new BodyParameterHandler(RequestBody.class.getName()));
+		this.parameterHandlers.add(new HeaderParameterHandler(RequestHeader.class.getName()));
+		this.parameterHandlers.add(new QueryParameterHandler(RequestParam.class.getName()));
 	}
 	
-	public Parameter getParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
-		for (ParameterAnnotationHandler pah : handlers) {
-			if (CommonHelper.hasAnnotation(parameter, pah.getName())) {
-				return pah.createNewParameter(parameter, methodDoc);
-			}
-		}
-		return null;
+	/**
+	 * Creates a swagger parameter from a JavaDoc parameter. 
+	 * It is used to set the parameters of a swagger operation for example.
+	 * 
+	 * @param methodDoc The MethodDoc which contains the JavaDoc parameter.
+	 * @param javaDocParameter The JavaDoc parameter itself.
+	 * @return The fully configured swagger parameter.
+	 */
+	public Parameter createSwaggerParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
+		return parameterHandlers.stream()
+				.filter(parameterHandler -> CommonHelper.hasAnnotation(javaDocParameter, parameterHandler.getHttpParameterType()))
+				.map(parameterHandler -> parameterHandler.createNewSwaggerParameter(methodDoc, javaDocParameter))
+				.findFirst()
+				.orElse(null);
 	}
 }

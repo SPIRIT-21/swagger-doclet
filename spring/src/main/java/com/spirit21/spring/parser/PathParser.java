@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.AnnotationHelper;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.spring.handler.annotation.HttpMethodHandler;
@@ -24,10 +24,10 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Path;
-import v2.io.swagger.models.Swagger;
-import v2.io.swagger.models.parameters.PathParameter;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
+import io.swagger.models.parameters.PathParameter;
 
 public class PathParser {
 
@@ -75,7 +75,7 @@ public class PathParser {
 					putInMapppingAndMethods(controllerMapping, methodDoc);
 				}
 				
-				List<String> methodMappings = ParserHelper.getPath(controllerMapping, methodDoc);
+				List<String> methodMappings = ParserHelper.getAllFullMappingsOfMethod(controllerMapping, methodDoc);
 				methodMappings.forEach(methodMapping -> putInMapppingAndMethods(methodMapping, methodDoc));
 			}
 		}
@@ -125,8 +125,8 @@ public class PathParser {
 	 */
 	private void setOperationToPath(Path path, Operation operation, String httpMethod) {
 		Arrays.asList(HttpMethodHandler.values()).stream()
-			.filter(hmh -> hmh.getSimpleName().equals(httpMethod))
-			.forEach(hmh -> hmh.setOperationToPath(path, operation));
+			.filter(hmh -> hmh.getSimpleHttpMethodName().equals(httpMethod))
+			.forEach(hmh -> hmh.setOperationToPath(operation, path));
 	}
 	
 	/**
@@ -157,9 +157,9 @@ public class PathParser {
 	 */
 	private Set<PathParameter> checkAndCreateParameter(Set<String> pathParamNames, MethodDoc methodDoc) {
 		return Arrays.asList(methodDoc.parameters()).stream()
-			.filter(param -> CommonHelper.hasAnnotation(param, pathParameterHandler.getName()))
+			.filter(param -> CommonHelper.hasAnnotation(param, pathParameterHandler.getHttpParameterType()))
 			.filter(param -> checkPathParamName(pathParamNames, param))
-			.map(param -> pathParameterHandler.createNewParameter(param, methodDoc))
+			.map(param -> pathParameterHandler.createNewSwaggerParameter(methodDoc, param))
 			.collect(Collectors.toSet());
 	}
 	
@@ -184,7 +184,7 @@ public class PathParser {
 		AnnotationHelper annotationHelper = new AnnotationHelper(param.annotations());
 
 		String value = (String) ParserHelper.getAnnotationValueOfTwoSpecifics(annotationHelper,
-				pathParameterHandler.getName(), com.spirit21.spring.Consts.NAME, Consts.VALUE);
+				pathParameterHandler.getHttpParameterType(), com.spirit21.spring.Consts.NAME, CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 
 		if (pathParamNames.contains(value)) {
 			pathParamNames.remove(value);

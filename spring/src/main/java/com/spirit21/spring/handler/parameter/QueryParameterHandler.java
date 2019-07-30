@@ -4,22 +4,24 @@ import com.spirit21.common.handler.parameter.AbstractParameterHandler;
 import com.spirit21.spring.Consts;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.parameters.Parameter;
-import v2.io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
 
+/**
+ * Query parameter handler for Spring Boot's query parameters.
+ * 
+ * @author mweidmann
+ */
 public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> {
 	
-	public QueryParameterHandler(String name) {
-		super(name, name, Consts.DEFAULT_VALUE);
+	public QueryParameterHandler(String httpParameterName) {
+		super(httpParameterName, httpParameterName, Consts.DEFAULT_VALUE);
 	}
 	
-	/** 
-	 * This method creates a new QueryParameter sets the data and returns it
-	 */
 	@Override
-	public Parameter createNewParameter(com.sun.javadoc.Parameter parameter, MethodDoc methodDoc) {
+	public Parameter createNewSwaggerParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		QueryParameter queryParameter = new QueryParameter();
-		handleParameter(queryParameter, parameter, methodDoc);
+		setDataToSwaggerParameter(queryParameter, methodDoc, javaDocParameter);
 		return queryParameter;
 	}
 }
