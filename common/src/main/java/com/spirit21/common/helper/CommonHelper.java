@@ -16,6 +16,11 @@ import com.sun.javadoc.ProgramElementDoc;
 public class CommonHelper {
 	
 	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private CommonHelper() { }
+	
+	/**
 	 * Checks if a ProgramElementDoc (ClassDoc, MethodDoc) is annotated by a specific annotation.
 	 * 
 	 * @param programElementDoc The element which should be checked if it is annotated.

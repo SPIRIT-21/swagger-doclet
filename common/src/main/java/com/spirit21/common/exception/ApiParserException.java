@@ -5,6 +5,7 @@ package com.spirit21.common.exception;
  * 
  * @author mweidmann
  */
+// TODO: git pre commit?
 public class ApiParserException extends SwaggerDocletException {
 
 	private static final long serialVersionUID = 5474714634617099805L;

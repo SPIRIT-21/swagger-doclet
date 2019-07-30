@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.ApiParserException;
 import com.spirit21.common.parser.AbstractParser;
+import com.spirit21.helper.Utility;
 import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
@@ -25,6 +26,11 @@ import lombok.extern.java.Log;
 public class Doclet {
 
 	private static String[][] options;
+	
+	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private Doclet() { }
 
 	/**
 	 * Entry method of the Doclet. Parses the output format, swagger version,

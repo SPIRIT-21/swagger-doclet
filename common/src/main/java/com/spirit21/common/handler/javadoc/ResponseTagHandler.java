@@ -18,7 +18,7 @@ import io.swagger.models.properties.RefProperty;
  * 
  * @author mweidmann
  */
-// TODO: Refactor deprecated methods.
+// TODO: refactor deprecated methods.
 public enum ResponseTagHandler {
 	
 	/**

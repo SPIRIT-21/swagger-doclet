@@ -1,5 +1,10 @@
 package com.spirit21.common;
 
+/**
+ * Common constants over all projects.
+ * 
+ * @author mweidmann
+ */
 public class CommonConsts {
 
 	// Possible Command-line options.
@@ -55,4 +60,9 @@ public class CommonConsts {
 	// Common regular expressions. These expressions are used to replace multiple successive slashes with one.
 	public static final String REGEX_SLASHES = "[/]{2,}";
 	public static final String REGEX_SLASHES_REPLACE = "/";
+	
+	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private CommonConsts() { }
 }

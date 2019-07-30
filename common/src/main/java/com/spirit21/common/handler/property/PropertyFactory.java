@@ -19,6 +19,11 @@ import io.swagger.models.properties.PropertyBuilder;
 public class PropertyFactory {
 	
 	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private PropertyFactory() { }
+	
+	/**
 	 * Creates a swagger property from a JavaDoc type. 
 	 * Is used to set a property of a query parameter for example.
 	 * 

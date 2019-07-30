@@ -1,9 +1,20 @@
-package com.spirit21;
+package com.spirit21.helper;
 
+import com.spirit21.Consts;
 import com.spirit21.common.CommonConsts;
 
+/**
+ * Utility methods for the javadoc2swagger module.
+ * 
+ * @author mweidmann
+ */
 public class Utility {
 
+	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private Utility() { }
+	
 	/**
 	 * Checks if the CLI argument '-type' was correctly set by the user.
 	 * Valid values are: 'json' or 'yaml'.

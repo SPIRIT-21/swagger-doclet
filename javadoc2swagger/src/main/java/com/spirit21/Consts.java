@@ -1,5 +1,10 @@
 package com.spirit21;
 
+/**
+ * Constants for the javadoc2swagger module.
+ * 
+ * @author mweidmann
+ */
 public class Consts {
 
 	// Possible Command-line option.
@@ -14,4 +19,9 @@ public class Consts {
 
 	// Possible/supported swagger version.
 	public static final String SWAGGER_VERSION_2 = "2";
+	
+	/**
+	 * Private constructor to hide the implicit public one.
+	 */
+	private Consts() { }
 }
