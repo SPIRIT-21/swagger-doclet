@@ -5,12 +5,12 @@ import java.util.Arrays;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.Operation;
+import io.swagger.models.Operation;
 
 /** 
  * This enum saves the produces and consumes annotation and adds the value of these annotations to the operation
@@ -49,7 +49,7 @@ public enum MIMEMediaTypeHandler {
 	}
 	
 	protected AnnotationValue[] getAnnotationValues(MethodDoc methodDoc) {
-		AnnotationValue aValue = CommonHelper.getAnnotationValue(methodDoc, getMimeMediaType(), Consts.VALUE);
+		AnnotationValue aValue = CommonHelper.getAnnotationValue(methodDoc, getMimeMediaType(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 		return (AnnotationValue[]) CommonHelper.getAnnotationValueObject(aValue);
 	}
 

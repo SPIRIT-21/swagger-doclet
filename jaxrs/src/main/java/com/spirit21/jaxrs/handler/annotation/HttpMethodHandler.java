@@ -7,8 +7,8 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Path;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 
 /**
  * This enum saves all http methods and sets the operation to path

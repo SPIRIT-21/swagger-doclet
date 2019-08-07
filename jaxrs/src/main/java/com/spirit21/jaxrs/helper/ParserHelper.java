@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.AnnotationHelper;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.jaxrs.handler.annotation.HttpMethodHandler;
@@ -119,7 +119,7 @@ public class ParserHelper {
 			Arrays.asList(parent.methods()).stream()
 				.filter(ParserHelper::hasPathAnnotation)
 				.filter(m -> !isHttpMethod(m) && m.returnType().equals(classDoc))
-				.map(m -> CommonHelper.getAnnotationValue(m, Path.class.getName(), Consts.VALUE))
+				.map(m -> CommonHelper.getAnnotationValue(m, Path.class.getName(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE))
 				.filter(Objects::nonNull)
 				.map(CommonHelper::getAnnotationValueObject)
 				.filter(Objects::nonNull)
@@ -128,11 +128,11 @@ public class ParserHelper {
 					sb.insert(0, getPath(parent));
 				});
 			
-			return CommonHelper.replaceSlashes(sb.toString());
+			return CommonHelper.replaceMultipleSlashes(sb.toString());
 		} else {
-			AnnotationValue aValue = CommonHelper.getAnnotationValue(classDoc, Path.class.getName(), Consts.VALUE);
+			AnnotationValue aValue = CommonHelper.getAnnotationValue(classDoc, Path.class.getName(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 			String value = "/" + (String) CommonHelper.getAnnotationValueObject(aValue);
-			return CommonHelper.replaceSlashes(value);
+			return CommonHelper.replaceMultipleSlashes(value);
 		}
 	}
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.PathParam;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.CommonHelper;
 import com.spirit21.jaxrs.handler.annotation.HttpMethodHandler;
 import com.spirit21.jaxrs.handler.parameter.PathParameterHandler;
@@ -21,10 +21,10 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Path;
-import v2.io.swagger.models.Swagger;
-import v2.io.swagger.models.parameters.Parameter;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 
 public class PathParser {
 
@@ -68,10 +68,10 @@ public class PathParser {
 			String pathAnnotation = javax.ws.rs.Path.class.getName();
 			
 			if (CommonHelper.hasAnnotation(methodDoc, pathAnnotation) && ParserHelper.isHttpMethod(methodDoc)) {
-				AnnotationValue aValue = CommonHelper.getAnnotationValue(methodDoc, pathAnnotation, Consts.VALUE);
+				AnnotationValue aValue = CommonHelper.getAnnotationValue(methodDoc, pathAnnotation, CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 				String methodPath = (String) CommonHelper.getAnnotationValueObject(aValue);
 			
-				String mappingValue = CommonHelper.replaceSlashes(classDocPath + "/" + methodPath);
+				String mappingValue = CommonHelper.replaceMultipleSlashes(classDocPath + "/" + methodPath);
 				
 				putInMappingAndMethods(mappingValue, methodDoc);
 			} else if (!CommonHelper.hasAnnotation(methodDoc, pathAnnotation) && ParserHelper.isHttpMethod(methodDoc)) {
@@ -138,7 +138,7 @@ public class PathParser {
 	 */
 	private List<Parameter> getPathParameterFromField(ClassDoc classDoc) {
 		return Arrays.asList(classDoc.fields(false)).stream()
-			.filter(f -> CommonHelper.hasAnnotation(f, pathParameterHandler.getName()))
+			.filter(f -> CommonHelper.hasAnnotation(f, pathParameterHandler.getHttpParameterType()))
 			.map(f -> pathParameterHandler.createPathParameterFromField(f))
 			.collect(Collectors.toList());
 	}
@@ -148,8 +148,8 @@ public class PathParser {
 	 */
 	private List<Parameter> getPathParameterFromMethodParameter(MethodDoc methodDoc) {
 		return Arrays.asList(methodDoc.parameters()).stream()
-			.filter(p -> CommonHelper.hasAnnotation(p, pathParameterHandler.getName()))
-			.map(p -> pathParameterHandler.createNewParameter(p, methodDoc))
+			.filter(p -> CommonHelper.hasAnnotation(p, pathParameterHandler.getHttpParameterType()))
+			.map(p -> pathParameterHandler.createNewSwaggerParameter(p, methodDoc))
 			.collect(Collectors.toList());
 	}
 	

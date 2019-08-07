@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.helper.CommonHelper;
 
-import v2.io.swagger.models.Swagger;
-import v2.io.swagger.models.Tag;
+import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
 
 public class TagParser {
 	
@@ -22,7 +22,7 @@ public class TagParser {
 	protected void setTags(Swagger swagger) {
 		Set<Tag> tags = Parser.resourceClassDocs.entrySet().stream()
 			.filter(entry -> entry.getValue() == null)
-			.map(entry -> CommonHelper.getAnnotationValue(entry.getKey(), Path.class.getName(), Consts.VALUE))
+			.map(entry -> CommonHelper.getAnnotationValue(entry.getKey(), Path.class.getName(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE))
 			.filter(Objects::nonNull)
 			.map(aValue -> (String) CommonHelper.getAnnotationValueObject(aValue))
 			.filter(Objects::nonNull)
@@ -37,7 +37,7 @@ public class TagParser {
 	 * This method creates the tag with the annotation value 
 	 */
 	private Tag createTag(String annotationValue) {
-		Matcher matcher = Parser.pattern.matcher(annotationValue);
+		Matcher matcher = Parser.TAG_NAME_PATTERN.matcher(annotationValue);
 		if (matcher.matches()) {
 			String group = matcher.group(1);
 			Tag tag = new Tag();

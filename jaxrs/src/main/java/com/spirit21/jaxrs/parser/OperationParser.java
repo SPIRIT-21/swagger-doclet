@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
-import com.spirit21.common.Consts;
+import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.OperationParserException;
 import com.spirit21.common.handler.javadoc.ResponseTagHandler;
 import com.spirit21.common.helper.CommonHelper;
@@ -23,11 +23,11 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Tag;
 
+import io.swagger.models.Operation;
+import io.swagger.models.Response;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
 import lombok.extern.java.Log;
-import v2.io.swagger.models.Operation;
-import v2.io.swagger.models.Response;
-import v2.io.swagger.models.parameters.BodyParameter;
-import v2.io.swagger.models.parameters.Parameter;
 
 @Log
 public class OperationParser {
@@ -79,10 +79,10 @@ public class OperationParser {
 		List<String> tags = new ArrayList<>();
 
 		ClassDoc parentClassDoc = ParserHelper.getParentClassDoc(methodDoc.containingClass());
-		AnnotationValue aValue = CommonHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), Consts.VALUE);
+		AnnotationValue aValue = CommonHelper.getAnnotationValue(parentClassDoc, Path.class.getName(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
 		String value = (String) CommonHelper.getAnnotationValueObject(aValue);
 		
-		Matcher matcher = Parser.pattern.matcher(value);
+		Matcher matcher = Parser.TAG_NAME_PATTERN.matcher(value);
 		
 		if (matcher.matches()) {
 			tags.add(matcher.group(1));
@@ -119,7 +119,7 @@ public class OperationParser {
 		Response currentResponse = null;
 		
 		for (Tag tag : methodDoc.tags()) {
-			if (tag.name().equals(Consts.RESPONSE_CODE)) {
+			if (tag.name().equals(CommonConsts.OPERATION_PARSER_RESPONSE_CODE)) {
 				currentResponse = new Response();
 				responses.put(tag.text(), currentResponse);
 				continue;
@@ -140,8 +140,8 @@ public class OperationParser {
 	 */
 	private void setResponseProperties(Tag tag, Response response) {
 		Arrays.asList(ResponseTagHandler.values()).stream()
-			.filter(rth -> rth.getName().equals(tag.name()))
-			.forEach(rth -> rth.setResponseData(response, tag, Parser.definitionClassDocs, Parser.classDocCache));
+			.filter(rth -> rth.getTagName().equals(tag.name()))
+			.forEach(rth -> rth.setTagValueToSwaggerModel(response, tag, Parser.DEFINITION_CLASS_DOCS, Parser.classDocCache));
 	}
 
 	/**

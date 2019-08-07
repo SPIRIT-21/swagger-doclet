@@ -36,13 +36,13 @@ public class Parser extends AbstractParser {
 	@Override
 	public boolean run() throws ApiParserException, IOException {
 		try {
-			entryPointClassDoc = getEntryPointClassDoc(ParserHelper::hasApplicationPathAnnotation);
+			entryPointClassDoc = searchEntryPointClassDoc(ParserHelper::hasApplicationPathAnnotation);
 			resourceClassDocs = getResources();
 
 			apiParser.setBasicInformation(swagger, entryPointClassDoc);
 			tagParser.setTags(swagger);
 			pathParser.setPath(swagger);
-			definitionParser.setDefinitions(swagger, definitionClassDocs, classDocCache);
+			definitionParser.setDefinitions(swagger, DEFINITION_CLASS_DOCS, classDocCache);
 			
 			writeFile(getFileName(apiParser.getFileName()));
 

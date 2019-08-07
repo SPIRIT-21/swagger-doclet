@@ -8,7 +8,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
-import com.spirit21.common.handler.parameter.ParameterAnnotationHandler;
+import com.spirit21.common.handler.parameter.IParameterHandler;
 import com.spirit21.common.helper.CommonHelper;
 import com.sun.javadoc.MethodDoc;
 
@@ -17,7 +17,7 @@ import v2.io.swagger.models.parameters.Parameter;
 public class ParameterFactory {
 
 	private BodyParameterHandler bph;
-	private List<ParameterAnnotationHandler> handlers;
+	private List<IParameterHandler> handlers;
 
 	public ParameterFactory() {
 		this.handlers = new ArrayList<>();
@@ -33,17 +33,17 @@ public class ParameterFactory {
 	public Parameter getParameter(MethodDoc methodDoc, com.sun.javadoc.Parameter parameter) {
 		Parameter param = null;
 
-		for (ParameterAnnotationHandler pah : handlers) {
-			if (CommonHelper.hasAnnotation(parameter, pah.getName())
+		for (IParameterHandler pah : handlers) {
+			if (CommonHelper.hasAnnotation(parameter, pah.getHttpParameterType())
 					&& !CommonHelper.hasAnnotation(parameter, Context.class.getName())) {
-				return pah.createNewParameter(parameter, methodDoc);
+				return pah.createNewSwaggerParameter(parameter, methodDoc);
 			}
 		}
 
 		if (CommonHelper.hasAnnotation(parameter, Context.class.getName())) {
 			return param;
 		} else {
-			return bph.createNewParameter(parameter, methodDoc);
+			return bph.createNewSwaggerParameter(parameter, methodDoc);
 		}
 	}
 }
