@@ -1,7 +1,7 @@
 package com.spirit21.common.handler.datatype;
 
 import com.spirit21.common.CommonConsts;
-import com.spirit21.common.handler.datatype.ObjectTypeHandler.ObjectType;;
+import com.spirit21.common.handler.datatype.ObjectTypeHandler.ObjectType;
 
 /**
  * This handler handles Objects.

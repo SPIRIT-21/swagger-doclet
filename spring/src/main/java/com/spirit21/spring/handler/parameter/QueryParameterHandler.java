@@ -15,7 +15,7 @@ import io.swagger.models.parameters.QueryParameter;
 public class QueryParameterHandler extends AbstractParameterHandler<QueryParameter> {
 	
 	public QueryParameterHandler(String httpParameterName) {
-		super(httpParameterName, httpParameterName, Consts.DEFAULT_VALUE);
+		super(httpParameterName, httpParameterName, Consts.ANNOTATION_PROPERTY_DEFAULT_VALUE);
 	}
 	
 	@Override

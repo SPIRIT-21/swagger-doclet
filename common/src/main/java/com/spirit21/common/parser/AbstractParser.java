@@ -35,7 +35,7 @@ public abstract class AbstractParser {
 	
 	// This pattern finds the tag name out of an API endpoint. Rule: The root/first resource in the path is the tag name.
 	// E.g. with the endpoint "/LALA/xfa/d1" this pattern finds "LALA".
-	public static final Pattern PATTERN_TAG_NAME = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
+	public static final Pattern TAG_NAME_PATTERN = Pattern.compile("\"?/?([a-zA-Z0-9_-]+)/?.*\"?");
 	public static final List<ClassDoc> DEFINITION_CLASS_DOCS = new ArrayList<>();
 	public static final ClassDocCache CLASS_DOC_CACHE = new ClassDocCache();
 	
@@ -81,16 +81,15 @@ public abstract class AbstractParser {
 	 * or no entry point exists, an exception will be thrown.
 	 * 
 	 * @param predicate The condition by which the ClassDocs are filtered.
-	 * @return The found entry point ClassDoc.
 	 * @throws ApiParserException if more than one entry point was found or no entry point exists.
 	 */
-	protected ClassDoc getEntryPointClassDoc(Predicate<? super ClassDoc> predicate) throws ApiParserException {
+	protected void searchEntryPointClassDoc(Predicate<? super ClassDoc> predicate) throws ApiParserException {
 		List<ClassDoc> tmpList = Arrays.asList(rootDoc.classes()).stream()
 				.filter(predicate)
 				.collect(Collectors.toList());
 		
 		if (tmpList.size() == 1) {
-			return tmpList.get(0);
+			entryPointClassDoc = tmpList.get(0);
 		} else if (tmpList.size() > 1) {
 			throw new ApiParserException("Mutliple API entry points found. Only one entry point is allowed.");
 		} else {

@@ -14,7 +14,7 @@ import io.swagger.models.parameters.PathParameter;
 public class PathParameterHandler extends AbstractParameterHandler<PathParameter> {
 	
 	public PathParameterHandler(String httpParameterName) {
-		super(httpParameterName, httpParameterName, Consts.DEFAULT_VALUE);
+		super(httpParameterName, httpParameterName, Consts.ANNOTATION_PROPERTY_DEFAULT_VALUE);
 	}
 	
 	@Override

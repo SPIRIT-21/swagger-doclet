@@ -37,9 +37,9 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	 */
 	protected void setDataToSwaggerParameter(AbstractSerializableParameter<T> swaggerParameter, MethodDoc methodDoc, com.sun.javadoc.Parameter javaDocParameter) {
 		// Set the parameter name.
-		AnnotationValue aValue = CommonHelper.getAnnotationValue(javaDocParameter, getHttpParameterType(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
-		String value = (String) CommonHelper.getAnnotationValueObject(aValue);
-		swaggerParameter.setName(value);
+		AnnotationValue annotationValue = CommonHelper.getAnnotationValue(javaDocParameter, getHttpParameterType(), CommonConsts.ANNOTATION_PROPERTY_NAME_VALUE);
+		String parameterName = (String) CommonHelper.getAnnotationValueObject(annotationValue);
+		swaggerParameter.setName(parameterName);
 		
 		// Set the default value.
 		String defaultValue = getDefaultValue(javaDocParameter);
@@ -61,8 +61,8 @@ public abstract class AbstractParameterHandler<T extends AbstractSerializablePar
 	 * @return A string which contains the default value for a parameter or null.
 	 */
 	protected String getDefaultValue(com.sun.javadoc.Parameter javaDocParameter) {
-		AnnotationValue aValue = CommonHelper.getAnnotationValue(javaDocParameter, defaultValueAnnotationName, defaultValueAnnotationProperty);
-		return (String) CommonHelper.getAnnotationValueObject(aValue);
+		AnnotationValue annotationValue = CommonHelper.getAnnotationValue(javaDocParameter, defaultValueAnnotationName, defaultValueAnnotationProperty);
+		return (String) CommonHelper.getAnnotationValueObject(annotationValue);
 	}
 	
 	@Override

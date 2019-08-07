@@ -15,7 +15,7 @@ import io.swagger.models.parameters.Parameter;
 public class HeaderParameterHandler extends AbstractParameterHandler<HeaderParameter> {
 	
 	public HeaderParameterHandler(String httpParameterName) {
-		super(httpParameterName, httpParameterName, Consts.DEFAULT_VALUE);
+		super(httpParameterName, httpParameterName, Consts.ANNOTATION_PROPERTY_DEFAULT_VALUE);
 	}
 	
 	@Override

@@ -19,44 +19,44 @@ public enum HttpMethodHandler {
 
 	GET("get", GetMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setGet(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setGet(operation);
 		}
 	},
 	POST("post", PostMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setPost(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setPost(operation);
 		}
 	},
 	PUT("put", PutMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setPut(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setPut(operation);
 		}
 	},
 	DELETE("delete", DeleteMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setDelete(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setDelete(operation);
 		}
 	},
 	PATCH("patch", PatchMapping.class.getName()) {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setPatch(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setPatch(operation);
 		}
 	},
 	HEAD("head", "") {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setHead(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setHead(operation);
 		}
 	},
 	OPTIONS("options", "") {
 		@Override
-		public void setOperationToPath(Operation operation, Path path) {
-			path.setOptions(operation);
+		public void setOperationToPath(Operation operation, Path swaggerPath) {
+			swaggerPath.setOptions(operation);
 		}
 	};
 
@@ -80,7 +80,7 @@ public enum HttpMethodHandler {
 	 * Adds the passed fully configured swagger operation to the passed swagger path.
 	 * 
 	 * @param operation The operation which should be set to the path object.
-	 * @param path The swagger path in which the operation should be set.
+	 * @param swaggerPath The swagger path in which the operation should be set.
 	 */
-	public abstract void setOperationToPath(Operation operation, Path path);
+	public abstract void setOperationToPath(Operation operation, Path swaggerPath);
 }

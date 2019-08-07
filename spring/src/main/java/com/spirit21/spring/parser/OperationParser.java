@@ -1,6 +1,5 @@
 package com.spirit21.spring.parser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +9,12 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.spirit21.common.CommonConsts;
 import com.spirit21.common.exception.OperationParserException;
 import com.spirit21.common.handler.javadoc.ResponseTagHandler;
 import com.spirit21.common.helper.CommonHelper;
+import com.spirit21.spring.Consts;
 import com.spirit21.spring.handler.parameter.ParameterFactory;
 import com.spirit21.spring.helper.ParserHelper;
 import com.sun.javadoc.AnnotationValue;
@@ -28,175 +27,211 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import lombok.extern.java.Log;
 
+/**
+ * Parses a MethodDoc to create operations for a mapping path.
+ * Firstly the basic operation is created: the tags, media type, description etc. is set.
+ * After that for every HTTP mapping a unique operation id is set and the resulting operation is
+ * added to the data structure of the swagger path object. 
+ * 
+ * @author mweidmann
+ */
 @Log
 public class OperationParser {
 
 	private ParameterFactory parameterFactory;
 
-	/**
-	 * Initialize
-	 */
 	protected OperationParser() {
 		this.parameterFactory = new ParameterFactory();
 	}
 
 	/**
-	 * This method creates a list of operations for one method
+	 * Starts the parsing process for swagger operations. First a map is created in which the HTTP method and 
+	 * the operation is saved to. Then the operation is created and saved into the map.
+	 * Afterwards the created map will be returned.
+	 * 
+	 * @param mappingPath The mapping path out of which the operation tags are created.
+	 * @param methodDoc The MethodDoc out of which the operation is created.
+	 * @return A map which contains all HTTP methods and the corresponding swagger operation for a mapping path.
 	 */
-	protected Map<String, Operation> createOperations(MethodDoc methodDoc, String pathName) {
-		Map<String, Operation> operations = new HashMap<>();
-
-		for (String httpMethod : ParserHelper.getHttpMethods(methodDoc)) {
-			Operation operation = createOperation(methodDoc, pathName, httpMethod);
-			operations.put(httpMethod, operation);
+	protected Map<String, Operation> run(String mappingPath, MethodDoc methodDoc) {
+		Map<String, Operation> httpMethodToOperation = new HashMap<>();
+		Operation swaggerOperation = createOperation(mappingPath, methodDoc);
+		
+		for (String httpMethod : ParserHelper.getSimpleHttpMethods(methodDoc)) {
+			swaggerOperation.setOperationId(httpMethod + mappingPath);
+			httpMethodToOperation.put(httpMethod, swaggerOperation);
 		}
-		return operations;
+		return httpMethodToOperation;
 	}
 
 	/**
-	 * This method creates an operation and calls other methods to set the operation
-	 * properties
+	 * Creates a swagger operation and calls other methods to set the properties of the created
+	 * swagger operation.
+	 * 
+	 * @param mappingPath The mapping path out of which the operation tags are created.
+	 * @param methodDoc The MethodDoc out of which the information for the swagger operation properties are taken.
+	 * @return The fully configured swagger operation.
 	 */
-	private Operation createOperation(MethodDoc methodDoc, String pathName, String httpMethod) {
-		Operation operation = new Operation();
-
-		operation.setOperationId(httpMethod + pathName);
-		setTags(operation, pathName);
-		setMediaType(operation, methodDoc);
-		setDescription(operation, methodDoc);
-
+	private Operation createOperation(String mappingPath, MethodDoc methodDoc) {
+		Operation swaggerOperation = new Operation();
+		
+		swaggerOperation.setTags(getTags(mappingPath));
+		setMediaType(swaggerOperation, methodDoc);
+		swaggerOperation.setDescription(getDescription(methodDoc));
+		setParameters(methodDoc, swaggerOperation);
+		swaggerOperation.setDeprecated(isDeprecated(methodDoc));
+		
 		try {
-			setResponses(operation, methodDoc);
+			setResponses(methodDoc, swaggerOperation);
 		} catch (OperationParserException e) {
-			log.log(Level.SEVERE, "Error while creating operation for a path!", e);
+			log.log(Level.SEVERE, "Error while creating the responses for an operation for a path!", e);
 		}
-		setParameters(operation, methodDoc);
-		setDeprecated(operation, methodDoc);
-
-		return operation;
+		
+		return swaggerOperation;
 	}
-
+	
 	/**
-	 * This method sets the tag(s) for the operation
+	 * Gets the tag of the swagger operation. Therefore the mapping path will be checked
+	 * with a regular expression and the result is taken as the tag of the operation.
+	 * 
+	 * @param mappingPath The mapping path out of which the operation tags are created.
+	 * @return A list containing all tags. (In this case, it is only one tag, due to requirements of this application)
 	 */
-	private void setTags(Operation operation, String value) {
-		List<String> tags = new ArrayList<>();
-
-		Matcher matcher = Parser.PATTERN_TAG_NAME.matcher(value);
-		if (matcher.matches()) {
-			tags.add(matcher.group(1));
-		}
-		operation.setTags(tags);
+	private List<String> getTags(String mappingPath) {
+		Matcher matcher = Parser.TAG_NAME_PATTERN.matcher(mappingPath);
+		return matcher.matches() ? Arrays.asList(matcher.group(1)) : Arrays.asList();
 	}
 
 	/**
-	 * This method sets the MIME media type of the operation
+	 * Sets the MIME media types of the operation.
+	 * 
+	 * @param operation The operation in which the MIME media types are set.
+	 * @param methodDoc The MethodDoc to get media type values of the mapping annotation.
 	 */
 	private void setMediaType(Operation operation, MethodDoc methodDoc) {
-		String annotation = null;
+		String mappingAnnotation = ParserHelper.getFullMappingAnnotation(methodDoc);
 
-		if (CommonHelper.hasAnnotation(methodDoc, RequestMapping.class.getName())) {
-			annotation = RequestMapping.class.getName();
-		} else if (ParserHelper.getFullHttpMappingAnnotation(methodDoc) != null) {
-			annotation = ParserHelper.getFullHttpMappingAnnotation(methodDoc);
+		// Adds produces to the operation.
+		AnnotationValue annotationValue = CommonHelper.getAnnotationValue(methodDoc, mappingAnnotation, Consts.ANNOTATION_PROPERTY_PRODUCES);
+		String[] value = (String[]) CommonHelper.getAnnotationValueObject(annotationValue);
+		
+		if (value != null) {
+			Arrays.asList(value).forEach(operation::addProduces);
 		}
-
-		AnnotationValue aProduces = CommonHelper.getAnnotationValue(methodDoc, annotation, com.spirit21.spring.Consts.PRODUCES);
-		String[] produces = (String[]) CommonHelper.getAnnotationValueObject(aProduces);
-
-		AnnotationValue aConsumes = CommonHelper.getAnnotationValue(methodDoc, annotation, com.spirit21.spring.Consts.CONSUMES);
-		String[] consumes = (String[]) CommonHelper.getAnnotationValueObject(aConsumes);
-
-		if (produces != null) Arrays.asList(produces).forEach(operation::addProduces);
-		if (consumes != null) Arrays.asList(consumes).forEach(operation::addConsumes);
+		
+		// Adds consumes to the operation.
+		annotationValue = CommonHelper.getAnnotationValue(methodDoc, mappingAnnotation, Consts.ANNOTATION_PROPERTY_CONSUMES);
+		value = (String[]) CommonHelper.getAnnotationValueObject(annotationValue);
+		
+		if (value != null) {
+			Arrays.asList(value).forEach(operation::addConsumes);
+		}
 	}
 
 	/**
-	 * This method sets the description of the operation
+	 * Gets the description of the passed MethodDoc by checking its JavaDoc comments.
+	 * 
+	 * @param methodDoc The MethodDoc from which the JavaDoc will be checked for a description.
+	 * @return A string containing the description of the MethodDoc.
 	 */
-	private void setDescription(Operation operation, MethodDoc methodDoc) {
-		String description = Arrays.asList(methodDoc.inlineTags()).stream()
-								.map(Tag::text)
-								.collect(Collectors.joining());
-
-		operation.setDescription(description);
+	private String getDescription(MethodDoc methodDoc) {
+		return Arrays.asList(methodDoc.inlineTags()).stream()
+				.map(Tag::text)
+				.collect(Collectors.joining());
 	}
 
 	/**
-	 * This method sets the responses for an operation and throw an exception if
-	 * there is no response documented
+	 * Creates and sets the responses for a swagger operation. If no response is documented an exception
+	 * will be thrown.
+	 * 
+	 * @param methodDoc The MethodDoc in which JavaDoc documentation all responses are documented.
+	 * @param operation The operation in which the created responses will be set.
+	 * @throws OperationParserException If no response was documented.
 	 */
-	private void setResponses(Operation operation, MethodDoc methodDoc) throws OperationParserException {
-		Map<String, Response> responses = new HashMap<>();
+	private void setResponses(MethodDoc methodDoc, Operation operation) throws OperationParserException {
+		Map<String, Response> swaggerResponses = new HashMap<>();
 		Response currentResponse = null;
 
-		for (Tag tag : methodDoc.tags()) {
-			if (tag.name().equals(CommonConsts.OPERATION_PARSER_RESPONSE_CODE)) {
-				currentResponse = new Response();
-				responses.put(tag.text(), currentResponse);
+		// Iterate through all JavaDoc tags.
+		for (Tag javadocTag : methodDoc.tags()) {
+			// If the tag does not begin with @responseCode, then the response properties can be set.
+			if (!javadocTag.name().equals(CommonConsts.OPERATION_PARSER_RESPONSE_CODE)) {
+				setResponseProperty(javadocTag, currentResponse);
 				continue;
-			} else {
-				setResponseProperties(tag, currentResponse);
 			}
+			
+			// If the tag does begin with @responseCode, then it is a new response object.
+			currentResponse = new Response();
+			swaggerResponses.put(javadocTag.text(), currentResponse);
 		}
 
-		if (responses.size() == 0) {
+		if (swaggerResponses.isEmpty()) {
 			throw new OperationParserException("In your documentation of the method '" + methodDoc.name() + "' in '"
 					+ methodDoc.containingClass().qualifiedName() + "' you have to document at least one response!");
 		}
-		operation.setResponses(responses);
+		operation.setResponses(swaggerResponses);
 	}
 
 	/**
-	 * This method sets the response properties of the response object. E.g. the
-	 * response message
+	 * Sets the swagger response object properties with the help of the ResponseTagHandler.
+	 * Example for response object properties are the response schema or description.
+	 * 
+	 * @param javadocTag The tag which is potentially a response object property.
+	 * @param swaggerResponse The swagger response in which the information of the tag will be set.
 	 */
-	private void setResponseProperties(Tag tag, Response response) {
+	private void setResponseProperty(Tag javadocTag, Response swaggerResponse) {
 		Arrays.asList(ResponseTagHandler.values()).stream()
-			.filter(rth -> rth.getTagName().equals(tag.name()))
-			.forEach(rth -> rth.setTagValueToResponseModel(tag, response));
+			.filter(responseTagHandler -> responseTagHandler.getTagName().equals(javadocTag.name()))
+			.forEach(responseTagHandler -> responseTagHandler.setTagValueToResponseModel(javadocTag, swaggerResponse));
 	}
 
 	/**
-	 * This method analyzes the paramteres of a methodDoc, puts them in a list and
-	 * adds it to the operation
+	 * Creates all swagger parameters of a MethodDoc and adds them to the swagger operation.
+	 * In addition to that it is checked whether the number of body parameters is correct.
+	 * 
+	 * @param methodDoc The MethodDoc which contains all parameters.
+	 * @param swaggerOperation The swagger operation in which the created parameters will be set.
 	 */
-	private void setParameters(Operation operation, MethodDoc methodDoc) {
-		List<Parameter> parameters = Arrays.asList(methodDoc.parameters()).stream()
-				.filter(param -> !CommonHelper.hasAnnotation(param, PathVariable.class.getName()))
-				.map(param -> parameterFactory.createSwaggerParameter(methodDoc, param))
+	private void setParameters(MethodDoc methodDoc, Operation swaggerOperation) {
+		List<Parameter> swaggerParameters = Arrays.asList(methodDoc.parameters()).stream()
+				.filter(parameter -> !CommonHelper.hasAnnotation(parameter, PathVariable.class.getName()))
+				.map(parameter -> parameterFactory.createSwaggerParameter(methodDoc, parameter))
 				.collect(Collectors.toList());
 
-		checkBodyParameters(parameters, methodDoc);
-
-		operation.setParameters(parameters);
+		checkBodyParameters(methodDoc, swaggerParameters);
+		swaggerOperation.setParameters(swaggerParameters);
 	}
 
 	/**
-	 * This method checks the amount of the body parameters and if there is more
-	 * than one body parameter, it picks one and removes the other body parameters
+	 * Checks the number of body parameters. If there are more than one, a warning is printed
+	 * and all body parameter are removed except for the first. The reason for that is to get 
+	 * a valid swagger file.
+	 * 
+	 * @param methodDoc The MethodDoc to get correct logging if it is needed.
+	 * @param swaggerParameters All swagger parameters of the MethodDoc.
 	 */
-	private void checkBodyParameters(List<Parameter> parameters, MethodDoc methodDoc) {
-		List<Parameter> bodyParameters = parameters.stream()
-				.filter(param -> param instanceof BodyParameter)
+	private void checkBodyParameters(MethodDoc methodDoc, List<Parameter> swaggerParameters) {
+		List<Parameter> swaggerBodyParameters = swaggerParameters.stream()
+				.filter(swaggerParameter -> swaggerParameter instanceof BodyParameter)
 				.collect(Collectors.toList());
-
-		if (bodyParameters.size() > 1) {
-			bodyParameters.remove(0);
-			parameters.removeAll(bodyParameters);
-			log.info("The method '" + methodDoc + "' in the resource '" + methodDoc.containingClass()
-					+ "' has more than one bodyParameter. Only one is allowed.");
+		
+		if (swaggerBodyParameters.size() > 1) {
+			swaggerBodyParameters.remove(0);
+			swaggerParameters.removeAll(swaggerBodyParameters);
+			log.warning("Only one body parameter is here allowed: " 
+						+ methodDoc.containingClass().qualifiedName() + " " + methodDoc.name());
 		}
 	}
 	
 	/**
-	 * This method sets the operation to value, if the method or the class is annotated
-	 * with the Deprecated annotation
+	 * Checks if the passed MethodDoc or the containing ClassDoc is deprecated.
+	 * If yes, true is returned, otherwise false.
+	 * 
+	 * @param methodDoc The MethodDoc which should be checked.
+	 * @return True if it is deprecated, otherwise false.
 	 */
-	private void setDeprecated(Operation operation, MethodDoc methodDoc) {
-		if (CommonHelper.hasAnnotation(methodDoc.containingClass(), Deprecated.class.getName()) 
-				|| CommonHelper.hasAnnotation(methodDoc, Deprecated.class.getName())) {
-			operation.setDeprecated(true);
-		}
+	private boolean isDeprecated(MethodDoc methodDoc) {
+		return CommonHelper.hasAnnotation(methodDoc.containingClass(), Deprecated.class.getName()) 
+				|| CommonHelper.hasAnnotation(methodDoc, Deprecated.class.getName());
 	}
 }

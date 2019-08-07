@@ -1,5 +1,6 @@
 package com.spirit21.common.handler.datatype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,8 @@ public class DataTypeFactory {
 	 * Adds all handlers in one list.
 	 */
 	public DataTypeFactory() {
+		handlers = new ArrayList<>();
+		
 		handlers.add(new CollectionTypeHandler());
 		handlers.add(new DateTypeHandler());
 		handlers.add(new NumberTypeHandler());

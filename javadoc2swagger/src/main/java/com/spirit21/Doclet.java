@@ -23,6 +23,7 @@ import lombok.extern.java.Log;
  * @author mweidmann
  */
 @Log
+// TODO: maybe throw exceptions when logging a severe error?
 public class Doclet {
 
 	private static String[][] options;
